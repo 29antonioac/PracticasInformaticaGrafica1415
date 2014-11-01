@@ -9,6 +9,8 @@ Pulsando Fx se va cambiando de práctica. Por ahora las disponibles son:
 
 ## Práctica 1
 
+Esta práctica consta de dibujar modelos usando un fichero ply.
+
 - **./prac <nombre_del_ply.ply>**
   Si no se especifica un ply a cargar se cargará ant.ply
 
