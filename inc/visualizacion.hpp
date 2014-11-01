@@ -1,0 +1,6 @@
+#ifndef VISUALIZACION_HPP
+#define VISUALIZACION_HPP
+
+enum visualizacion {ALAMBRE,SOLIDO,AJEDREZ,PUNTOS};
+
+#endif

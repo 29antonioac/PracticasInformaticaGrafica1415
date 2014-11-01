@@ -1,0 +1,19 @@
+// *********************************************************************
+// **
+// ** Informática Gráfica, curso 2014-15
+// ** 
+// **
+// ** Práctica 1  (declaraciones públicas)
+// **
+// *********************************************************************
+
+#ifndef __IG_PRACTICA2_HPP__
+#define __IG_PRACTICA2_HPP__
+
+#include "visualizacion.hpp"
+#include "mallaTVT.hpp"
+
+void P2_DibujarObjetos() ;
+void P2_Inicializar( int argc, char *argv[] ) ;
+
+#endif
