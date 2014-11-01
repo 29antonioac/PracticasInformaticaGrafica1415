@@ -23,36 +23,7 @@ MallaTVT::MallaTVT (std::vector<GLfloat> vertices, std::vector<int> caras, enum 
 
    unsigned i,j;
 
-#if defined TUPLAS_HPP
-   for ( i = 0, j = 0 ; j < num_verts ; i+=3, j++ )
-   {
-      ver[j].coo[0] = vertices.at(i);
-      ver[j].coo[1] = vertices.at(i+1);
-      ver[j].coo[2] = vertices.at(i+2);
-   }
 
-   for ( i = 0, j = 0 ; j < num_tri ; i+=3, j++ )
-   {
-      tri[j].idx[0] = caras.at(i);
-      tri[j].idx[1] = caras.at(i+1);
-      tri[j].idx[2] = caras.at(i+2);
-   }
-
-   for (i = 0, j = 0; i < num_tri; i+=2, j++)
-   {
-      pares[j].idx[0] = tri[i].idx[0];
-      pares[j].idx[1] = tri[i].idx[1];
-      pares[j].idx[2] = tri[i].idx[2];
-   }
-
-
-   for (i = 1, j = 0; i < num_tri; i+=2, j++)
-   {
-      impares[j].idx[0] = tri[i].idx[0];
-      impares[j].idx[1] = tri[i].idx[1];
-      impares[j].idx[2] = tri[i].idx[2];
-   }
-#elif defined TUPLAS2_HPP
    for ( i = 0, j = 0 ; j < num_verts ; i+=3, j++ )
       {
          ver[j][0] = vertices.at(i);
@@ -81,7 +52,6 @@ MallaTVT::MallaTVT (std::vector<GLfloat> vertices, std::vector<int> caras, enum 
          impares[j][1] = tri[i][1];
          impares[j][2] = tri[i][2];
       }
-#endif
 
    int
    tam_ver = sizeof(float)*3L*num_verts ,
