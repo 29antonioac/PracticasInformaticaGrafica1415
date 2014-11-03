@@ -61,12 +61,13 @@ public:
    inline float lenSq();
    inline float len();
    inline Tupla3f normalized();
-   Tupla3f() {};
+   inline Tupla3f(){};
 
    /* Añaidos propios a la clase Tupla3f */
    inline Tupla3f& operator=(const Tupla3f & v );
    inline float& operator[](std::size_t i);
    inline const float& operator[](std::size_t i) const;
+   inline float* getPuntero();
    friend inline std::ostream& operator<<(std::ostream &f, const Tupla3f &v);
 
 
@@ -209,11 +210,16 @@ const float& Tupla3f::operator[](std::size_t i) const
    }
 }
 
+float* Tupla3f::getPuntero()
+{
+   return coo;
+}
+
 // operador de salida
 
 std::ostream& operator<<(std::ostream& f, const Tupla3f &v)
 {
-   f << "(" << v.coo[X] << "," << v.coo[Y] << "," << v.coo[Z] << ")" << std::endl;
+   f << "(" << v.coo[X] << "," << v.coo[Y] << "," << v.coo[Z] << ")" << std::flush;
    return f;
 }
 
@@ -227,6 +233,8 @@ private:
 public:
    inline Tupla4f( const float x, const float y, const float z, const float w );
    inline Tupla4f( const float coot[4] );
+   inline float& operator[](std::size_t i);
+   inline const float& operator[](std::size_t i) const;
    Tupla4f() {};
 } ;
 
@@ -247,6 +255,34 @@ inline Tupla4f::Tupla4f( const float coot[4] )
    coo[W] = coot[W] ;
 }
 
+// operador de indexación
+float& Tupla4f::operator[](std::size_t i)
+{
+   return coo[i];
+   try
+   {
+      return coo[i];
+   }
+   catch (std::exception& e)
+   {
+      std::cout << "Excepción en Tupla3f " << e.what() << std::endl;
+   }
+}
+
+
+const float& Tupla4f::operator[](std::size_t i) const
+{
+   return coo[i];
+   try
+   {
+      return coo[i];
+   }
+   catch (std::exception& e)
+   {
+      std::cout << "Excepción en Tupla3f " << e.what() << std::endl;
+   }
+}
+
 // *********************************************************************
 // tuplas con tres valores int
 
@@ -260,11 +296,28 @@ class Tupla3i
 private:
    int idx[3];
 public:
+   inline Tupla3i() {};
+   inline Tupla3i( const unsigned x, const unsigned y, const unsigned z );
+   inline Tupla3i( const unsigned coot[3] );
    inline Tupla3i& operator=(const Tupla3i & v );
    inline int& operator[](std::size_t i);
    inline const int& operator[](std::size_t i) const;
    friend inline std::ostream& operator<<(std::ostream &f, const Tupla3i &v);
 };
+
+inline Tupla3i::Tupla3i( const unsigned x, const unsigned y, const unsigned z )
+{
+   idx[X] = x ;
+   idx[Y] = y ;
+   idx[Z] = z ;
+}
+// ---------------------------------------------------------------------
+inline Tupla3i::Tupla3i( const unsigned coot[3] )
+{
+   idx[X] = coot[X] ;
+   idx[Y] = coot[Y] ;
+   idx[Z] = coot[Z] ;
+}
 
 // operador de asignación
 
@@ -310,7 +363,7 @@ const int& Tupla3i::operator[](std::size_t i) const
 
 std::ostream& operator<<(std::ostream& f, const Tupla3i &v)
 {
-   f << "(" << v.idx[X] << "," << v.idx[Y] << "," << v.idx[Z] << ")" << std::endl;
+   f << "(" << v.idx[X] << "," << v.idx[Y] << "," << v.idx[Z] << ")" << std::flush;
    return f;
 }
 

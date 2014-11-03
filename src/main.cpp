@@ -520,8 +520,8 @@ void Inicializar( int argc, char *argv[] )
 
    // asigna como malla actual la de la práctica 1
    // y como función de dibujado la de la práctica 1
-   pmActual = pm_P1;
-   DibujarObjetos = P1_DibujarObjetos;
+   pmActual = pm_P2;
+   DibujarObjetos = P2_DibujarObjetos;
 }
 
 // *********************************************************************

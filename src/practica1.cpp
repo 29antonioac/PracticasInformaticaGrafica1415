@@ -68,7 +68,7 @@ void P1_Inicializar( int argc, char *argv[] )
    }
    else
    {
-      file = std::string(argv[1]);
+      file = "./PLY/ant.ply";
    }
 
    std::cout << "Archivo: " << file << std::endl;
@@ -77,7 +77,7 @@ void P1_Inicializar( int argc, char *argv[] )
    std::vector<int> caras;
 
    ply::read(file.c_str(),vertices,caras);
-   pm_P1 = new MallaTVT(vertices,caras,ALAMBRE);
+   pm_P1 = new MallaTVT(vertices,ALAMBRE,caras);
 
    std::cout << "-----------------------------------" << std::endl;
 

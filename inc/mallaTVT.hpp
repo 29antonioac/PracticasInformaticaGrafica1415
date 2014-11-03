@@ -5,10 +5,12 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include <vector>
+#include <cmath>
 #include "tuplas2.hpp"
 #include "error-ogl.hpp"
 #include "visualizacion.hpp"
 #include "VBO.hpp"
+#include "Matriz.hpp"
 
 
 class MallaTVT
@@ -32,13 +34,11 @@ private:
 
    visualizacion modo;
 
-   //GLuint VBO_Crear( GLuint tipo, GLuint tamanio, GLvoid * puntero );
-   //void MTVT_Crear_VBOs();
-
 public:
-   MallaTVT(std::vector<GLfloat> vertices, std::vector<int> caras, enum visualizacion modo);
-   //MallaTVT(std::vector<GLfloat> vertices,enum visualizacion modo);
+   MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::vector<int> caras = std::vector<int>() );
+   //MallaTVT(std::vector<GLfloat> vertices, unsigned caras_longitudinales, enum visualizacion modo);
    void MTVT_Visualizar();
+   MallaTVT* MTVT_Revolucion(unsigned caras);
    enum visualizacion getModo();
    void CambioModoDibujo ( enum visualizacion modo ) ;
 
