@@ -134,22 +134,22 @@ MallaTVT* MallaTVT::MTVT_Revolucion(unsigned caras)
    std::vector<Tupla3i> caras_temp;
 
    // Añadimos todos los vértices a un vector para no explotar
-   if (ver[0][X] != 0.0f || ver[0][Z] != 0.0f)
+   /*if (ver[0][X] != 0.0f || ver[0][Z] != 0.0f)
    {
       //std::cout << "Necesito tapa inferior " <<  ver[0] << std::endl;
       vertices_temp.push_back(Tupla3f(0.0,ver[0][Y],0.0));
-   }
+   }*/
 
    for (unsigned i = 0; i < num_verts; i++)
    {
       vertices_temp.push_back(ver[i]);
    }
 
-   if (ver[num_verts-1][X] != 0.0f || ver[num_verts-1][Z] != 0.0f)
+   /*if (ver[num_verts-1][X] != 0.0f || ver[num_verts-1][Z] != 0.0f)
    {
       //std::cout << "Necesito tapa superior " <<  ver[num_verts-1] << std::endl;
       vertices_temp.push_back(Tupla3f(0.0,ver[num_verts-1][Y],0.0));
-   }
+   }*/
 
    /*for (unsigned i = 0; i < vertices_temp.size(); i++)
    {
@@ -157,7 +157,7 @@ MallaTVT* MallaTVT::MTVT_Revolucion(unsigned caras)
    }*/
 
    unsigned vertice = 0;
-   num_verts = vertices_temp.size();
+   //num_verts = vertices_temp.size();
    std::cout << "Tengo " << num_verts << " vértices! " << std::endl;
    for (unsigned perfil = 1; perfil < caras; perfil++)
    {
@@ -188,12 +188,53 @@ MallaTVT* MallaTVT::MTVT_Revolucion(unsigned caras)
       Tupla3i cara1 = Tupla3i(i,i-vertice,i-vertice+1);
       Tupla3i cara2 = Tupla3i(i,i-vertice,i-1);
 
-      caras_temp.push_back(cara1);
       caras_temp.push_back(cara2);
+      caras_temp.push_back(cara1);
 
    }
 
+//#define TAPA_SUP
+#define TAPA_INF
 
+#ifdef TAPA_INF
+
+   // Agregamos las tapas
+
+   // Tapa inferior
+   if (ver[0][X] != 0.0f || ver[0][Z] != 0.0f)
+   {
+      vertices_temp.push_back(Tupla3f(0.0,ver[0][Y],0.0));
+   }
+
+   int centro_tapa_inferior = vertices_temp.size()-1;
+   for (unsigned i = 0; i < caras*num_verts; i+=num_verts)
+   {
+      Tupla3i cara = Tupla3i(centro_tapa_inferior,i,i+num_verts);
+      caras_temp.push_back(cara);
+   }
+   caras_temp.push_back(Tupla3i(centro_tapa_inferior,(caras-1)*num_verts,0));
+
+#endif
+
+#ifdef TAPA_SUP
+
+   // Tapa superior
+   if (ver[num_verts-1][X] != 0.0f || ver[num_verts-1][Z] != 0.0f)
+   {
+      vertices_temp.push_back(Tupla3f(0.0,ver[num_verts-1][Y],0.0));
+   }
+
+   int centro_tapa_superior = vertices_temp.size()-1;
+   for (unsigned i = num_verts-1; i < caras*num_verts; i+=num_verts)
+   {
+      Tupla3i cara = Tupla3i(centro_tapa_superior,i,i+num_verts);
+      caras_temp.push_back(cara);
+   }
+
+   //caras_temp.push_back(Tupla3i(centro_tapa_superior,caras*num_verts-1,num_verts-1));
+   //caras_temp.push_back(Tupla3i(centro_tapa_inferior,(caras-1)*num_verts,0));
+
+#endif
 
 
    // Lo devolvemos a formato GLfloat e int y devolvemos un puntero a una malla nueva
@@ -218,7 +259,7 @@ MallaTVT* MallaTVT::MTVT_Revolucion(unsigned caras)
 
    MallaTVT *res = new MallaTVT(v_res,ALAMBRE,c_res);
 
-   delete this;
+   delete this; // Cuidado! Después de esto NO TOCAR EL PROPIO OBJETO
 
    return res;
 
