@@ -4,7 +4,7 @@
 
 MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::vector<int> caras)
 {
-   num_verts = vertices.size()/3;
+   unsigned num_verts = vertices.size()/3,
    num_tri = caras.size()/3;
 
    // Esta división tan rara de triángulos
@@ -12,14 +12,18 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::
    // de número total de triángulos impares no quede
    // ninguno suelto
 
-   num_pares = num_tri / 2;
+   unsigned num_pares = num_tri / 2,
    num_impares = num_tri - num_pares;
 
-   ver = new Tupla3f[num_verts];
-   tri = new Tupla3i[num_tri];
+   //ver = new Tupla3f[num_verts];
+   //tri = new Tupla3i[num_tri];
+   ver.resize(num_verts);
+   tri.resize(num_tri);
+   pares.resize(num_pares);
+   impares.resize(num_impares);
 
-   pares = new Tupla3i[num_pares];
-   impares = new Tupla3i[num_impares];
+   //pares = new Tupla3i[num_pares];
+   //impares = new Tupla3i[num_impares];
 
    unsigned i,j;
 
@@ -61,10 +65,10 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::
 
    this->modo = modo;
 
-   vbo_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, ver);
-   vbo_triangulos = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_tri,tri);
-   vbo_pares = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_pares,pares);
-   vbo_impares = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_impares,impares);
+   vbo_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, ver[0].getPuntero());
+   vbo_triangulos = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_tri, tri[0].getPuntero());
+   vbo_pares = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_pares, pares[0].getPuntero());
+   vbo_impares = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_impares, impares[0].getPuntero());
 
 }
 
@@ -93,6 +97,9 @@ void MallaTVT::MTVT_Visualizar()
    glBindBuffer( GL_ARRAY_BUFFER, 0 ); // desact VBO.
    glEnableClientState( GL_VERTEX_ARRAY ); // act. uso VA
 
+   unsigned num_tri = tri.size();
+   unsigned num_pares = pares.size();
+   unsigned num_impares = impares.size();
 
    // visualizar con glDrawElements (puntero a tabla == NULL)
    if (modo != AJEDREZ)
@@ -120,6 +127,8 @@ MallaTVT* MallaTVT::MTVT_Revolucion(unsigned caras)
 {
 
    float alpha = 2*M_PI/caras;
+
+   unsigned num_verts = ver.size();
 
    float rotacion[4][4] = {
          {cos(alpha),0,sin(alpha),0},

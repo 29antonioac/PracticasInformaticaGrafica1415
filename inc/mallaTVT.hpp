@@ -16,16 +16,19 @@
 class MallaTVT
 {
 private:
-   unsigned num_verts;
-   unsigned num_tri;
-   Tupla3f * ver;
-   Tupla3i * tri;
+   //unsigned num_verts;
+   //unsigned num_tri;
+   std::vector<Tupla3f> ver;
+   std::vector<Tupla3i> tri,pares,impares;
 
-   Tupla3i * pares;
-   Tupla3i * impares;
+   //Tupla3f * ver;
+   //Tupla3i * tri;
 
-   unsigned num_pares;
-   unsigned num_impares;
+   //Tupla3i * pares;
+   //Tupla3i * impares;
+
+   //unsigned num_pares;
+   //unsigned num_impares;
 
    VBO * vbo_vertices;
    VBO * vbo_triangulos;

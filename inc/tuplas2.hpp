@@ -302,6 +302,7 @@ public:
    inline Tupla3i& operator=(const Tupla3i & v );
    inline int& operator[](std::size_t i);
    inline const int& operator[](std::size_t i) const;
+   inline int* getPuntero();
    friend inline std::ostream& operator<<(std::ostream &f, const Tupla3i &v);
 };
 
@@ -357,6 +358,11 @@ const int& Tupla3i::operator[](std::size_t i) const
    {
       std::cout << "Excepción en Tupla3f " << e.what() << std::endl;
    }
+}
+
+int* Tupla3i::getPuntero()
+{
+   return idx;
 }
 
 // operador de salida
