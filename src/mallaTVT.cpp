@@ -42,7 +42,7 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::
       tri[j][2] = caras.at(i+2);
    }
 
-   for (i = 0, j = 0; i < num_tri; i+=2, j++)
+   for (i = 1, j = 0; i < num_tri; i+=2, j++)
    {
       pares[j][0] = tri[i][0];
       pares[j][1] = tri[i][1];
@@ -50,7 +50,7 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::
    }
 
 
-   for (i = 1, j = 0; i < num_tri; i+=2, j++)
+   for (i = 0, j = 0; i < num_tri; i+=2, j++)
    {
       impares[j][0] = tri[i][0];
       impares[j][1] = tri[i][1];
@@ -69,6 +69,8 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::
    vbo_triangulos = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_tri, tri[0].getPuntero());
    vbo_pares = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_pares, pares[0].getPuntero());
    vbo_impares = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_impares, impares[0].getPuntero());
+
+   std::cout << "Hay " << pares.size() << " pares y " << impares.size() << " impares." << std::endl;
 
 }
 
@@ -242,7 +244,7 @@ MallaTVT* MallaTVT::MTVT_Revolucion(unsigned caras)
    ver.push_back(centro_tapas.front());
    centro_tapas.erase(centro_tapas.begin());
 
-   int centro_tapa_superior = ver.size() - 1;
+   int centro_tapa_superior = centro_tapa_inferior + 1;
    for (unsigned cara = 0; cara < caras - 1; cara++)
    {
       unsigned vertice_actual = (cara + 1) * vertices_perfil - 1;
@@ -252,7 +254,6 @@ MallaTVT* MallaTVT::MTVT_Revolucion(unsigned caras)
       tri.push_back(triangulo);
    }
    //tri.push_back(Tupla3i(centro_tapa_superior, caras*vertices_perfil,vertices_perfil - 1));
-
 
 
 //   for (unsigned perfil = 1; perfil < caras; perfil++)
@@ -360,6 +361,9 @@ MallaTVT* MallaTVT::MTVT_Revolucion(unsigned caras)
    }
 
    MallaTVT *res = new MallaTVT(v_res,ALAMBRE,c_res);
+
+   std::cout << "Tengo " << c_res.size() << " triángulos " << std::endl;
+
 
    delete this; // Cuidado! Después de esto NO TOCAR EL PROPIO OBJETO
 
