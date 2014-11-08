@@ -33,7 +33,7 @@ GLfloat coords_verts_cubo[num_verts_cubo][3] =
    };
 
 
-
+MallaTVT * pm_P1;
    
 // ---------------------------------------------------------------------
 //  dibujar vértices del cubo en modo inmediato con begin/end

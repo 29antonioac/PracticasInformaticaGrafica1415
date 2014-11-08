@@ -15,15 +15,11 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::
    unsigned num_pares = num_tri / 2,
    num_impares = num_tri - num_pares;
 
-   //ver = new Tupla3f[num_verts];
-   //tri = new Tupla3i[num_tri];
    ver.resize(num_verts);
    tri.resize(num_tri);
    pares.resize(num_pares);
    impares.resize(num_impares);
 
-   //pares = new Tupla3i[num_pares];
-   //impares = new Tupla3i[num_impares];
 
    unsigned i,j;
 
@@ -70,8 +66,46 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::
    vbo_pares = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_pares, pares[0].getPuntero());
    vbo_impares = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_impares, impares[0].getPuntero());
 
-   std::cout << "Hay " << pares.size() << " pares y " << impares.size() << " impares." << std::endl;
+   CalcularVectoresNormales();
 
+}
+
+void MallaTVT::CalcularVectoresNormales()
+{
+   // Primero las normales de las caras
+   for (unsigned cara = 0; cara < tri.size(); cara++)
+   {
+      Tupla3f A = ver[tri[cara][0]];
+      Tupla3f B = ver[tri[cara][1]];
+      Tupla3f C = ver[tri[cara][2]];
+
+      Tupla3f AB = B - A;
+      Tupla3f BC = C - B;
+
+      normales_caras.push_back((AB*BC).normalized());
+   }
+
+   for (unsigned vertice = 0; vertice < ver.size(); vertice++)
+   {
+      normales_vertices.push_back(Tupla3f(0.0,0.0,0.0));
+   }
+
+   // Ahora las normales a los vértices
+   for (unsigned cara = 0; cara < tri.size(); cara++)
+   {
+      unsigned A = tri[cara][0];
+      unsigned B = tri[cara][1];
+      unsigned C = tri[cara][2];
+
+      normales_vertices[A] += normales_caras[cara];
+      normales_vertices[B] += normales_caras[cara];
+      normales_vertices[C] += normales_caras[cara];
+   }
+
+   for (unsigned vertice = 0; vertice < ver.size(); vertice++)
+   {
+      normales_vertices[vertice] = (normales_vertices[vertice]).normalized();
+   }
 }
 
 void MallaTVT::MTVT_Visualizar()
@@ -128,14 +162,7 @@ void MallaTVT::MTVT_Visualizar()
 MallaTVT* MallaTVT::MTVT_Revolucion(unsigned caras)
 {
 
-
    float alpha = 2*M_PI/caras;
-
-   //caras = 3;
-
-   /* Estoy a las agujas del reloj! Hay que hacerlo contrario! */
-
-
 
    float rotacion[4][4] = {
          {cosf(alpha),0,sinf(alpha),0},
@@ -151,31 +178,26 @@ MallaTVT* MallaTVT::MTVT_Revolucion(unsigned caras)
 
    if (ver.front()[X] != 0.0f)
    {
-      std::cout << "No hay tapa inferior!" << ver.front() << std::endl;
       centro_tapas.push_back(Tupla3f(0.0,ver.front()[Y],0.0));
    }
    else
    {
-      std::cout << "Hay tapa inferior!" << ver.front() << std::endl;
       centro_tapas.push_back(ver.front());
       ver.erase(ver.begin());
    }
 
    if (ver.back()[X] != 0.0f)
    {
-      std::cout << "No hay tapa superior!" << ver.back() << std::endl;
       centro_tapas.push_back(Tupla3f(0.0,ver.back()[Y],0.0));
    }
    else
    {
-      std::cout << "Hay tapa superior!" << ver.back() << std::endl;
       centro_tapas.push_back(ver.back());
       ver.pop_back();
    }
 
    unsigned vertices_perfil = ver.size();
 
-   std::cout << "Tengo " << vertices_perfil << " vértices! " << std::endl;
 
    // Crear matriz de perfiles
    std::vector<std::vector<Tupla3f> > perfiles;
@@ -198,6 +220,8 @@ MallaTVT* MallaTVT::MTVT_Revolucion(unsigned caras)
    }
 
 
+
+   // Añadir triángulos
    for (unsigned perfil = 0; perfil < caras-1; perfil++)
    {
       for (unsigned vertice = 1; vertice < vertices_perfil; vertice++)     // Cogemos los triángulos igual que en el guión de prácticas
@@ -278,9 +302,6 @@ MallaTVT* MallaTVT::MTVT_Revolucion(unsigned caras)
 
    MallaTVT *res = new MallaTVT(v_res,ALAMBRE,c_res);
 
-   std::cout << "Tengo " << c_res.size() << " triángulos " << std::endl;
-
-
    delete this; // Cuidado! Después de esto NO TOCAR EL PROPIO OBJETO
 
    return res;
@@ -296,6 +317,3 @@ void MallaTVT::CambioModoDibujo(enum visualizacion modo)
 {
    this->modo = modo;
 }
-
-MallaTVT * pm_P1;
-MallaTVT * pm_P2;

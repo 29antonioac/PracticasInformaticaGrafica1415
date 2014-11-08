@@ -30,7 +30,7 @@ std::vector<Tupla3i> caras;
 
 unsigned caras_longitudinales = 10;
 
-unsigned N;
+MallaTVT * pm_P2;
 
 // ---------------------------------------------------------------------
 // función para implementar en la práctica 1 para inicialización
@@ -40,6 +40,7 @@ unsigned N;
 void P2_Inicializar( int argc, char *argv[] )
 {
 
+   unsigned N;
    std::string file;
    
    if (argc < 2)
@@ -60,17 +61,7 @@ void P2_Inicializar( int argc, char *argv[] )
 
    std::cout << "Archivo: " << file << std::endl;
 
-   std::cout << "Tabla de vértices" << std::endl;
-
-   std::vector<int> caras;
-
    ply::read_vertices(file.c_str(),vertices_ply);
-   std::cout << "Tabla de vértices" << std::endl;
-
-   for (unsigned i = 0; i < vertices_ply.size(); i+=3)
-   {
-      std::cout << "(" << vertices_ply[i] << "," << vertices_ply[i+1] << "," << vertices_ply[i+2] << ")" << std::endl;
-   }
 
    pm_P2 = new MallaTVT(vertices_ply,ALAMBRE);
    pm_P2 = pm_P2->MTVT_Revolucion(N);
@@ -87,32 +78,6 @@ void P2_Inicializar( int argc, char *argv[] )
 void P2_DibujarObjetos()
 {
    pm_P2->MTVT_Visualizar();
-
-   /*glBegin(GL_LINE_STRIP);
-   for (unsigned i = 0; i < vertices_ply.size(); i+=3)
-      glVertex3f(vertices_ply[i], vertices_ply[i+1], vertices_ply[i+2]);
-   glEnd();*/
-
-   /*unsigned num_ver = vertices_ply.size()/3;
-   //std::cout << "Número de vértices " << vertices.size() << std::endl;
-
-   for (unsigned j = 0; j < vertices.size(); j++)
-   {
-      //std::cout << "Entro en begin! " << std::endl;
-      glBegin(GL_LINE_STRIP);
-      //for (unsigned i = 0; i < vertices.size(); i+=3)
-      //   glVertex3f( vertices[i],vertices[i+1],vertices[i+2] );
-      //for (unsigned i = 0; i < perfiles.at(0).size(); i++)
-      for (unsigned i = 0; i < num_ver; i++)
-      {
-         //std::cout << perfiles.at(j).at(i) << " ";
-        glVertex3f( vertices[j*num_ver+i][0], vertices[j*num_ver+i][1], vertices[j*num_ver+i][2]);
-      }
-      //std::cout << std::endl;
-
-      glEnd();
-
-   }*/
 
 
 }

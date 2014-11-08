@@ -53,7 +53,9 @@ public:
    inline Tupla3f( const float x, const float y, const float z );
    inline Tupla3f( const float coot[3] );
    inline Tupla3f operator + ( const Tupla3f & t2 );
+   inline Tupla3f& operator+= (const Tupla3f & t2) ;
    inline Tupla3f operator - ( const Tupla3f & t2 );
+   inline Tupla3f& operator-= (const Tupla3f & t2) ;
    inline Tupla3f operator * ( float a );
    inline Tupla3f operator / ( float a );
    inline float operator | ( const Tupla3f & t2 );
@@ -98,6 +100,15 @@ inline Tupla3f Tupla3f::operator + ( const Tupla3f & t2 )
                   coo[Z]+t2.coo[Z]);
 }
 
+inline Tupla3f& Tupla3f::operator+= (const Tupla3f & t2)
+{
+   coo[X]+=t2.coo[X];
+   coo[Y]+=t2.coo[Y];
+   coo[Z]+=t2.coo[Z];
+
+   return *this;
+}
+
 // ---------------------------------------------------------------------
 // tupla = tupla-tupla
 inline Tupla3f Tupla3f::operator - ( const Tupla3f & t2 )
@@ -105,6 +116,15 @@ inline Tupla3f Tupla3f::operator - ( const Tupla3f & t2 )
    return Tupla3f(coo[X]-t2.coo[X],
                   coo[Y]-t2.coo[Y],
                   coo[Z]-t2.coo[Z]);
+}
+
+inline Tupla3f& Tupla3f::operator-= (const Tupla3f & t2)
+{
+   coo[X]-=t2.coo[X];
+   coo[Y]-=t2.coo[Y];
+   coo[Z]-=t2.coo[Z];
+
+   return *this;
 }
 
 // ---------------------------------------------------------------------

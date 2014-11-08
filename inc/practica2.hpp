@@ -16,4 +16,6 @@
 void P2_DibujarObjetos() ;
 void P2_Inicializar( int argc, char *argv[] ) ;
 
+extern MallaTVT * pm_P2;
+
 #endif

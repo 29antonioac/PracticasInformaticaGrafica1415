@@ -16,19 +16,11 @@
 class MallaTVT
 {
 private:
-   //unsigned num_verts;
-   //unsigned num_tri;
+
    std::vector<Tupla3f> ver;
    std::vector<Tupla3i> tri,pares,impares;
 
-   //Tupla3f * ver;
-   //Tupla3i * tri;
-
-   //Tupla3i * pares;
-   //Tupla3i * impares;
-
-   //unsigned num_pares;
-   //unsigned num_impares;
+   std::vector<Tupla3f> normales_vertices,normales_caras;
 
    VBO * vbo_vertices;
    VBO * vbo_triangulos;
@@ -36,6 +28,8 @@ private:
    VBO * vbo_impares;
 
    visualizacion modo;
+
+   void CalcularVectoresNormales();
 
 public:
    MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::vector<int> caras = std::vector<int>() );
@@ -46,9 +40,5 @@ public:
    void CambioModoDibujo ( enum visualizacion modo ) ;
 
 };
-
-extern MallaTVT * pm_P1;
-extern MallaTVT * pm_P2;
-
 
 #endif
