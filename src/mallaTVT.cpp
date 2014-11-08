@@ -131,16 +131,16 @@ MallaTVT* MallaTVT::MTVT_Revolucion(unsigned caras)
 
    float alpha = 2*M_PI/caras;
 
-   //caras = 4;
+   //caras = 3;
 
    /* Estoy a las agujas del reloj! Hay que hacerlo contrario! */
 
 
 
    float rotacion[4][4] = {
-         {cos(alpha),0,sin(alpha),0},
+         {cosf(alpha),0,sinf(alpha),0},
          {0,1,0,0},
-         {-sin(alpha),0,cos(alpha),0},
+         {(-1)*sinf(alpha),0,cosf(alpha),0},
          {0,0,0,1}
    };
 
@@ -235,10 +235,10 @@ MallaTVT* MallaTVT::MTVT_Revolucion(unsigned caras)
       unsigned vertice_actual = cara * vertices_perfil;
       unsigned vertice_siguiente = vertice_actual + vertices_perfil;
 
-      Tupla3i triangulo(centro_tapa_inferior,vertice_actual,vertice_siguiente);
+      Tupla3i triangulo(centro_tapa_inferior,vertice_siguiente,vertice_actual);
       tri.push_back(triangulo);
    }
-   tri.push_back(Tupla3i(centro_tapa_inferior,(caras-1)*vertices_perfil,0));
+   tri.push_back(Tupla3i(centro_tapa_inferior,0,(caras-1)*vertices_perfil));
 
    // Tapa superior
    ver.push_back(centro_tapas.front());

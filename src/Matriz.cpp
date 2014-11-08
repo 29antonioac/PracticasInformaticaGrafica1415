@@ -80,7 +80,7 @@ Tupla3f Matriz4x4::operator*(Tupla3f& t)
       resultado[fila] = 0.0f;
       for (unsigned col = 0; col < 4; col++)
       {
-         resultado[fila] += this->coe[col][fila]*t2[col];
+         resultado[fila] += this->coe[fila][col]*t2[col];
       }
    }
 
