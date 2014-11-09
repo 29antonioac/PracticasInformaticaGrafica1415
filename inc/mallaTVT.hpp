@@ -6,7 +6,7 @@
 #include <GL/glut.h>
 #include <vector>
 #include <cmath>
-#include "tuplas2.hpp"
+#include "tuplas.hpp"
 #include "error-ogl.hpp"
 #include "visualizacion.hpp"
 #include "VBO.hpp"

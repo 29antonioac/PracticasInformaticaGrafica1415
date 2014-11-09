@@ -70,6 +70,8 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo_dibujo
 
    this->modo_dibujo = modo_dibujo;
 
+   this->dibujo_normales = NADA;
+
    vbo_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, ver[0].getPuntero());
    vbo_triangulos = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_tri, tri[0].getPuntero());
    vbo_pares = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_pares, pares[0].getPuntero());

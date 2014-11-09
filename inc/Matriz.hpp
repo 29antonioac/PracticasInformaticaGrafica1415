@@ -2,7 +2,7 @@
 #ifndef IG_MATRIZ_HPP
 #define IG_MATRIZ_HPP
 
-#include "tuplas2.hpp"
+#include "tuplas.hpp"
 
 class Matriz4x4
 {

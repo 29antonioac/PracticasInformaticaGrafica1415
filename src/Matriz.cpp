@@ -1,5 +1,4 @@
 #include "Matriz.hpp"
-//#include "tuplas2.hpp"
 
 Matriz4x4::Matriz4x4()
 {
