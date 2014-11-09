@@ -29,7 +29,8 @@ private:
    VBO * vbo_colores_vertices;
    VBO * vbo_normales_vertices;
 
-   visualizacion modo;
+   visualizacion modo_dibujo;
+   normales dibujo_normales;
 
    void CalcularVectoresNormales();
 
@@ -37,12 +38,14 @@ public:
    MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::vector<int> caras = std::vector<int>() );
    //MallaTVT(std::vector<GLfloat> vertices, unsigned caras_longitudinales, enum visualizacion modo);
    void Visualizar();
+   void VisualizarModoInmediato();
    void VisualizarNormalesCaras();
    void VisualizarNormalesVertices();
    MallaTVT* Revolucion(unsigned caras);
    MallaTVT* Barrido(unsigned caras);
    enum visualizacion getModo();
    void CambioModoDibujo ( enum visualizacion modo ) ;
+   void CambioModoNormales();
 
 };
 

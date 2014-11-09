@@ -248,6 +248,9 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
          camara_angulo_x = 0.0 ;
          camara_angulo_y = 0.0 ;
          break;
+      case 'N':
+         pmActual->CambioModoNormales();
+         break;
       default:
          redisp = false ;
          break ;
