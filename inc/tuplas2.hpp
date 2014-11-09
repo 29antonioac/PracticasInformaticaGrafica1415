@@ -66,6 +66,7 @@ public:
    inline Tupla3f(){};
 
    /* Añaidos propios a la clase Tupla3f */
+   inline Tupla3f abs();
    inline Tupla3f& operator=(const Tupla3f & v );
    inline float& operator[](std::size_t i);
    inline const float& operator[](std::size_t i) const;
@@ -188,6 +189,16 @@ inline float Tupla3f::len( )
 inline Tupla3f Tupla3f::normalized( )
 {
    return  *this/len() ;
+}
+
+inline Tupla3f Tupla3f::abs()
+{
+   Tupla3f abs;
+   for (unsigned i = 0; i < 3; i++)
+   {
+      abs[i] = fabs(coo[i]);
+   }
+   return abs;
 }
 
 // operador de asignación
