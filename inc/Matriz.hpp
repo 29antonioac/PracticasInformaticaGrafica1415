@@ -10,7 +10,7 @@ private:
    float coe[4][4];
 public:
    Matriz4x4();
-   Matriz4x4(float m[4][4]);
+   Matriz4x4(float m[4][4], bool traspuesta = false);
    Matriz4x4(const Matriz4x4& m);
 
    Matriz4x4& operator=(const Matriz4x4& m);

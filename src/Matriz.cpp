@@ -8,11 +8,20 @@ Matriz4x4::Matriz4x4()
          coe[i][j] = 0;
 }
 
-Matriz4x4::Matriz4x4(float m[4][4])
+Matriz4x4::Matriz4x4(float m[4][4], bool traspuesta)
 {
-   for (int i = 0; i < 4; i++)
-      for (int j = 0; j < 4; j++)
-         coe[i][j] = m[i][j];
+   if(traspuesta)
+   {
+         for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
+               coe[j][i] = m[j][i];
+   }
+   else
+   {
+      for (int i = 0; i < 4; i++)
+         for (int j = 0; j < 4; j++)
+            coe[j][i] = m[i][j];
+   }
 }
 
 Matriz4x4::Matriz4x4(const Matriz4x4& m)
@@ -80,7 +89,7 @@ Tupla3f Matriz4x4::operator*(Tupla3f& t)
       resultado[fila] = 0.0f;
       for (unsigned col = 0; col < 4; col++)
       {
-         resultado[fila] += this->coe[fila][col]*t2[col];
+         resultado[fila] += this->coe[col][fila]*t2[col];
       }
    }
 
