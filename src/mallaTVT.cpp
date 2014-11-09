@@ -2,7 +2,7 @@
 
 
 
-MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::vector<int> caras)
+MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo_dibujo, std::vector<int> caras)
 {
    unsigned num_verts = vertices.size()/3,
    num_tri = caras.size()/3;
@@ -68,7 +68,7 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::
    tam_pares = sizeof(int)*3L*num_pares ,
    tam_impares = sizeof(int)*3L*num_impares ;
 
-   this->modo = modo;
+   this->modo_dibujo = modo_dibujo;
 
    vbo_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, ver[0].getPuntero());
    vbo_triangulos = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_tri, tri[0].getPuntero());
@@ -91,13 +91,17 @@ void MallaTVT::CalcularVectoresNormales()
       Tupla3f AB = B - A;
       Tupla3f BC = C - B;
 
+      Tupla3f normal((AB*BC).normalized());
+
+      normales_caras.push_back(normal);
+
       Tupla3f baricentro;
       baricentro[X] = (A[X] + B[X] + C[X])/3;
       baricentro[Y] = (A[Y] + B[Y] + C[Y])/3;
       baricentro[Z] = (A[Z] + B[Z] + C[Z])/3;
       baricentros.push_back(baricentro);
 
-      normales_caras.push_back((AB*BC).normalized());
+
    }
 
    for (unsigned vertice = 0; vertice < ver.size(); vertice++)
@@ -127,7 +131,7 @@ void MallaTVT::Visualizar()
 {
 
    glColor3f(0.0,0.0,1.0);
-   switch (modo)
+   switch (modo_dibujo)
    {
       case ALAMBRE:
          glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
@@ -173,7 +177,7 @@ void MallaTVT::Visualizar()
    unsigned num_impares = impares.size();
 
    // visualizar con glDrawElements (puntero a tabla == NULL)
-   if (modo != AJEDREZ)
+   if (modo_dibujo != AJEDREZ)
    {
 
       glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vbo_triangulos->getID() );
@@ -196,20 +200,47 @@ void MallaTVT::Visualizar()
    glDisableClientState( GL_VERTEX_ARRAY );
 
    if (!colores_vertices.empty())
-      glDisableClientState( GL_COLOR_ARRAY );
+      //glDisableClientState( GL_COLOR_ARRAY );
    if (!normales_vertices.empty())
          glDisableClientState( GL_NORMAL_ARRAY );
+
+   if (dibujo_normales == CARAS)
+      VisualizarNormalesCaras();
+   else if (dibujo_normales == VERTICES)
+      VisualizarNormalesVertices();
+}
+
+void MallaTVT::VisualizarModoInmediato()
+{
+
+   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+
+   glBegin( GL_TRIANGLES );
+   for (unsigned i = 0; i < tri.size(); i++)
+   {
+      if(!normales_caras.empty())
+      {
+         glColor3fv( normales_caras[i].abs().getPuntero() );
+         glNormal3fv( normales_caras[i].getPuntero() );
+      }
+
+      for (int j = 0; j < 3; ++j) {
+         unsigned int iv = tri[i][j]; // iv = índice de vértice
+         glVertex3fv(ver[iv].getPuntero());
+      }
+   }
+   glEnd();
 }
 
 void MallaTVT::VisualizarNormalesCaras()
 {
    glColor3f(0.0,0.0,0.0);
-   for (unsigned cara = 0; cara < baricentros.size(); cara++)
+   for (unsigned cara = 0; cara < normales_caras.size(); cara++)
    {
       glBegin(GL_LINES);
 
       glVertex3fv(baricentros[cara].getPuntero());
-      Tupla3f extremo = baricentros[cara] + normales_caras[cara];
+      Tupla3f extremo = baricentros[cara] + normales_caras[cara]*0.1;
       glVertex3fv(extremo.getPuntero());
 
       glEnd();
@@ -219,12 +250,12 @@ void MallaTVT::VisualizarNormalesCaras()
 void MallaTVT::VisualizarNormalesVertices()
 {
    glColor3f(0.0,0.0,0.0);
-   for (unsigned vertice = 0; vertice < ver.size(); vertice++)
+   for (unsigned vertice = 0; vertice < normales_vertices.size(); vertice++)
    {
       glBegin(GL_LINES);
 
       glVertex3fv(ver[vertice].getPuntero());
-      Tupla3f extremo = ver[vertice] + normales_vertices[vertice];
+      Tupla3f extremo = ver[vertice] + normales_vertices[vertice]*0.1;
       glVertex3fv(extremo.getPuntero());
 
       glEnd();
@@ -318,7 +349,7 @@ MallaTVT* MallaTVT::Revolucion(unsigned caras)
       unsigned indice_vertice_coplanario_anterior = vertice - 1;
 
       tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_coplanario_anterior));
-      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario, indice_vertice_coplanario_anterior));
+      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario_anterior, indice_vertice_coplanario));
    }
 
    // Tapa inferior
@@ -349,6 +380,7 @@ MallaTVT* MallaTVT::Revolucion(unsigned caras)
       Tupla3i triangulo(centro_tapa_superior,vertice_actual,vertice_siguiente);
       tri.push_back(triangulo);
    }
+
    tri.push_back(Tupla3i(centro_tapa_superior, caras*vertices_perfil - 1,vertices_perfil - 1));
 
 
@@ -439,7 +471,7 @@ MallaTVT* MallaTVT::Barrido(unsigned caras)
          indice_vertice_coplanario_anterior = indice_vertice_anterior + vertices_perfil;
 
          tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_coplanario_anterior));
-         tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario, indice_vertice_coplanario_anterior));
+         tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario_anterior, indice_vertice_coplanario));
       }
 
       indice_vertice_actual = perfil * vertices_perfil;
@@ -448,7 +480,7 @@ MallaTVT* MallaTVT::Barrido(unsigned caras)
       indice_vertice_coplanario_anterior = indice_vertice_anterior + vertices_perfil;
 
       tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_coplanario_anterior));
-      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario, indice_vertice_coplanario_anterior));
+      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario_anterior, indice_vertice_coplanario));
 
    }
 
@@ -463,7 +495,7 @@ MallaTVT* MallaTVT::Barrido(unsigned caras)
       indice_vertice_coplanario_anterior = vertice - 1;
 
       tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_coplanario_anterior));
-      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario, indice_vertice_coplanario_anterior));
+      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario_anterior, indice_vertice_coplanario));
    }
 
 
@@ -478,7 +510,7 @@ MallaTVT* MallaTVT::Barrido(unsigned caras)
    indice_vertice_coplanario_anterior = vertices_perfil - 1;
 
    tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_coplanario_anterior));
-   tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario, indice_vertice_coplanario_anterior));
+   tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario_anterior, indice_vertice_coplanario));
 
 
 
@@ -514,10 +546,20 @@ MallaTVT* MallaTVT::Barrido(unsigned caras)
 
 enum visualizacion MallaTVT::getModo()
 {
-   return modo;
+   return modo_dibujo;
 }
 
-void MallaTVT::CambioModoDibujo(enum visualizacion modo)
+void MallaTVT::CambioModoDibujo(enum visualizacion modo_dibujo)
 {
-   this->modo = modo;
+   this->modo_dibujo = modo_dibujo;
+}
+
+void MallaTVT::CambioModoNormales()
+{
+   if (dibujo_normales == NADA)
+      dibujo_normales = CARAS;
+   else if (dibujo_normales == CARAS)
+      dibujo_normales = VERTICES;
+   else
+      dibujo_normales = NADA;
 }
