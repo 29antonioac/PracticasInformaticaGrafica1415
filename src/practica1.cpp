@@ -91,5 +91,5 @@ void P1_Inicializar( int argc, char *argv[] )
 void P1_DibujarObjetos()
 {
    //DibujarCuboPuntos() ;
-   pm_P1->MTVT_Visualizar();
+   pm_P1->Visualizar();
 }

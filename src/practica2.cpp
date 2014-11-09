@@ -64,7 +64,8 @@ void P2_Inicializar( int argc, char *argv[] )
    ply::read_vertices(file.c_str(),vertices_ply);
 
    pm_P2 = new MallaTVT(vertices_ply,ALAMBRE);
-   pm_P2 = pm_P2->MTVT_Revolucion(N);
+   pm_P2 = pm_P2->Revolucion(N);
+   //pm_P2 = pm_P2->Barrido(N);
 
    std::cout << "-----------------------------------" << std::endl;
 
@@ -77,7 +78,19 @@ void P2_Inicializar( int argc, char *argv[] )
 
 void P2_DibujarObjetos()
 {
-   pm_P2->MTVT_Visualizar();
+   pm_P2->Visualizar();
+   //pm_P2->VisualizarNormalesCaras();
+   //pm_P2->VisualizarNormalesVertices();
+
+   /*
+   glBegin(GL_POLYGON);
+   for (unsigned i = 0; i < vertices_ply.size(); i+=3)
+   {
+      glVertex3f (vertices_ply[i], vertices_ply[i+1], vertices_ply[i+2] );
+   }
+
+   glEnd();
+   */
 
 
 }

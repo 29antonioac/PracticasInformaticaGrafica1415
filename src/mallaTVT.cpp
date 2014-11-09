@@ -53,6 +53,15 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::
       impares[j][2] = tri[i][2];
    }
 
+   CalcularVectoresNormales();
+
+   // Asignamos colores a los vértices según su normal
+   for (unsigned i = 0; i < ver.size(); i++)
+   {
+      Tupla3f color(fabs(ver[i][X]),fabs(ver[i][Y]),fabs(ver[i][Z]));
+      colores_vertices.push_back(color);
+   }
+
    int
    tam_ver = sizeof(float)*3L*num_verts ,
    tam_tri = sizeof(int)*3L*num_tri ,
@@ -65,22 +74,28 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::
    vbo_triangulos = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_tri, tri[0].getPuntero());
    vbo_pares = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_pares, pares[0].getPuntero());
    vbo_impares = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_impares, impares[0].getPuntero());
-
-   CalcularVectoresNormales();
+   vbo_colores_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, colores_vertices[0].getPuntero());
+   vbo_normales_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, normales_vertices[0].getPuntero());
 
 }
 
 void MallaTVT::CalcularVectoresNormales()
 {
-   // Primero las normales de las caras
+   // Primero las normales de las caras y baricentros
    for (unsigned cara = 0; cara < tri.size(); cara++)
    {
-      Tupla3f A = ver[tri[cara][0]];
-      Tupla3f B = ver[tri[cara][1]];
-      Tupla3f C = ver[tri[cara][2]];
+      Tupla3f A = ver[tri[cara][X]];
+      Tupla3f B = ver[tri[cara][Y]];
+      Tupla3f C = ver[tri[cara][Z]];
 
       Tupla3f AB = B - A;
       Tupla3f BC = C - B;
+
+      Tupla3f baricentro;
+      baricentro[X] = (A[X] + B[X] + C[X])/3;
+      baricentro[Y] = (A[Y] + B[Y] + C[Y])/3;
+      baricentro[Z] = (A[Z] + B[Z] + C[Z])/3;
+      baricentros.push_back(baricentro);
 
       normales_caras.push_back((AB*BC).normalized());
    }
@@ -93,9 +108,9 @@ void MallaTVT::CalcularVectoresNormales()
    // Ahora las normales a los vértices
    for (unsigned cara = 0; cara < tri.size(); cara++)
    {
-      unsigned A = tri[cara][0];
-      unsigned B = tri[cara][1];
-      unsigned C = tri[cara][2];
+      unsigned A = tri[cara][X];
+      unsigned B = tri[cara][Y];
+      unsigned C = tri[cara][Z];
 
       normales_vertices[A] += normales_caras[cara];
       normales_vertices[B] += normales_caras[cara];
@@ -108,7 +123,7 @@ void MallaTVT::CalcularVectoresNormales()
    }
 }
 
-void MallaTVT::MTVT_Visualizar()
+void MallaTVT::Visualizar()
 {
 
    glColor3f(0.0,0.0,1.0);
@@ -127,6 +142,26 @@ void MallaTVT::MTVT_Visualizar()
          glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
          break;
    }
+
+   // Ver si usamos array de colores o vértices
+   if (!colores_vertices.empty())
+   {
+
+      glBindBuffer( GL_ARRAY_BUFFER, vbo_colores_vertices->getID() );
+      glColorPointer (3, GL_FLOAT, 0, 0);
+      glEnableClientState( GL_COLOR_ARRAY );
+
+   }
+
+   if (!normales_vertices.empty())
+   {
+      glBindBuffer( GL_ARRAY_BUFFER, vbo_normales_vertices->getID() );
+      glNormalPointer ( GL_FLOAT, 0, 0);
+      glEnableClientState( GL_NORMAL_ARRAY );
+
+   }
+
+
    // especificar formato de los vértices en su VBO (y offset)
    glBindBuffer( GL_ARRAY_BUFFER, vbo_vertices->getID() ); // act. VBO
    glVertexPointer( 3, GL_FLOAT, 0, 0 ); // formato y offset (0)
@@ -140,11 +175,13 @@ void MallaTVT::MTVT_Visualizar()
    // visualizar con glDrawElements (puntero a tabla == NULL)
    if (modo != AJEDREZ)
    {
+
       glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vbo_triangulos->getID() );
       glDrawElements( GL_TRIANGLES, 3L*num_tri, GL_UNSIGNED_INT, NULL ) ;
    }
    else
    {
+      glDisableClientState(GL_COLOR_ARRAY);
       glColor3f(0.0,0.0,0.0);
       glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vbo_pares->getID() );
       glDrawElements( GL_TRIANGLES, 3L*num_pares, GL_UNSIGNED_INT, NULL ) ;
@@ -157,9 +194,44 @@ void MallaTVT::MTVT_Visualizar()
 
    // desactivar uso de array de vértices
    glDisableClientState( GL_VERTEX_ARRAY );
+
+   if (!colores_vertices.empty())
+      glDisableClientState( GL_COLOR_ARRAY );
+   if (!normales_vertices.empty())
+         glDisableClientState( GL_NORMAL_ARRAY );
 }
 
-MallaTVT* MallaTVT::MTVT_Revolucion(unsigned caras)
+void MallaTVT::VisualizarNormalesCaras()
+{
+   glColor3f(0.0,0.0,0.0);
+   for (unsigned cara = 0; cara < baricentros.size(); cara++)
+   {
+      glBegin(GL_LINES);
+
+      glVertex3fv(baricentros[cara].getPuntero());
+      Tupla3f extremo = baricentros[cara] + normales_caras[cara];
+      glVertex3fv(extremo.getPuntero());
+
+      glEnd();
+   }
+}
+
+void MallaTVT::VisualizarNormalesVertices()
+{
+   glColor3f(0.0,0.0,0.0);
+   for (unsigned vertice = 0; vertice < ver.size(); vertice++)
+   {
+      glBegin(GL_LINES);
+
+      glVertex3fv(ver[vertice].getPuntero());
+      Tupla3f extremo = ver[vertice] + normales_vertices[vertice];
+      glVertex3fv(extremo.getPuntero());
+
+      glEnd();
+   }
+}
+
+MallaTVT* MallaTVT::Revolucion(unsigned caras)
 {
 
    float alpha = 2*M_PI/caras;
@@ -232,7 +304,7 @@ MallaTVT* MallaTVT::MTVT_Revolucion(unsigned caras)
          unsigned indice_vertice_coplanario_anterior = indice_vertice_anterior + vertices_perfil;
 
          tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_coplanario_anterior));
-         tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario, indice_vertice_coplanario_anterior));
+         tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario_anterior, indice_vertice_coplanario));
       }
    }
 
@@ -278,6 +350,112 @@ MallaTVT* MallaTVT::MTVT_Revolucion(unsigned caras)
       tri.push_back(triangulo);
    }
    tri.push_back(Tupla3i(centro_tapa_superior, caras*vertices_perfil - 1,vertices_perfil - 1));
+
+
+   // Lo devolvemos a formato GLfloat e int y devolvemos un puntero a una malla nueva
+
+   std::vector<GLfloat> v_res;
+
+   for (unsigned i = 0; i < ver.size(); i++)
+   {
+      v_res.push_back(ver[i][0]);
+      v_res.push_back(ver[i][1]);
+      v_res.push_back(ver[i][2]);
+   }
+
+   std::vector<int> c_res;
+
+   for (unsigned i = 0; i < tri.size(); i++)
+   {
+      c_res.push_back(tri[i][0]);
+      c_res.push_back(tri[i][1]);
+      c_res.push_back(tri[i][2]);
+   }
+
+   MallaTVT *res = new MallaTVT(v_res,ALAMBRE,c_res);
+
+   delete this; // Cuidado! Después de esto NO TOCAR EL PROPIO OBJETO
+
+   return res;
+
+}
+
+MallaTVT* MallaTVT::Barrido(unsigned caras)
+{
+
+   float alpha = 2*M_PI/caras;
+
+   float rotacion[4][4] = {
+         {cosf(alpha),0,sinf(alpha),0},
+         {0,1,0,0},
+         {(-1)*sinf(alpha),0,cosf(alpha),0},
+         {0,0,0,1}
+   };
+
+   Matriz4x4 rot(rotacion);
+
+   std::vector<Tupla3f> centro_tapas;
+
+   unsigned vertices_perfil = ver.size();
+
+
+   // Crear matriz de perfiles
+   std::vector<std::vector<Tupla3f> > perfiles;
+
+   perfiles.push_back(ver);
+   std::vector<Tupla3f> perfil_actual;
+   std::vector<int> vertices_fijos;
+   Tupla3f vertice_actual;
+
+   for (unsigned perfil = 1; perfil < caras; perfil++)
+   {
+      perfil_actual.clear();
+      for (unsigned i = 0; i < vertices_perfil; i++)
+      {
+         vertice_actual = rot*perfiles[perfil-1][i];
+         perfil_actual.push_back(vertice_actual);
+         ver.push_back(vertice_actual);
+      }
+      perfiles.push_back(perfil_actual);
+   }
+
+
+
+   // Añadir triángulos
+   for (unsigned perfil = 0; perfil < caras-1; perfil++)
+   {
+      for (unsigned vertice = 1; vertice < vertices_perfil; vertice++)     // Cogemos los triángulos igual que en el guión de prácticas
+      {
+         unsigned indice_vertice_actual = perfil * vertices_perfil + vertice;
+         unsigned indice_vertice_anterior = indice_vertice_actual - 1;
+         unsigned indice_vertice_coplanario = indice_vertice_actual + vertices_perfil;
+         unsigned indice_vertice_coplanario_anterior = indice_vertice_anterior + vertices_perfil;
+
+         tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_coplanario_anterior));
+         tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario, indice_vertice_coplanario_anterior));
+      }
+
+      unsigned indice_vertice_actual = perfil * vertices_perfil + 1;
+      unsigned indice_vertice_anterior = perfil * vertices_perfil + vertices_perfil;
+      unsigned indice_vertice_coplanario = indice_vertice_actual + vertices_perfil;
+      unsigned indice_vertice_coplanario_anterior = indice_vertice_anterior + vertices_perfil;
+
+      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_coplanario_anterior));
+      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario, indice_vertice_coplanario_anterior));
+   }
+
+   // Último perfil a fuego
+   unsigned perfil = caras - 1;
+   for (unsigned vertice = 1; vertice < vertices_perfil; vertice++)     // Cogemos los triángulos igual que en el guión de prácticas
+   {
+      unsigned indice_vertice_actual = perfil * vertices_perfil + vertice;
+      unsigned indice_vertice_anterior = indice_vertice_actual - 1;
+      unsigned indice_vertice_coplanario = vertice;
+      unsigned indice_vertice_coplanario_anterior = vertice - 1;
+
+      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_coplanario_anterior));
+      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario, indice_vertice_coplanario_anterior));
+   }
 
 
    // Lo devolvemos a formato GLfloat e int y devolvemos un puntero a una malla nueva
