@@ -45,7 +45,8 @@ void P2_Inicializar( int argc, char *argv[] )
    
    if (argc < 2)
    {
-      file = "/home/antonio/toro.ply";
+      //file = "/home/antonio/toro.ply";
+      file = "PLY/peon.ply";
       N = 20;
    }
    else if (argc < 3)
@@ -64,8 +65,8 @@ void P2_Inicializar( int argc, char *argv[] )
    ply::read_vertices(file.c_str(),vertices_ply);
 
    pm_P2 = new MallaTVT(vertices_ply,ALAMBRE);
-   //pm_P2 = pm_P2->Revolucion(N);
-   pm_P2 = pm_P2->Barrido(N);
+   pm_P2 = pm_P2->Revolucion(N);
+   //pm_P2 = pm_P2->Barrido(N);
 
    std::cout << "-----------------------------------" << std::endl;
 
@@ -79,6 +80,7 @@ void P2_Inicializar( int argc, char *argv[] )
 void P2_DibujarObjetos()
 {
    pm_P2->Visualizar();
+   //pm_P2->VisualizarModoInmediato();
    //pm_P2->VisualizarNormalesCaras();
    //pm_P2->VisualizarNormalesVertices();
 
