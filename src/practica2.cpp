@@ -45,13 +45,13 @@ void P2_Inicializar( int argc, char *argv[] )
    
    if (argc < 2)
    {
-      file = "./PLY/peon.ply";
-      N = 10;
+      file = "/home/antonio/toro.ply";
+      N = 20;
    }
    else if (argc < 3)
    {
       file = std::string(argv[1]);
-      N = 10;
+      N = 20;
    }
    else
    {
@@ -64,8 +64,8 @@ void P2_Inicializar( int argc, char *argv[] )
    ply::read_vertices(file.c_str(),vertices_ply);
 
    pm_P2 = new MallaTVT(vertices_ply,ALAMBRE);
-   pm_P2 = pm_P2->Revolucion(N);
-   //pm_P2 = pm_P2->Barrido(N);
+   //pm_P2 = pm_P2->Revolucion(N);
+   pm_P2 = pm_P2->Barrido(N);
 
    std::cout << "-----------------------------------" << std::endl;
 

@@ -422,40 +422,66 @@ MallaTVT* MallaTVT::Barrido(unsigned caras)
 
 
    // Añadir triángulos
+
+   unsigned indice_vertice_actual;
+   unsigned indice_vertice_anterior;
+   unsigned indice_vertice_coplanario;
+   unsigned indice_vertice_coplanario_anterior;
+
+
    for (unsigned perfil = 0; perfil < caras-1; perfil++)
    {
       for (unsigned vertice = 1; vertice < vertices_perfil; vertice++)     // Cogemos los triángulos igual que en el guión de prácticas
       {
-         unsigned indice_vertice_actual = perfil * vertices_perfil + vertice;
-         unsigned indice_vertice_anterior = indice_vertice_actual - 1;
-         unsigned indice_vertice_coplanario = indice_vertice_actual + vertices_perfil;
-         unsigned indice_vertice_coplanario_anterior = indice_vertice_anterior + vertices_perfil;
+         indice_vertice_actual = perfil * vertices_perfil + vertice;
+         indice_vertice_anterior = indice_vertice_actual - 1;
+         indice_vertice_coplanario = indice_vertice_actual + vertices_perfil;
+         indice_vertice_coplanario_anterior = indice_vertice_anterior + vertices_perfil;
 
          tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_coplanario_anterior));
          tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario, indice_vertice_coplanario_anterior));
       }
 
-      unsigned indice_vertice_actual = perfil * vertices_perfil + 1;
-      unsigned indice_vertice_anterior = perfil * vertices_perfil + vertices_perfil;
-      unsigned indice_vertice_coplanario = indice_vertice_actual + vertices_perfil;
-      unsigned indice_vertice_coplanario_anterior = indice_vertice_anterior + vertices_perfil;
+      indice_vertice_actual = perfil * vertices_perfil;
+      indice_vertice_anterior = indice_vertice_actual + vertices_perfil - 1;
+      indice_vertice_coplanario = indice_vertice_actual + vertices_perfil;
+      indice_vertice_coplanario_anterior = indice_vertice_anterior + vertices_perfil;
 
       tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_coplanario_anterior));
       tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario, indice_vertice_coplanario_anterior));
+
    }
+
 
    // Último perfil a fuego
    unsigned perfil = caras - 1;
    for (unsigned vertice = 1; vertice < vertices_perfil; vertice++)     // Cogemos los triángulos igual que en el guión de prácticas
    {
-      unsigned indice_vertice_actual = perfil * vertices_perfil + vertice;
-      unsigned indice_vertice_anterior = indice_vertice_actual - 1;
-      unsigned indice_vertice_coplanario = vertice;
-      unsigned indice_vertice_coplanario_anterior = vertice - 1;
+      indice_vertice_actual = perfil * vertices_perfil + vertice;
+      indice_vertice_anterior = indice_vertice_actual - 1;
+      indice_vertice_coplanario = vertice;
+      indice_vertice_coplanario_anterior = vertice - 1;
 
       tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_coplanario_anterior));
       tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario, indice_vertice_coplanario_anterior));
    }
+
+
+   // Último rectángulo a fuego
+   // El actual es el primero del último perfil
+   // El anterior es el último del último perfil
+   // El coplanario es el 0
+   // El coplanario anterior es el último del primer perfil
+   indice_vertice_actual = perfil * vertices_perfil;
+   indice_vertice_anterior = indice_vertice_actual + vertices_perfil - 1;
+   indice_vertice_coplanario = 0;
+   indice_vertice_coplanario_anterior = vertices_perfil - 1;
+
+   tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_coplanario_anterior));
+   tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_coplanario, indice_vertice_coplanario_anterior));
+
+
+
 
 
    // Lo devolvemos a formato GLfloat e int y devolvemos un puntero a una malla nueva
