@@ -37,6 +37,10 @@ MallaTVT * pm_P2;
 // se llama una vez al inicio, cuando ya se ha creado la ventana e 
 // incializado OpenGL. El PLY se debe cargar aquí.
 
+
+//#define REVOLUCION
+//#define BARRIDO_ROTACION
+#define BARRIDO_TRASLACION
 void P2_Inicializar( int argc, char *argv[] )
 {
 
@@ -45,14 +49,21 @@ void P2_Inicializar( int argc, char *argv[] )
    
    if (argc < 2)
    {
-      //file = "/home/antonio/toro.ply";
+#if defined REVOLUCION
       file = "PLY/peon.ply";
       N = 20;
+#elif defined BARRIDO_ROTACION
+      file = "PLY/toro.ply";
+      N = 20;
+#elif defined BARRIDO_TRASLACION
+      file = "PLY/prisma.ply";
+      N = 5;
+#endif
    }
    else if (argc < 3)
    {
       file = std::string(argv[1]);
-      N = 20;
+      N = 10;
    }
    else
    {
@@ -65,8 +76,13 @@ void P2_Inicializar( int argc, char *argv[] )
    ply::read_vertices(file.c_str(),vertices_ply);
 
    pm_P2 = new MallaTVT(vertices_ply,ALAMBRE);
+#if defined REVOLUCION
    pm_P2 = pm_P2->Revolucion(N);
-   //pm_P2 = pm_P2->Barrido(N);
+#elif defined BARRIDO_ROTACION
+   pm_P2 = pm_P2->Barrido_Rotacion(N);
+#elif defined BARRIDO_TRASLACION
+   pm_P2 = pm_P2->Barrido_Traslacion(N,0.5);
+#endif
 
    std::cout << "-----------------------------------" << std::endl;
 
@@ -80,19 +96,16 @@ void P2_Inicializar( int argc, char *argv[] )
 void P2_DibujarObjetos()
 {
    pm_P2->Visualizar();
-   //pm_P2->VisualizarModoInmediato();
-   //pm_P2->VisualizarNormalesCaras();
-   //pm_P2->VisualizarNormalesVertices();
 
-   /*
-   glBegin(GL_POLYGON);
+
+   /*glBegin(GL_POLYGON);
    for (unsigned i = 0; i < vertices_ply.size(); i+=3)
    {
       glVertex3f (vertices_ply[i], vertices_ply[i+1], vertices_ply[i+2] );
    }
+   glEnd();*/
 
-   glEnd();
-   */
+
 
 
 }
