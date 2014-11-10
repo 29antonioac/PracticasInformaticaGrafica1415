@@ -238,6 +238,9 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
       case 'S':
          pmActual->CambioModoDibujo(SOLIDO);
       	break;
+      case 'D':
+         pmActual->CambioModoDibujo(SOLIDO_CARAS);
+         break;
       case 'P':
          pmActual->CambioModoDibujo(PUNTOS);
       	break;

@@ -1,7 +1,7 @@
 #ifndef VISUALIZACION_HPP
 #define VISUALIZACION_HPP
 
-enum visualizacion {ALAMBRE,SOLIDO,AJEDREZ,PUNTOS};
-enum normales {NADA,CARAS,VERTICES};
+enum visualizacion {ALAMBRE,SOLIDO,AJEDREZ,PUNTOS, SOLIDO_CARAS};
+enum normales {NADA,CARAS,VERTICES,AMBAS};
 
 #endif
