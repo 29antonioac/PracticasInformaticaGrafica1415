@@ -95,5 +95,86 @@ Tupla3f Matriz4x4::operator*(Tupla3f& t)
    return Tupla3f(resultado[0],resultado[1],resultado[2]);
 }
 
+Matriz4x4 Matriz4x4::Identidad()
+{
+   float m[4][4] = {
+         {1,0,0,0},
+         {0,1,0,0},
+         {0,0,1,0},
+         {0,0,0,1}
+   };
+
+   return Matriz4x4(m,true);
+}
+
+Matriz4x4 Matriz4x4::RotacionEjeX(const float angulo)
+{
+   float c = cosf(angulo);
+   float s = sinf(angulo);
+
+   float m[4][4] = {
+         {1,0,0,0},
+         {0,c,-s,0},
+         {0,s,c,0},
+         {0,0,0,1}
+   };
+
+   return Matriz4x4(m,false);
+}
+
+Matriz4x4 Matriz4x4::RotacionEjeY(const float angulo)
+{
+   float c = cosf(angulo);
+   float s = sinf(angulo);
+
+   float m[4][4] = {
+         {c,0,s,0},
+         {0,1,0,0},
+         {-s,0,c,0},
+         {0,0,0,1}
+   };
+
+   return Matriz4x4(m,false);
+}
+
+Matriz4x4 Matriz4x4::RotacionEjeZ(const float angulo)
+{
+   float c = cosf(angulo);
+   float s = sinf(angulo);
+
+   float m[4][4] = {
+         {c,-s,0,0},
+         {s,c,0,0},
+         {0,0,1,0},
+         {0,0,0,1}
+   };
+
+   return Matriz4x4(m,false);
+}
+
+Matriz4x4 Matriz4x4::Escalado(const float sx, const float sy, const float sz)
+{
+   float m[4][4] = {
+         {sx,0,0,0},
+         {0,sy,0,0},
+         {0,0,sz,0},
+         {0,0,0,1}
+   };
+
+   return Matriz4x4(m,false);
+}
+
+Matriz4x4 Matriz4x4::Traslacion(const float dx, const float dy, const float dz)
+{
+   float m[4][4] = {
+         {1,0,0,dx},
+         {0,1,0,dy},
+         {0,0,1,dz},
+         {0,0,0,1}
+   };
+
+   return Matriz4x4(m,false);
+}
+
 
 //Matriz4x4 Matriz4x4::trasponer();
