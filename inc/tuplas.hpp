@@ -46,8 +46,18 @@ public:
    inline T& operator[](std::size_t i);
    inline const T& operator[](std::size_t i) const;
    inline T* getPuntero();
-   template <class U>
-   friend inline std::ostream& operator<<(std::ostream &f, const Tupla<N,U> &v);
+   //template <class U>
+   friend inline std::ostream& operator<<(std::ostream &f, const Tupla<N,T> &v)
+   {
+      f << "(";
+      for (unsigned i = 0; i < N - 1; i++)
+      {
+         f << v[i] << ",";
+      }
+      f << v[N - 1] << ")" << std::flush;
+
+      return f;
+   }
 };
 
 // ---------------------------------------------------------------------
@@ -274,10 +284,10 @@ T* Tupla<N,T>::getPuntero()
 {
    return coo;
 }
-
+/*
 // operador de salida
-template <unsigned N,class U>
-std::ostream& operator<<(std::ostream& f, const Tupla<N,U> &v)
+template <unsigned N,class T>
+std::ostream& operator<<<>(std::ostream& f, const Tupla<N,T> &v)
 {
    f << "(";
    for (unsigned i = 0; i < N - 1; i++)
@@ -287,7 +297,7 @@ std::ostream& operator<<(std::ostream& f, const Tupla<N,U> &v)
    f << v[N - 1] << ")" << std::flush;
 
    return f;
-}
+}*/
 
 template class Tupla<3,int>;
 template class Tupla<3,float>;
