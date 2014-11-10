@@ -33,16 +33,17 @@ private:
    normales dibujo_normales;
 
    void CalcularVectoresNormales();
+   void VisualizarModoInmediato();
+   void VisualizarNormalesCaras();
+   void VisualizarNormalesVertices();
 
 public:
    MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::vector<int> caras = std::vector<int>() );
    //MallaTVT(std::vector<GLfloat> vertices, unsigned caras_longitudinales, enum visualizacion modo);
    void Visualizar();
-   void VisualizarModoInmediato();
-   void VisualizarNormalesCaras();
-   void VisualizarNormalesVertices();
-   MallaTVT* Revolucion(unsigned caras);
-   MallaTVT* Barrido(unsigned caras);
+   MallaTVT* Revolucion(const unsigned caras);
+   MallaTVT* Barrido_Rotacion(const unsigned caras);
+   MallaTVT* Barrido_Traslacion(const unsigned caras, const float desplazamiento);
    enum visualizacion getModo();
    void CambioModoDibujo ( enum visualizacion modo ) ;
    void CambioModoNormales();
