@@ -58,7 +58,7 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo_dibujo
    // Asignamos colores a los vértices según su normal
    for (unsigned i = 0; i < ver.size(); i++)
    {
-      Tupla3f color(fabs(ver[i][X]),fabs(ver[i][Y]),fabs(ver[i][Z]));
+      Tupla3f color(normales_vertices[i].abs());
       colores_vertices.push_back(color);
    }
 
@@ -147,6 +147,7 @@ void MallaTVT::Visualizar()
       case AJEDREZ:
          glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
          break;
+
    }
 
    // Ver si usamos array de colores o vértices
@@ -215,7 +216,7 @@ void MallaTVT::Visualizar()
 void MallaTVT::VisualizarModoInmediato()
 {
 
-   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+   //glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
    glBegin( GL_TRIANGLES );
    for (unsigned i = 0; i < tri.size(); i++)
@@ -269,15 +270,6 @@ MallaTVT* MallaTVT::Revolucion(unsigned caras)
 
    float alpha = 2*M_PI/caras;
 
-   float rotacion[4][4] = {
-         {cosf(alpha),0,sinf(alpha),0},
-         {0,1,0,0},
-         {(-1)*sinf(alpha),0,cosf(alpha),0},
-         {0,0,0,1}
-   };
-
-   Matriz4x4 rot(rotacion);
-
    std::vector<Tupla3f> centro_tapas;
 
 
@@ -317,7 +309,7 @@ MallaTVT* MallaTVT::Revolucion(unsigned caras)
       perfil_actual.clear();
       for (unsigned i = 0; i < vertices_perfil; i++)
       {
-         vertice_actual = rot*perfiles[perfil-1][i];
+         vertice_actual = Matriz4x4::RotacionEjeY(alpha)*perfiles[perfil-1][i];
          perfil_actual.push_back(vertice_actual);
          ver.push_back(vertice_actual);
       }
