@@ -232,7 +232,7 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
       case '-' :
          frustum_factor_escala /= 1.05;
          break;
-      case 'A':
+      case 'L':
          pmActual->CambioModoDibujo(ALAMBRE);
       	break;
       case 'S':
@@ -244,7 +244,7 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
       case 'P':
          pmActual->CambioModoDibujo(PUNTOS);
       	break;
-      case 'C':
+      case 'A':
          pmActual->CambioModoDibujo(AJEDREZ);
          break;
       case 'R':
@@ -335,7 +335,7 @@ int origen[2] = {-1,-1};
 void FGE_PulsarRaton(int boton, int estado, int x, int y)
 {
    const float da = 5.0 ; // incremento en grados de ángulos de camara
-   bool redisp = false;
+   bool redisp = true;
 
    // Si pulsamos el botón izquierdo del ratón
    // nos preparamos para mover la cámara
@@ -351,26 +351,23 @@ void FGE_PulsarRaton(int boton, int estado, int x, int y)
          origen[0] = x;
          origen[1] = y;
       }
+      redisp = false;
    }
    else if (boton == 3) // Rueda arriba aumenta el zoom
    {
       frustum_factor_escala *= 1.05;
-      redisp = true;
    }
    else if (boton == 4) // Rueda abajo disminuye el zoom
    {
       frustum_factor_escala /= 1.05;
-      redisp = true;
    }
    else if (boton == 5) // Llevar la rueda a la izquierda gira la cámara a la izquierda
    {
       camara_angulo_y -= da;
-      redisp = true;
    }
    else if (boton == 6) // Llevar la rueda a la derecha gira la cámara a la derecha
    {
       camara_angulo_y += da;
-      redisp = true;
    }
 
    if (redisp)
