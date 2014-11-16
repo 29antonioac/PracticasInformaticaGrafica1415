@@ -45,7 +45,7 @@ public:
    inline Tupla<N,T>& operator=(const Tupla<N,T> & v );
    inline T& operator[](std::size_t i);
    inline const T& operator[](std::size_t i) const;
-   inline T* getPuntero();
+   inline T* data();
    //template <class U>
    friend inline std::ostream& operator<<(std::ostream &f, const Tupla<N,T> &v)
    {
@@ -280,7 +280,7 @@ const T& Tupla<N,T>::operator[](std::size_t i) const
 }
 
 template <unsigned N,class T>
-T* Tupla<N,T>::getPuntero()
+T* Tupla<N,T>::data()
 {
    return coo;
 }
