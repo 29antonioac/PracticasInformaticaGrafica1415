@@ -207,13 +207,13 @@ void MallaTVT::VisualizarModoInmediato()
    {
       if(!normales_caras.empty())
       {
-         glColor3fv( normales_caras[i].abs().getPuntero() );
-         glNormal3fv( normales_caras[i].getPuntero() );
+         glColor3fv( normales_caras[i].abs().data() );
+         glNormal3fv( normales_caras[i].data() );
       }
 
       for (int j = 0; j < 3; ++j) {
          unsigned int iv = tri[i][j]; // iv = índice de vértice
-         glVertex3fv(ver[iv].getPuntero());
+         glVertex3fv(ver[iv].data());
       }
    }
    glEnd();
@@ -226,9 +226,9 @@ void MallaTVT::VisualizarNormalesCaras()
    {
       glBegin(GL_LINES);
 
-      glVertex3fv(baricentros[cara].getPuntero());
+      glVertex3fv(baricentros[cara].data());
       Tupla3f extremo = baricentros[cara] + normales_caras[cara]*0.1;
-      glVertex3fv(extremo.getPuntero());
+      glVertex3fv(extremo.data());
 
       glEnd();
    }
@@ -241,9 +241,9 @@ void MallaTVT::VisualizarNormalesVertices()
    {
       glBegin(GL_LINES);
 
-      glVertex3fv(ver[vertice].getPuntero());
+      glVertex3fv(ver[vertice].data());
       Tupla3f extremo = ver[vertice] + normales_vertices[vertice]*0.1;
-      glVertex3fv(extremo.getPuntero());
+      glVertex3fv(extremo.data());
 
       glEnd();
    }
