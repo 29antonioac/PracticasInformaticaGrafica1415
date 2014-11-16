@@ -28,8 +28,6 @@ std::vector<float> vertices_ply;
 std::vector<std::vector<Tupla3f> > perfiles;
 std::vector<Tupla3i> caras;
 
-unsigned caras_longitudinales = 10;
-
 MallaTVT * pm_P2;
 
 // ---------------------------------------------------------------------
