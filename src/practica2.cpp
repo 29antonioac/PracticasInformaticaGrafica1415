@@ -38,9 +38,9 @@ MallaTVT * pm_P2;
 // incializado OpenGL. El PLY se debe cargar aquí.
 
 
-//#define REVOLUCION
+#define REVOLUCION
 //#define BARRIDO_ROTACION
-#define BARRIDO_TRASLACION
+//#define BARRIDO_TRASLACION
 void P2_Inicializar( int argc, char *argv[] )
 {
 
@@ -74,8 +74,10 @@ void P2_Inicializar( int argc, char *argv[] )
    std::cout << "Archivo: " << file << std::endl;
 
    ply::read_vertices(file.c_str(),vertices_ply);
-
+#if defined REVOLUCION or defined BARRIDO_ROTACION or defined BARRIDO_TRASLACION
    pm_P2 = new MallaTVT(vertices_ply,ALAMBRE);
+#endif
+
 #if defined REVOLUCION
    pm_P2 = pm_P2->Revolucion(N);
 #elif defined BARRIDO_ROTACION
@@ -95,7 +97,11 @@ void P2_Inicializar( int argc, char *argv[] )
 
 void P2_DibujarObjetos()
 {
+
+
+#if defined REVOLUCION or defined BARRIDO_ROTACION or defined BARRIDO_TRASLACION
    pm_P2->Visualizar();
+#endif
 
 
    /*glBegin(GL_POLYGON);
@@ -104,6 +110,16 @@ void P2_DibujarObjetos()
       glVertex3f (vertices_ply[i], vertices_ply[i+1], vertices_ply[i+2] );
    }
    glEnd();*/
+
+#if not defined REVOLUCION and not defined BARRIDO_ROTACION and not defined BARRIDO_TRASLACION
+   glBegin(GL_LINE_STRIP);
+   for (unsigned i = 0; i < vertices_ply.size(); i+=3)
+   {
+      glVertex3f (vertices_ply[i], vertices_ply[i+1], vertices_ply[i+2] );
+   }
+   glEnd();
+#endif
+
 
 
 
