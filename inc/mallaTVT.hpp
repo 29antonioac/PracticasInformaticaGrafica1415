@@ -30,12 +30,15 @@ private:
    visualizacion modo_dibujo;
    normales dibujo_normales;
 
+   float dimension;
+
    void CalcularVectoresNormales();
    void VisualizarModoInmediato();
    void VisualizarNormalesCaras();
    void VisualizarNormalesVertices();
 
    MallaTVT(std::vector<Tupla3f> vertices, std::vector<Tupla3i> caras);
+   void CalcularDimension();
 
 public:
    MallaTVT(std::vector<GLfloat> vertices, std::vector<int> caras = std::vector<int>() );

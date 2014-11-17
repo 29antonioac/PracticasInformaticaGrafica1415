@@ -34,6 +34,7 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, std::vector<int> caras)
    pares.clear();
 
    CalcularVectoresNormales();
+   CalcularDimension();
 
    // Asignamos colores a los vértices según su normal
    for (unsigned i = 0; i < ver.size(); i++)
@@ -94,6 +95,7 @@ MallaTVT::MallaTVT(std::vector<Tupla3f> vertices, std::vector<Tupla3i> caras)
 
 
    CalcularVectoresNormales();
+   CalcularDimension();
 
    // Asignamos colores a los vértices según su normal
    for (unsigned i = 0; i < ver.size(); i++)
@@ -123,6 +125,22 @@ MallaTVT::MallaTVT(std::vector<Tupla3f> vertices, std::vector<Tupla3i> caras)
    vbo_colores_vertices = new VBO_Colores(elementos_vertices, tam_ver, colores_vertices.data());
    vbo_normales_vertices = new VBO_Normales(elementos_vertices, tam_ver, normales_vertices.data());
 
+}
+
+void MallaTVT::CalcularDimension()
+{
+   dimension = 0;
+   for (unsigned vertice = 0; vertice < ver.size(); vertice++)
+   {
+      for (unsigned coo = 0; coo < 3; coo++)
+      {
+         float dim_actual = fabs(ver[vertice][coo]);
+         if (dim_actual > dimension)
+            dimension = dim_actual;
+      }
+   }
+
+   dimension *= 2;
 }
 
 void MallaTVT::CalcularVectoresNormales()
@@ -263,7 +281,7 @@ void MallaTVT::VisualizarNormalesCaras()
       glBegin(GL_LINES);
 
       glVertex3fv(baricentros[cara].data());
-      Tupla3f extremo = baricentros[cara] + normales_caras[cara]*0.1;
+      Tupla3f extremo = baricentros[cara] + normales_caras[cara]*0.1*dimension;
       glVertex3fv(extremo.data());
 
       glEnd();
@@ -278,7 +296,7 @@ void MallaTVT::VisualizarNormalesVertices()
       glBegin(GL_LINES);
 
       glVertex3fv(ver[vertice].data());
-      Tupla3f extremo = ver[vertice] + normales_vertices[vertice]*0.1;
+      Tupla3f extremo = ver[vertice] + normales_vertices[vertice]*0.1*dimension;
       glVertex3fv(extremo.data());
 
       glEnd();
