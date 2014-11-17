@@ -3,7 +3,7 @@
 
 
 
-MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo_dibujo, std::vector<int> caras)
+MallaTVT::MallaTVT(std::vector<GLfloat> vertices, std::vector<int> caras)
 {
 
    // Pasamos los vértices a vector de Tupla3f
@@ -19,8 +19,11 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo_dibujo
    {
       Tupla3i cara(caras[i],caras[i+1],caras[i+2]);
       impares.push_back(cara);
+   }
 
-      cara = Tupla3i(caras[i+3],caras[i+4],caras[i+5]);
+   for (unsigned i = 3; i < caras.size(); i+=6)
+   {
+      Tupla3i cara(caras[i],caras[i+1],caras[i+2]);
       pares.push_back(cara);
    }
 
@@ -47,7 +50,59 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo_dibujo
       tam_ver = sizeof(float)*3L*num_verts ,
       tam_tri = sizeof(int)*3L*num_tri;
 
-   this->modo_dibujo = modo_dibujo;
+   this->modo_dibujo = ALAMBRE;
+   this->dibujo_normales = NADA;
+
+   vbo_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, ver.data());
+   vbo_triangulos = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_tri, tri.data());
+   vbo_colores_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, colores_vertices.data());
+   vbo_normales_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, normales_vertices.data());
+
+}
+
+MallaTVT::MallaTVT(std::vector<Tupla3f> vertices, std::vector<Tupla3i> caras)
+{
+
+   ver = vertices;
+
+   std::vector<Tupla3i> pares,impares;
+
+   // Pasamos las caras a vectores de Tupla3f
+   for (unsigned i = 0; i < caras.size(); i+=2)
+   {
+      impares.push_back(caras[i]);
+   }
+
+   for (unsigned i = 1; i < caras.size(); i+=2)
+   {
+      pares.push_back(caras[i]);
+   }
+
+   tri.clear();
+   tri.insert(tri.end(),impares.begin(),impares.end());
+   tri.insert(tri.end(),pares.begin(),pares.end());
+
+   impares.clear();
+   pares.clear();
+
+   unsigned
+         num_verts = ver.size(),
+         num_tri = tri.size();
+
+   CalcularVectoresNormales();
+
+   // Asignamos colores a los vértices según su normal
+   for (unsigned i = 0; i < ver.size(); i++)
+   {
+      Tupla3f color(normales_vertices[i].abs());
+      colores_vertices.push_back(color);
+   }
+
+   unsigned
+      tam_ver = sizeof(float)*3L*num_verts ,
+      tam_tri = sizeof(int)*3L*num_tri;
+
+   this->modo_dibujo = ALAMBRE;
    this->dibujo_normales = NADA;
 
    vbo_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, ver.data());
@@ -361,31 +416,13 @@ MallaTVT* MallaTVT::Revolucion(const unsigned caras)
 
    tri.push_back(Tupla3i(centro_tapa_superior, caras*vertices_perfil - 1,vertices_perfil - 1));
 
+   // Construimos una malla nueva
+   MallaTVT *res = new MallaTVT(ver,tri);
 
-   // Lo devolvemos a formato GLfloat e int y devolvemos un puntero a una malla nueva
-
-   std::vector<GLfloat> v_res;
-
-   for (unsigned i = 0; i < ver.size(); i++)
-   {
-      v_res.push_back(ver[i][0]);
-      v_res.push_back(ver[i][1]);
-      v_res.push_back(ver[i][2]);
-   }
-
-   std::vector<int> c_res;
-
-   for (unsigned i = 0; i < tri.size(); i++)
-   {
-      c_res.push_back(tri[i][0]);
-      c_res.push_back(tri[i][1]);
-      c_res.push_back(tri[i][2]);
-   }
-
-   MallaTVT *res = new MallaTVT(v_res,ALAMBRE,c_res);
-
+   // Borramos la actual
    delete this; // Cuidado! Después de esto NO TOCAR EL PROPIO OBJETO
 
+   // Devolvemos puntero a la malla nueva
    return res;
 
 }
@@ -471,8 +508,8 @@ MallaTVT* MallaTVT::Barrido_Rotacion(const unsigned caras)
    // Último rectángulo a fuego
    // El actual es el primero del último perfil
    // El anterior es el último del último perfil
-   // El coplanario es el 0
-   // El coplanario anterior es el último del primer perfil
+   // El del siguiente perfil es el 0
+   // El del siguiente perfil anterior es el último del primer perfil
    indice_vertice_actual = perfil * vertices_perfil;
    indice_vertice_anterior = indice_vertice_actual + vertices_perfil - 1;
    indice_vertice_siguiente_perfil = 0;
@@ -481,31 +518,13 @@ MallaTVT* MallaTVT::Barrido_Rotacion(const unsigned caras)
    tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
    tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
 
+   // Construimos una malla nueva
+   MallaTVT *res = new MallaTVT(ver,tri);
 
-   // Lo devolvemos a formato GLfloat e int y devolvemos un puntero a una malla nueva
-
-   std::vector<GLfloat> v_res;
-
-   for (unsigned i = 0; i < ver.size(); i++)
-   {
-      v_res.push_back(ver[i][0]);
-      v_res.push_back(ver[i][1]);
-      v_res.push_back(ver[i][2]);
-   }
-
-   std::vector<int> c_res;
-
-   for (unsigned i = 0; i < tri.size(); i++)
-   {
-      c_res.push_back(tri[i][0]);
-      c_res.push_back(tri[i][1]);
-      c_res.push_back(tri[i][2]);
-   }
-
-   MallaTVT *res = new MallaTVT(v_res,ALAMBRE,c_res);
-
+   // Borramos la actual
    delete this; // Cuidado! Después de esto NO TOCAR EL PROPIO OBJETO
 
+   // Devolvemos puntero a la malla nueva
    return res;
 
 }
@@ -514,14 +533,6 @@ MallaTVT* MallaTVT::Barrido_Traslacion(const unsigned caras, const float dx, con
 {
 
    unsigned vertices_perfil = ver.size();
-
-   if (dy == 0)
-   {
-      std::cout << "Desplazamiento en Y debe ser no nulo. Saliendo..." << std::endl;
-      exit(-1);
-   }
-
-
 
    // Crear matriz de perfiles
    std::vector<std::vector<Tupla3f> > perfiles;
@@ -616,32 +627,13 @@ MallaTVT* MallaTVT::Barrido_Traslacion(const unsigned caras, const float dx, con
 
    tri.push_back(Tupla3i(centro_tapa_superior, caras * vertices_perfil - 1, (caras - 1) * vertices_perfil));
 
+   // Construimos una malla nueva
+   MallaTVT *res = new MallaTVT(ver,tri);
 
-
-   // Lo devolvemos a formato GLfloat e int y devolvemos un puntero a una malla nueva
-
-   std::vector<GLfloat> v_res;
-
-   for (unsigned i = 0; i < ver.size(); i++)
-   {
-      v_res.push_back(ver[i][0]);
-      v_res.push_back(ver[i][1]);
-      v_res.push_back(ver[i][2]);
-   }
-
-   std::vector<int> c_res;
-
-   for (unsigned i = 0; i < tri.size(); i++)
-   {
-      c_res.push_back(tri[i][0]);
-      c_res.push_back(tri[i][1]);
-      c_res.push_back(tri[i][2]);
-   }
-
-   MallaTVT *res = new MallaTVT(v_res,ALAMBRE,c_res);
-
+   // Borramos la actual
    delete this; // Cuidado! Después de esto NO TOCAR EL PROPIO OBJETO
 
+   // Devolvemos puntero a la malla nueva
    return res;
 }
 

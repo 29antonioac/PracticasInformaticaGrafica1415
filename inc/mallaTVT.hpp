@@ -35,8 +35,10 @@ private:
    void VisualizarNormalesCaras();
    void VisualizarNormalesVertices();
 
+   MallaTVT(std::vector<Tupla3f> vertices, std::vector<Tupla3i> caras);
+
 public:
-   MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::vector<int> caras = std::vector<int>() );
+   MallaTVT(std::vector<GLfloat> vertices, std::vector<int> caras = std::vector<int>() );
    void Visualizar();
    MallaTVT* Revolucion(const unsigned caras);
    MallaTVT* Barrido_Rotacion(const unsigned caras);
