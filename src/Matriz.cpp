@@ -23,6 +23,22 @@ Matriz4x4::Matriz4x4(float m[4][4], bool traspuesta)
    }
 }
 
+Matriz4x4::Matriz4x4(GLdouble m[16], bool traspuesta)
+{
+   if(traspuesta)
+   {
+         for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
+               coe[j][i] = m[4*j+i];
+   }
+   else
+   {
+      for (int i = 0; i < 4; i++)
+         for (int j = 0; j < 4; j++)
+            coe[j][i] = m[4*i+j];
+   }
+}
+
 Matriz4x4::Matriz4x4(const Matriz4x4& m)
 {
    for (int i = 0; i < 4; i++)
