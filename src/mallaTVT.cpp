@@ -12,23 +12,27 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo_dibujo
       ver.push_back(Tupla3f(vertices[i],vertices[i+1],vertices[i+2]));
    }
 
+   std::vector<Tupla3i> pares,impares;
+
    // Pasamos las caras a vectores de Tupla3f
    for (unsigned i = 0; i < caras.size(); i+=6)
    {
       Tupla3i cara(caras[i],caras[i+1],caras[i+2]);
       impares.push_back(cara);
-      tri.push_back(cara);
 
       cara = Tupla3i(caras[i+3],caras[i+4],caras[i+5]);
       pares.push_back(cara);
-      tri.push_back(cara);
    }
+
+   tri.insert(tri.end(),impares.begin(),impares.end());
+   tri.insert(tri.end(),pares.begin(),pares.end());
+
+   impares.clear();
+   pares.clear();
 
    unsigned
          num_verts = ver.size(),
-         num_tri = tri.size(),
-         num_pares = pares.size(),
-         num_impares = impares.size();
+         num_tri = tri.size();
 
    CalcularVectoresNormales();
 
@@ -41,17 +45,13 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo_dibujo
 
    unsigned
       tam_ver = sizeof(float)*3L*num_verts ,
-      tam_tri = sizeof(int)*3L*num_tri ,
-      tam_pares = sizeof(int)*3L*num_pares ,
-      tam_impares = sizeof(int)*3L*num_impares ;
+      tam_tri = sizeof(int)*3L*num_tri;
 
    this->modo_dibujo = modo_dibujo;
    this->dibujo_normales = NADA;
 
    vbo_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, ver.data());
    vbo_triangulos = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_tri, tri.data());
-   vbo_pares = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_pares, pares.data());
-   vbo_impares = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_impares, impares.data());
    vbo_colores_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, colores_vertices.data());
    vbo_normales_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, normales_vertices.data());
 
@@ -160,8 +160,6 @@ void MallaTVT::Visualizar()
       glEnableClientState( GL_VERTEX_ARRAY ); // act. uso VA
 
       unsigned num_tri = tri.size();
-      unsigned num_pares = pares.size();
-      unsigned num_impares = impares.size();
 
       // visualizar con glDrawElements (puntero a tabla == NULL)
       if (modo_dibujo != AJEDREZ)
@@ -172,14 +170,16 @@ void MallaTVT::Visualizar()
       }
       else
       {
+         unsigned num_pares = num_tri / 2;
+         unsigned num_impares = num_tri - num_pares;
+
          glDisableClientState(GL_COLOR_ARRAY);
          glColor3f(0.0,0.0,0.0);
-         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vbo_pares->getID() );
-         glDrawElements( GL_TRIANGLES, 3L*num_pares, GL_UNSIGNED_INT, NULL ) ;
+         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vbo_triangulos->getID() );
+         glDrawElements( GL_TRIANGLES, 3L*num_impares, GL_UNSIGNED_INT, NULL ) ;
 
          glColor3f(1.0,1.0,1.0);
-         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vbo_impares->getID() );
-         glDrawElements( GL_TRIANGLES, 3L*num_impares, GL_UNSIGNED_INT, NULL ) ;
+         glDrawElements( GL_TRIANGLES, 3L*num_pares, GL_UNSIGNED_INT, (const void *) (3L*num_impares*sizeof(GLuint)) ) ;
       }
       glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 
@@ -194,11 +194,10 @@ void MallaTVT::Visualizar()
 
    if (dibujo_normales == AMBAS || dibujo_normales == CARAS )
       VisualizarNormalesCaras();
+
    if (dibujo_normales == AMBAS || dibujo_normales == VERTICES)
       VisualizarNormalesVertices();
 
-   /*for (unsigned vertice = 0; vertice < ver.size(); vertice++)
-      std::cout << ver[vertice] << std::endl;*/
 }
 
 void MallaTVT::VisualizarModoInmediato()

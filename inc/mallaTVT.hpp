@@ -18,14 +18,12 @@ class MallaTVT
 private:
 
    std::vector<Tupla3f> ver;
-   std::vector<Tupla3i> tri,pares,impares;
+   std::vector<Tupla3i> tri;
 
    std::vector<Tupla3f> colores_vertices, normales_vertices, normales_caras, baricentros;
 
    VBO * vbo_vertices;
    VBO * vbo_triangulos;
-   VBO * vbo_pares;
-   VBO * vbo_impares;
    VBO * vbo_colores_vertices;
    VBO * vbo_normales_vertices;
 
@@ -39,7 +37,6 @@ private:
 
 public:
    MallaTVT(std::vector<GLfloat> vertices, enum visualizacion modo, std::vector<int> caras = std::vector<int>() );
-   //MallaTVT(std::vector<GLfloat> vertices, unsigned caras_longitudinales, enum visualizacion modo);
    void Visualizar();
    MallaTVT* Revolucion(const unsigned caras);
    MallaTVT* Barrido_Rotacion(const unsigned caras);
