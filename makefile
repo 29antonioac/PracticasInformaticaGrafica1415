@@ -52,7 +52,7 @@ start:
 
 exec: $(target_name)
 	@echo "ejecutando " $(target_name) " ...."
-	./$(target_name) ${PLY}
+	./$(target_name) ${PLY} ${PERFIL} ${N}
 
 all:
 	echo $(objs)
