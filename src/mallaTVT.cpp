@@ -1,4 +1,5 @@
 #include "mallaTVT.hpp"
+#include <cstdlib>
 
 
 
@@ -510,10 +511,16 @@ MallaTVT* MallaTVT::Barrido_Rotacion(const unsigned caras)
 
 }
 
-MallaTVT* MallaTVT::Barrido_Traslacion(const unsigned caras, const float desplazamiento)
+MallaTVT* MallaTVT::Barrido_Traslacion(const unsigned caras, const float dx, const float dy, const float dz)
 {
 
    unsigned vertices_perfil = ver.size();
+
+   if (dy == 0)
+   {
+      std::cout << "Desplazamiento en Y debe ser no nulo. Saliendo..." << std::endl;
+      exit(-1);
+   }
 
 
 
@@ -529,7 +536,7 @@ MallaTVT* MallaTVT::Barrido_Traslacion(const unsigned caras, const float desplaz
       perfil_actual.clear();
       for (unsigned i = 0; i < vertices_perfil; i++)
       {
-         vertice_actual = Matriz4x4::Traslacion(0,desplazamiento,0)*perfiles[perfil-1][i];
+         vertice_actual = Matriz4x4::Traslacion(dx,dy,dz)*perfiles[perfil-1][i];
          perfil_actual.push_back(vertice_actual);
          ver.push_back(vertice_actual);
       }
@@ -578,7 +585,7 @@ MallaTVT* MallaTVT::Barrido_Traslacion(const unsigned caras, const float desplaz
    // Calcular la última tapa
    Tupla3f centro_tapa_ultima(centro_tapa_primera);
    for (unsigned i = 1; i < caras; i++)
-      centro_tapa_ultima = Matriz4x4::Traslacion(0,desplazamiento,0)*centro_tapa_ultima;
+      centro_tapa_ultima = Matriz4x4::Traslacion(dx,dy,dz)*centro_tapa_ultima;
 
 
    // Tapa inferior

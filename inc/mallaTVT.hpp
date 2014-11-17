@@ -43,7 +43,7 @@ public:
    void Visualizar();
    MallaTVT* Revolucion(const unsigned caras);
    MallaTVT* Barrido_Rotacion(const unsigned caras);
-   MallaTVT* Barrido_Traslacion(const unsigned caras, const float desplazamiento);
+   MallaTVT* Barrido_Traslacion(const unsigned caras, const float dx, const float dy, const float dz);
    enum visualizacion getModo();
    void CambioModoDibujo ( enum visualizacion modo ) ;
    void CambioModoNormales();
