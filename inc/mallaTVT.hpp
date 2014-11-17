@@ -22,10 +22,10 @@ private:
 
    std::vector<Tupla3f> colores_vertices, normales_vertices, normales_caras, baricentros;
 
-   VBO * vbo_vertices;
-   VBO * vbo_triangulos;
-   VBO * vbo_colores_vertices;
-   VBO * vbo_normales_vertices;
+   VBO_Vertices   * vbo_vertices;
+   VBO_Triangulos * vbo_triangulos;
+   VBO_Colores    * vbo_colores_vertices;
+   VBO_Normales   * vbo_normales_vertices;
 
    visualizacion modo_dibujo;
    normales dibujo_normales;

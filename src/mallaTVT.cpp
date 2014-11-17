@@ -33,10 +33,6 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, std::vector<int> caras)
    impares.clear();
    pares.clear();
 
-   unsigned
-         num_verts = ver.size(),
-         num_tri = tri.size();
-
    CalcularVectoresNormales();
 
    // Asignamos colores a los vértices según su normal
@@ -46,17 +42,28 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, std::vector<int> caras)
       colores_vertices.push_back(color);
    }
 
-   unsigned
-      tam_ver = sizeof(float)*3L*num_verts ,
-      tam_tri = sizeof(int)*3L*num_tri;
-
    this->modo_dibujo = ALAMBRE;
    this->dibujo_normales = NADA;
 
-   vbo_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, ver.data());
-   vbo_triangulos = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_tri, tri.data());
-   vbo_colores_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, colores_vertices.data());
-   vbo_normales_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, normales_vertices.data());
+   unsigned
+      num_verts = ver.size(),
+      num_tri = tri.size();
+
+   unsigned
+      elementos_vertices = 3L * num_verts,
+      elementos_triangulos = 3L * num_tri;
+
+
+   unsigned
+      tam_ver = sizeof(float) * elementos_vertices ,
+      tam_tri = sizeof(int) * elementos_triangulos;
+
+
+
+   vbo_vertices = new VBO_Vertices(elementos_vertices, tam_ver, ver.data());
+   vbo_triangulos = new VBO_Triangulos(elementos_triangulos, tam_tri, tri.data());
+   vbo_colores_vertices = new VBO_Colores(elementos_vertices, tam_ver, colores_vertices.data());
+   vbo_normales_vertices = new VBO_Normales(elementos_vertices, tam_ver, normales_vertices.data());
 
 }
 
@@ -85,9 +92,6 @@ MallaTVT::MallaTVT(std::vector<Tupla3f> vertices, std::vector<Tupla3i> caras)
    impares.clear();
    pares.clear();
 
-   unsigned
-         num_verts = ver.size(),
-         num_tri = tri.size();
 
    CalcularVectoresNormales();
 
@@ -98,17 +102,26 @@ MallaTVT::MallaTVT(std::vector<Tupla3f> vertices, std::vector<Tupla3i> caras)
       colores_vertices.push_back(color);
    }
 
-   unsigned
-      tam_ver = sizeof(float)*3L*num_verts ,
-      tam_tri = sizeof(int)*3L*num_tri;
-
    this->modo_dibujo = ALAMBRE;
    this->dibujo_normales = NADA;
 
-   vbo_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, ver.data());
-   vbo_triangulos = new VBO(GL_ELEMENT_ARRAY_BUFFER,tam_tri, tri.data());
-   vbo_colores_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, colores_vertices.data());
-   vbo_normales_vertices = new VBO(GL_ARRAY_BUFFER, tam_ver, normales_vertices.data());
+   unsigned
+      num_verts = ver.size(),
+      num_tri = tri.size();
+
+   unsigned
+      elementos_vertices = 3L * num_verts,
+      elementos_triangulos = 3L * num_tri;
+
+
+   unsigned
+      tam_ver = sizeof(float) * elementos_vertices ,
+      tam_tri = sizeof(int) * elementos_triangulos;
+
+   vbo_vertices = new VBO_Vertices(elementos_vertices, tam_ver, ver.data());
+   vbo_triangulos = new VBO_Triangulos(elementos_triangulos, tam_tri, tri.data());
+   vbo_colores_vertices = new VBO_Colores(elementos_vertices, tam_ver, colores_vertices.data());
+   vbo_normales_vertices = new VBO_Normales(elementos_vertices, tam_ver, normales_vertices.data());
 
 }
 
@@ -191,52 +204,20 @@ void MallaTVT::Visualizar()
       VisualizarModoInmediato();
    else
    {
-
       // Ver si usamos array de colores o vértices
       if (!colores_vertices.empty())
       {
-         glBindBuffer( GL_ARRAY_BUFFER, vbo_colores_vertices->getID() );
-         glColorPointer (3, GL_FLOAT, 0, 0);
-         glEnableClientState( GL_COLOR_ARRAY );
+         vbo_colores_vertices->Activar();
       }
 
       if (!normales_vertices.empty())
       {
-         glBindBuffer( GL_ARRAY_BUFFER, vbo_normales_vertices->getID() );
-         glNormalPointer ( GL_FLOAT, 0, 0);
-         glEnableClientState( GL_NORMAL_ARRAY );
+         vbo_normales_vertices->Activar();
       }
 
+      vbo_vertices->Activar();
 
-      // especificar formato de los vértices en su VBO (y offset)
-      glBindBuffer( GL_ARRAY_BUFFER, vbo_vertices->getID() ); // act. VBO
-      glVertexPointer( 3, GL_FLOAT, 0, 0 ); // formato y offset (0)
-      glBindBuffer( GL_ARRAY_BUFFER, 0 ); // desact VBO.
-      glEnableClientState( GL_VERTEX_ARRAY ); // act. uso VA
-
-      unsigned num_tri = tri.size();
-
-      // visualizar con glDrawElements (puntero a tabla == NULL)
-      if (modo_dibujo != AJEDREZ)
-      {
-
-         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vbo_triangulos->getID() );
-         glDrawElements( GL_TRIANGLES, 3L*num_tri, GL_UNSIGNED_INT, NULL ) ;
-      }
-      else
-      {
-         unsigned num_pares = num_tri / 2;
-         unsigned num_impares = num_tri - num_pares;
-
-         glDisableClientState(GL_COLOR_ARRAY);
-         glColor3f(0.0,0.0,0.0);
-         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vbo_triangulos->getID() );
-         glDrawElements( GL_TRIANGLES, 3L*num_impares, GL_UNSIGNED_INT, NULL ) ;
-
-         glColor3f(1.0,1.0,1.0);
-         glDrawElements( GL_TRIANGLES, 3L*num_pares, GL_UNSIGNED_INT, (const void *) (3L*num_impares*sizeof(GLuint)) ) ;
-      }
-      glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+      vbo_triangulos->Visualizar(modo_dibujo);
 
       // desactivar uso de array de vértices
       glDisableClientState( GL_VERTEX_ARRAY );
