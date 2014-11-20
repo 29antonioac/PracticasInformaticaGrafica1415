@@ -12,60 +12,14 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, std::vector<int> caras)
       ver.push_back(Tupla3f(vertices[i],vertices[i+1],vertices[i+2]));
    }
 
-   std::vector<Tupla3i> pares,impares;
-
    // Pasamos las caras a vectores de Tupla3f
    for (unsigned i = 0; i < caras.size(); i+=6)
    {
       Tupla3i cara(caras[i],caras[i+1],caras[i+2]);
-      impares.push_back(cara);
+      tri.push_back(cara);
    }
 
-   for (unsigned i = 3; i < caras.size(); i+=6)
-   {
-      Tupla3i cara(caras[i],caras[i+1],caras[i+2]);
-      pares.push_back(cara);
-   }
-
-   tri.insert(tri.end(),impares.begin(),impares.end());
-   tri.insert(tri.end(),pares.begin(),pares.end());
-
-   impares.clear();
-   pares.clear();
-
-   CalcularVectoresNormales();
-   CalcularDimension();
-
-   // Asignamos colores a los vértices según su normal
-   for (unsigned i = 0; i < ver.size(); i++)
-   {
-      Tupla3f color(normales_vertices[i].abs());
-      colores_vertices.push_back(color);
-   }
-
-   this->modo_dibujo = ALAMBRE;
-   this->dibujo_normales = NADA;
-
-   unsigned
-      num_verts = ver.size(),
-      num_tri = tri.size();
-
-   unsigned
-      elementos_vertices = 3L * num_verts,
-      elementos_triangulos = 3L * num_tri;
-
-
-   unsigned
-      tam_ver = sizeof(float) * elementos_vertices ,
-      tam_tri = sizeof(int) * elementos_triangulos;
-
-
-
-   vbo_vertices = new VBO_Vertices(elementos_vertices, tam_ver, ver.data());
-   vbo_triangulos = new VBO_Triangulos(elementos_triangulos, tam_tri, tri.data());
-   vbo_colores_vertices = new VBO_Colores(elementos_vertices, tam_ver, colores_vertices.data());
-   vbo_normales_vertices = new VBO_Normales(elementos_vertices, tam_ver, normales_vertices.data());
-
+   Inicializar();
 }
 
 MallaTVT::MallaTVT(std::vector<Tupla3f> vertices, std::vector<Tupla3i> caras)
@@ -73,29 +27,25 @@ MallaTVT::MallaTVT(std::vector<Tupla3f> vertices, std::vector<Tupla3i> caras)
 
    ver = vertices;
 
-   std::vector<Tupla3i> pares,impares;
-
    // Pasamos las caras a vectores de Tupla3f
    for (unsigned i = 0; i < caras.size(); i+=2)
    {
-      impares.push_back(caras[i]);
+      tri.push_back(caras[i]);
    }
 
    for (unsigned i = 1; i < caras.size(); i+=2)
    {
-      pares.push_back(caras[i]);
+      tri.push_back(caras[i]);
    }
 
-   tri.clear();
-   tri.insert(tri.end(),impares.begin(),impares.end());
-   tri.insert(tri.end(),pares.begin(),pares.end());
+   Inicializar();
+}
 
-   impares.clear();
-   pares.clear();
-
-
-   CalcularVectoresNormales();
+void MallaTVT::Inicializar()
+{
    CalcularDimension();
+   CalcularVectoresNormales();
+
 
    // Asignamos colores a los vértices según su normal
    for (unsigned i = 0; i < ver.size(); i++)
@@ -107,24 +57,7 @@ MallaTVT::MallaTVT(std::vector<Tupla3f> vertices, std::vector<Tupla3i> caras)
    this->modo_dibujo = ALAMBRE;
    this->dibujo_normales = NADA;
 
-   unsigned
-      num_verts = ver.size(),
-      num_tri = tri.size();
-
-   unsigned
-      elementos_vertices = 3L * num_verts,
-      elementos_triangulos = 3L * num_tri;
-
-
-   unsigned
-      tam_ver = sizeof(float) * elementos_vertices ,
-      tam_tri = sizeof(int) * elementos_triangulos;
-
-   vbo_vertices = new VBO_Vertices(elementos_vertices, tam_ver, ver.data());
-   vbo_triangulos = new VBO_Triangulos(elementos_triangulos, tam_tri, tri.data());
-   vbo_colores_vertices = new VBO_Colores(elementos_vertices, tam_ver, colores_vertices.data());
-   vbo_normales_vertices = new VBO_Normales(elementos_vertices, tam_ver, normales_vertices.data());
-
+   CrearVBOs();
 }
 
 void MallaTVT::CalcularDimension()
@@ -166,8 +99,11 @@ void MallaTVT::CalcularVectoresNormales()
       baricentro[Z] = (A[Z] + B[Z] + C[Z])/3;
       baricentros.push_back(baricentro);
 
-
+      std::pair<Tupla3f,Tupla3f> linea (baricentro, baricentro + normal * 0.1 * dimension);
+      lineas_normales_caras.push_back(linea);
    }
+
+
 
    Tupla3f ceros(0.0,0.0,0.0);
 
@@ -191,13 +127,47 @@ void MallaTVT::CalcularVectoresNormales()
    for (unsigned vertice = 0; vertice < ver.size(); vertice++)
    {
       normales_vertices[vertice] = (normales_vertices[vertice]).normalized();
+
+      std::pair<Tupla3f,Tupla3f> linea (ver[vertice], ver[vertice] + normales_vertices[vertice] * 0.1 * dimension);
+      lineas_normales_vertices.push_back(linea);
    }
+}
+
+void MallaTVT::CrearVBOs()
+{
+
+   unsigned
+      num_verts = ver.size(),
+      num_tri = tri.size();
+
+   unsigned
+      elementos_vertices = 3L * num_verts,
+      elementos_triangulos = 3L * num_tri,   // Los triángulos van en un VBO GL_ELEMENT y se cuentan los vértices, no los índices en sí
+      elementos_lineas_normales_caras = 2L * elementos_triangulos,
+      elementos_lineas_normales_vertices = 2L * elementos_vertices;
+
+
+   unsigned
+      tam_ver = sizeof(float) * elementos_vertices ,
+      tam_tri = sizeof(int) * elementos_triangulos,
+      tam_lineas_normales_caras = sizeof(float) * elementos_lineas_normales_caras,
+      tam_lineas_normales_vertices = sizeof(float) * elementos_lineas_normales_vertices;
+
+   vbo_vertices = new VBO_Vertices(elementos_vertices, tam_ver, ver.data());
+   vbo_triangulos = new VBO_Triangulos(elementos_triangulos, tam_tri, tri.data());
+   vbo_colores_vertices = new VBO_Colores(elementos_vertices, tam_ver, colores_vertices.data());
+   vbo_normales_vertices = new VBO_Normales(elementos_vertices, tam_ver, normales_vertices.data());
+
+   vbo_lineas_normales_caras = new VBO_Lineas(elementos_lineas_normales_caras, tam_lineas_normales_caras, lineas_normales_caras.data() );
+   vbo_lineas_normales_vertices = new VBO_Lineas(elementos_lineas_normales_vertices, tam_lineas_normales_vertices, lineas_normales_vertices.data() );
 }
 
 void MallaTVT::Visualizar()
 {
 
+   // Ponemos un color por defecto por si no hubiera array de colores
    glColor3f(0.0,0.0,1.0);
+
    switch (modo_dibujo)
    {
       case ALAMBRE:
@@ -237,9 +207,6 @@ void MallaTVT::Visualizar()
 
       vbo_triangulos->Visualizar(modo_dibujo);
 
-      // desactivar uso de array de vértices
-      glDisableClientState( GL_VERTEX_ARRAY );
-
       if (!colores_vertices.empty())
          glDisableClientState( GL_COLOR_ARRAY );
       if (!normales_vertices.empty())
@@ -247,10 +214,14 @@ void MallaTVT::Visualizar()
    }
 
    if (dibujo_normales == AMBAS || dibujo_normales == CARAS )
+   {
       VisualizarNormalesCaras();
+   }
 
    if (dibujo_normales == AMBAS || dibujo_normales == VERTICES)
+   {
       VisualizarNormalesVertices();
+   }
 
 }
 
@@ -276,31 +247,17 @@ void MallaTVT::VisualizarModoInmediato()
 void MallaTVT::VisualizarNormalesCaras()
 {
    glColor3f(0.0,0.0,1.0);
-   for (unsigned cara = 0; cara < normales_caras.size(); cara++)
-   {
-      glBegin(GL_LINES);
 
-      glVertex3fv(baricentros[cara].data());
-      Tupla3f extremo = baricentros[cara] + normales_caras[cara]*0.1*dimension;
-      glVertex3fv(extremo.data());
-
-      glEnd();
-   }
+   vbo_lineas_normales_caras->Activar();
+   vbo_lineas_normales_caras->Visualizar();
 }
 
 void MallaTVT::VisualizarNormalesVertices()
 {
    glColor3f(1.0,0.0,0.0);
-   for (unsigned vertice = 0; vertice < normales_vertices.size(); vertice++)
-   {
-      glBegin(GL_LINES);
 
-      glVertex3fv(ver[vertice].data());
-      Tupla3f extremo = ver[vertice] + normales_vertices[vertice]*0.1*dimension;
-      glVertex3fv(extremo.data());
-
-      glEnd();
-   }
+   vbo_lineas_normales_vertices->Activar();
+   vbo_lineas_normales_vertices->Visualizar();
 }
 
 MallaTVT* MallaTVT::Revolucion(const unsigned caras)

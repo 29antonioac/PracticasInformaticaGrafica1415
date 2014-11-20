@@ -1,10 +1,10 @@
-
 #ifndef __IG_MALLATVT_HPP__
 #define __IG_MALLATVT_HPP__
 
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include <vector>
+#include <utility>
 #include <cmath>
 #include "tuplas.hpp"
 #include "error-ogl.hpp"
@@ -21,11 +21,14 @@ private:
    std::vector<Tupla3i> tri;
 
    std::vector<Tupla3f> colores_vertices, normales_vertices, normales_caras, baricentros;
+   std::vector<std::pair<Tupla3f,Tupla3f> > lineas_normales_caras, lineas_normales_vertices;
 
    VBO_Vertices   * vbo_vertices;
    VBO_Triangulos * vbo_triangulos;
    VBO_Colores    * vbo_colores_vertices;
    VBO_Normales   * vbo_normales_vertices;
+   VBO_Lineas     * vbo_lineas_normales_caras;
+   VBO_Lineas     * vbo_lineas_normales_vertices;
 
    visualizacion modo_dibujo;
    normales dibujo_normales;
@@ -33,12 +36,14 @@ private:
    float dimension;
 
    void CalcularVectoresNormales();
+   void CalcularDimension();
+   void CrearVBOs();
+   void Inicializar();
    void VisualizarModoInmediato();
    void VisualizarNormalesCaras();
    void VisualizarNormalesVertices();
 
    MallaTVT(std::vector<Tupla3f> vertices, std::vector<Tupla3i> caras);
-   void CalcularDimension();
 
 public:
    MallaTVT(std::vector<GLfloat> vertices, std::vector<int> caras = std::vector<int>() );
@@ -49,7 +54,6 @@ public:
    enum visualizacion getModo();
    void CambioModoDibujo ( enum visualizacion modo ) ;
    void CambioModoNormales();
-
 };
 
 #endif

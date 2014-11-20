@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/glut.h>
+#include <iostream>
 #include "visualizacion.hpp"
 
 
@@ -53,6 +54,15 @@ public:
 
    void Activar();
    void Visualizar(enum visualizacion modo);
+};
+
+class VBO_Lineas : virtual public VBO
+{
+public:
+   VBO_Lineas(GLuint numero_datos, GLuint tamanio, GLvoid * puntero) : VBO(GL_ARRAY_BUFFER, numero_datos, tamanio,  puntero) {}
+
+   void Activar();
+   void Visualizar();
 };
 
 
