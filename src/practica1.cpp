@@ -16,6 +16,11 @@
 #include "file_ply_stl.hpp"
 #include "mallaTVT.hpp"
 
+using std::cout;
+using std::endl;
+using std::string;
+using std::vector;
+
 // ---------------------------------------------------------------------
 // coordenadas de los vértices del cubo:
 
@@ -60,7 +65,7 @@ void DibujarCuboPuntos()
 void P1_Inicializar( int argc, char *argv[] )
 {
 
-   std::string file;
+   string file;
    
    if (argc == 1)
    {
@@ -68,23 +73,23 @@ void P1_Inicializar( int argc, char *argv[] )
    }
    else if (argc == 4)
    {
-      file = std::string(argv[1]);
+      file = string(argv[1]);
    }
    else
    {
-      std::cout << "Argumentos mal (argc = " << argc << ")" << std::endl;
+      cout << "Argumentos mal (argc = " << argc << ")" << endl;
       exit(-1);
    }
 
-   std::cout << "Archivo: " << file << std::endl;
+   cout << "Archivo: " << file << endl;
 
-   std::vector<float> vertices;
-   std::vector<int> caras;
+   vector<float> vertices;
+   vector<int> caras;
 
    ply::read(file.c_str(),vertices,caras);
    pm_P1 = new MallaTVT(vertices,caras);
 
-   std::cout << "-----------------------------------" << std::endl;
+   cout << "-----------------------------------" << endl;
 
 
    

@@ -24,7 +24,11 @@
 #include "mallaTVT.hpp"
 #include "Matriz.hpp"
 
-std::vector<float> P2_vertices_ply;
+using std::cout;
+using std::vector;
+using std::string;
+
+vector<float> P2_vertices_ply;
 
 MallaTVT * pm_P2;
 
@@ -43,7 +47,7 @@ void P2_Inicializar( int argc, char *argv[] )
 {
 
    unsigned N;
-   std::string file;
+   string file;
 
    if (argc == 1)
    {
@@ -63,26 +67,26 @@ void P2_Inicializar( int argc, char *argv[] )
    }
    else if (argc == 4)
    {
-      file = std::string(argv[2]);
+      file = string(argv[2]);
       N = atoi(argv[3]);
 
       if (N < 3)
       {
-         std::cout << "Por favor, introduce N >= 3" << std::endl;
+         cout << "Por favor, introduce N >= 3" << endl;
          exit(-1);
       }
       else if (N >= 10000)
       {
-         std::cout << "N muy grande, puede tardar un poco en procesar..." << std::endl;
+         cout << "N muy grande, puede tardar un poco en procesar..." << endl;
       }
    }
    else
    {
-      std::cout << "Argumentos mal (argc = " << argc << ")" << std::endl;
+      cout << "Argumentos mal (argc = " << argc << ")" << endl;
       exit(-1);
    }
 
-   std::cout << "Archivo: " << file << std::endl;
+   cout << "Archivo: " << file << endl;
 
    ply::read_vertices(file.c_str(),P2_vertices_ply);
 
@@ -101,11 +105,11 @@ void P2_Inicializar( int argc, char *argv[] )
 #if not defined REVOLUCION and not defined BARRIDO_ROTACION and not defined BARRIDO_TRASLACION
 for (unsigned i = 0; i < P2_vertices_ply.size(); i+=3)
 {
-   std::cout << "(" << P2_vertices_ply[i] << "," << P2_vertices_ply[i+1] << "," << P2_vertices_ply[i+2] << ")" << std::endl;
+   cout << "(" << P2_vertices_ply[i] << "," << P2_vertices_ply[i+1] << "," << P2_vertices_ply[i+2] << ")" << endl;
 }
 #endif
 
-   std::cout << "-----------------------------------" << std::endl;
+   cout << "-----------------------------------" << endl;
 
 
    
