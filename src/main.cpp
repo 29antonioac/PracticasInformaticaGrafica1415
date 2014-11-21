@@ -28,6 +28,10 @@
 #include "practica2.hpp"
 #include "mallaTVT.hpp"
 
+using std::cout;
+using std::endl;
+using std::string;
+
 // *********************************************************************
 // **
 // ** Variables globales
@@ -184,8 +188,6 @@ void LimpiarVentana()
 
 void FGE_Redibujado()
 {
-   using namespace std ;
-   //cout << "redibujado......" << endl << flush ;
    FijarViewportProyeccion() ; // necesario pues la escala puede cambiar
    FijarCamara();
    LimpiarVentana();
@@ -258,8 +260,6 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
          redisp = false ;
          break ;
    }
-   using namespace std ;
-   //cout << "tecla normal....." << frustum_factor_escala << endl ;
    
    // si se ha cambiado algo, forzar evento de redibujado
    if (redisp)
@@ -321,7 +321,6 @@ void FGE_PulsarTeclaEspecial( int tecla, int x_raton, int y_raton )
          redisp = false ;
          break ;
 	}
-   using namespace std ;
 
    // si se ha cambiado algo, forzar evento de redibujado
    if ( redisp )
@@ -453,14 +452,14 @@ void Inicializa_OpenGL( )
    GLenum codigoError = glewInit();
    if ( codigoError != GLEW_OK ) // comprobar posibles errores
    {
-      std::cout << "Imposible inicializar ’GLEW’, mensaje: "
-            << glewGetErrorString(codigoError) << std::endl ;
+      cout << "Imposible inicializar ’GLEW’, mensaje: "
+            << glewGetErrorString(codigoError) << endl ;
       exit(1);
    }
 
    // comprobar si OpenGL ver 2.0 + está soportado (usando GLEW)
    if ( ! GLEW_VERSION_2_0 )
-   {  std::cout << "OpenGL 2.0 no soportado." << std::endl  ;
+   {  cout << "OpenGL 2.0 no soportado." << endl  ;
       exit(1);
    }
 
