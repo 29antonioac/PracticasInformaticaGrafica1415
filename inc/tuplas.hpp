@@ -1,6 +1,5 @@
-
-#ifndef TUPLAS2_HPP
-#define TUPLAS2_HPP
+#ifndef TUPLAS_HPP
+#define TUPLAS_HPP
 
 #include <cmath>
 #include <iostream>
@@ -8,14 +7,18 @@
 #include <vector>
 #include <cassert>
 
+using std::vector;
+using std::ostream;
+using std::flush;
+using std::cout;
+using std::endl;
+using std::exception;
+
 // ---------------------------------------------------------------------
 // índices de los ejes X,Y Z
                         
 const unsigned int 
-   X=0, Y=1, Z=2, W=3 ;      // indices de los ejes
-
-// *********************************************************************
-// tuplas con tres valores de tipo float
+   X = 0, Y = 1, Z = 2, W = 3 ;      // indices de los ejes
  
 template <unsigned N,class T>
 class Tupla
@@ -27,7 +30,7 @@ public:
    inline Tupla( const T x, const T y, const T z );
    inline Tupla( const T x, const T y, const T z, const T w);
    inline Tupla( const T coot[N] );
-   inline Tupla( const std::vector<T> & v);
+   inline Tupla( const vector<T> & v);
    inline Tupla<N,T> operator + ( const Tupla<N,T> & t2 );
    inline Tupla<N,T>& operator+= (const Tupla<N,T> & t2) ;
    inline Tupla<N,T> operator - ( const Tupla<N,T> & t2 );
@@ -40,27 +43,27 @@ public:
    inline Tupla<N,T> normalized();
 
 
-   /* Añadidos propios a la clase Tupla<N,T> */
    inline Tupla<N,T> abs();
    inline Tupla<N,T>& operator=(const Tupla<N,T> & v );
-   inline T& operator[](std::size_t i);
-   inline const T& operator[](std::size_t i) const;
+   inline T& operator[](size_t i);
+   inline const T& operator[](size_t i) const;
    inline T* data();
-   //template <class U>
-   friend inline std::ostream& operator<<(std::ostream &f, const Tupla<N,T> &v)
+
+   // Operador de flujo de salida
+   friend inline ostream& operator<<(ostream &f, const Tupla<N,T> &v)
    {
       f << "(";
       for (unsigned i = 0; i < N - 1; i++)
       {
          f << v[i] << ",";
       }
-      f << v[N - 1] << ")" << std::flush;
+      f << v[N - 1] << ")" << flush;
 
       return f;
    }
 };
 
-// ---------------------------------------------------------------------
+// Constructor de tupla con 3 elementos
 template <unsigned N,class T>
 inline Tupla<N,T>::Tupla( const T x, const T y, const T z )
 {
@@ -71,6 +74,7 @@ inline Tupla<N,T>::Tupla( const T x, const T y, const T z )
    coo[Z] = z;
 }
 
+// Constructor de tupla con 4 elementos
 template <unsigned N, class T>
 inline Tupla<N,T>::Tupla( const T x, const T y, const T z, const T w)
 {
@@ -81,7 +85,8 @@ inline Tupla<N,T>::Tupla( const T x, const T y, const T z, const T w)
    coo[Z] = z;
    coo[W] = w;
 }
-// ---------------------------------------------------------------------
+
+// Constructor de copia usando un array
 template <unsigned N,class T>
 inline Tupla<N,T>::Tupla( const T coot[N] )
 {
@@ -91,8 +96,9 @@ inline Tupla<N,T>::Tupla( const T coot[N] )
    }
 }
 
+// Constructor de tupla usando un std::vector
 template <unsigned N, class T>
-inline Tupla<N,T>::Tupla(const std::vector<T> & v)
+inline Tupla<N,T>::Tupla(const vector<T> & v)
 {
    for (unsigned i = 0; i < N; i++)
    {
@@ -100,8 +106,7 @@ inline Tupla<N,T>::Tupla(const std::vector<T> & v)
    }
 }
 
-// ---------------------------------------------------------------------
-// tupla = tupla+tupla
+// Operador de suma de tuplas
 template <unsigned N,class T>
 inline Tupla<N,T> Tupla<N,T>::operator + ( const Tupla<N,T> & t2 )
 {
@@ -114,6 +119,7 @@ inline Tupla<N,T> Tupla<N,T>::operator + ( const Tupla<N,T> & t2 )
    return suma;
 }
 
+// Operador de suma con asignación
 template <unsigned N,class T>
 inline Tupla<N,T>& Tupla<N,T>::operator+= (const Tupla<N,T> & t2)
 {
@@ -125,8 +131,7 @@ inline Tupla<N,T>& Tupla<N,T>::operator+= (const Tupla<N,T> & t2)
    return *this;
 }
 
-// ---------------------------------------------------------------------
-// tupla = tupla-tupla
+// Operador de diferencia de tuplas
 template <unsigned N,class T>
 inline Tupla<N,T> Tupla<N,T>::operator - ( const Tupla<N,T> & t2 )
 {
@@ -139,6 +144,7 @@ inline Tupla<N,T> Tupla<N,T>::operator - ( const Tupla<N,T> & t2 )
    return diferencia;
 }
 
+// Operador de diferencia con asignación
 template <unsigned N,class T>
 inline Tupla<N,T>& Tupla<N,T>::operator-= (const Tupla<N,T> & t2)
 {
@@ -150,8 +156,7 @@ inline Tupla<N,T>& Tupla<N,T>::operator-= (const Tupla<N,T> & t2)
    return *this;
 }
 
-// ---------------------------------------------------------------------
-// tupla3 = T*tupla3
+// Producto de tupla por escalar
 template <unsigned N,class T>
 inline Tupla<N,T> Tupla<N,T>::operator * ( T a )
 {
@@ -172,8 +177,7 @@ inline Tupla<N,T> operator * (T a, Tupla<N,T> & v)
    return v*a;
 }
 
-// ---------------------------------------------------------------------
-// tupla = tupla/T
+// Cociente de tupla por escalar
 template <unsigned N,class T>
 inline Tupla<N,T> Tupla<N,T>::operator / ( T a )
 {
@@ -185,8 +189,7 @@ inline Tupla<N,T> Tupla<N,T>::operator / ( T a )
    return cociente;
 }
 
-// ---------------------------------------------------------------------
-// T = tupla|tupla (producto escalar)
+// Producto escalar de dos tuplas
 template <unsigned N,class T>
 inline T Tupla<N,T>::operator | ( const Tupla<N,T> & t2 )
 {
@@ -200,30 +203,28 @@ inline T Tupla<N,T>::operator | ( const Tupla<N,T> & t2 )
 
 
 
-// ---------------------------------------------------------------------
-// float = lenSq(tupla)
+// Norma al cuadrado de una tupla
 template <unsigned N,class T>
 inline float Tupla<N,T>::lenSq( )
 {
    return *this|*this;
 }
-// ---------------------------------------------------------------------
-// float = len(tupla)
+
+// Norma de una tupla
 template <unsigned N,class T>
 inline float Tupla<N,T>::len( )
 {
    return float(sqrt(double(lenSq()))) ;
 }
 
-//----------------------------------------------------------------------
-// tupla3 = normalized(tupla3)
-
+// Normalización de una tupla
 template <unsigned N,class T>
 inline Tupla<N,T> Tupla<N,T>::normalized( )
 {
    return  *this/len() ;
 }
 
+// Valor absoluto de una tupla
 template <unsigned N,class T>
 inline Tupla<N,T> Tupla<N,T>::abs()
 {
@@ -235,7 +236,7 @@ inline Tupla<N,T> Tupla<N,T>::abs()
    return abs;
 }
 
-// operador de asignación
+// Operador de asignación
 
 template <unsigned N,class T>
 inline Tupla<N,T>& Tupla<N,T>::operator=(const Tupla<N,T> & v )
@@ -250,58 +251,45 @@ inline Tupla<N,T>& Tupla<N,T>::operator=(const Tupla<N,T> & v )
    return *this;
 }
 
-// operador de indexación
+// Operador de indexación
 template <unsigned N,class T>
-T& Tupla<N,T>::operator[](std::size_t i)
+T& Tupla<N,T>::operator[](size_t i)
 {
    return coo[i];
    try
    {
       return coo[i];
    }
-   catch (std::exception& e)
+   catch (exception& e)
    {
-      std::cout << "Excepción en Tupla<N,T> " << e.what() << std::endl;
+      cout << "Excepción en Tupla<N,T> " << e.what() << endl;
    }
 }
 
 template <unsigned N,class T>
-const T& Tupla<N,T>::operator[](std::size_t i) const
+const T& Tupla<N,T>::operator[](size_t i) const
 {
    return coo[i];
    try
    {
       return coo[i];
    }
-   catch (std::exception& e)
+   catch (exception& e)
    {
-      std::cout << "Excepción en Tupla<N,T> " << e.what() << std::endl;
+      cout << "Excepción en Tupla<N,T> " << e.what() << endl;
    }
 }
 
+// Obtener puntero al primer elemento
 template <unsigned N,class T>
 T* Tupla<N,T>::data()
 {
    return coo;
 }
-/*
-// operador de salida
-template <unsigned N,class T>
-std::ostream& operator<<<>(std::ostream& f, const Tupla<N,T> &v)
-{
-   f << "(";
-   for (unsigned i = 0; i < N - 1; i++)
-   {
-      f << v[i] << ",";
-   }
-   f << v[N - 1] << ")" << std::flush;
 
-   return f;
-}*/
-
+// Especializaciones
 template class Tupla<3,int>;
 template class Tupla<3,float>;
-template class Tupla<4,int>;
 template class Tupla<4,float>;
 
 typedef Tupla<3,float>  Tupla3f;
@@ -311,8 +299,7 @@ typedef Tupla<3,int>    Tupla3i;
 
 
 
-// ---------------------------------------------------------------------
-//  = tupla*tupla (producto vectorial)
+// Producto vectorial de dos tuplas de 3 float
 inline Tupla3f operator * ( const Tupla3f & t1, const Tupla3f & t2 )
 {
    return Tupla3f
@@ -321,159 +308,6 @@ inline Tupla3f operator * ( const Tupla3f & t1, const Tupla3f & t2 )
          t1[X]*t2[Y] - t1[Y]*t2[X]
       );
 }
-
-
-// *********************************************************************
-// tuplas con cuatro valores de tipo float
- 
-/*
-class Tupla4f          // tupla con 3 valores floates que representan coordenas
-{
-private:
-   float coo[4] ;       
-public:
-   inline Tupla4f( const float x, const float y, const float z, const float w );
-   inline Tupla4f( const float coot[4] );
-   inline float& operator[](std::size_t i);
-   inline const float& operator[](std::size_t i) const;
-   Tupla4f() {};
-} ;
-
-// ---------------------------------------------------------------------
-inline Tupla4f::Tupla4f( const float x, const float y, const float z, const float w  )
-{
-   coo[X] = x ;
-   coo[Y] = y ;
-   coo[Z] = z ;
-   coo[W] = w ;
-}
-// ---------------------------------------------------------------------
-inline Tupla4f::Tupla4f( const float coot[4] )
-{
-   coo[X] = coot[X] ;
-   coo[Y] = coot[Y] ;
-   coo[Z] = coot[Z] ;
-   coo[W] = coot[W] ;
-}
-
-// operador de indexación
-float& Tupla4f::operator[](std::size_t i)
-{
-   return coo[i];
-   try
-   {
-      return coo[i];
-   }
-   catch (std::exception& e)
-   {
-      std::cout << "Excepción en Tupla3f " << e.what() << std::endl;
-   }
-}
-
-
-const float& Tupla4f::operator[](std::size_t i) const
-{
-   return coo[i];
-   try
-   {
-      return coo[i];
-   }
-   catch (std::exception& e)
-   {
-      std::cout << "Excepción en Tupla3f " << e.what() << std::endl;
-   }
-}
-
-// *********************************************************************
-// tuplas con tres valores int
-
-
-
-class Tupla3i
-{
-private:
-   int idx[3];
-public:
-   inline Tupla3i() {};
-   inline Tupla3i( const unsigned x, const unsigned y, const unsigned z );
-   inline Tupla3i( const unsigned coot[3] );
-   inline Tupla3i& operator=(const Tupla3i & v );
-   inline int& operator[](std::size_t i);
-   inline const int& operator[](std::size_t i) const;
-   inline int* getPuntero();
-   friend inline std::ostream& operator<<(std::ostream &f, const Tupla3i &v);
-};
-
-inline Tupla3i::Tupla3i( const unsigned x, const unsigned y, const unsigned z )
-{
-   idx[X] = x ;
-   idx[Y] = y ;
-   idx[Z] = z ;
-}
-// ---------------------------------------------------------------------
-inline Tupla3i::Tupla3i( const unsigned coot[3] )
-{
-   idx[X] = coot[X] ;
-   idx[Y] = coot[Y] ;
-   idx[Z] = coot[Z] ;
-}
-
-// operador de asignación
-
-inline Tupla3i& Tupla3i::operator=(const Tupla3i & v )
-{
-   if (this == &v)
-      return *this;
-   idx[X] = v.idx[X];
-   idx[Y] = v.idx[Y];
-   idx[Z] = v.idx[Z];
-   return *this;
-}
-
-// operador de indexación
-int& Tupla3i::operator[](std::size_t i)
-{
-   return idx[i];
-   try
-   {
-      return idx[i];
-   }
-   catch (std::exception& e)
-   {
-      std::cout << "Excepción en Tupla3f " << e.what() << std::endl;
-   }
-}
-
-
-const int& Tupla3i::operator[](std::size_t i) const
-{
-   return idx[i];
-   try
-   {
-      return idx[i];
-   }
-   catch (std::exception& e)
-   {
-      std::cout << "Excepción en Tupla3f " << e.what() << std::endl;
-   }
-}
-
-int* Tupla3i::getPuntero()
-{
-   return idx;
-}
-
-// operador de salida
-
-std::ostream& operator<<(std::ostream& f, const Tupla3i &v)
-{
-   f << "(" << v.idx[X] << "," << v.idx[Y] << "," << v.idx[Z] << ")" << std::flush;
-   return f;
-}
-
-
-*/
-
 
 
 #endif
