@@ -19,11 +19,6 @@ VBO::VBO( GLuint tipo, GLuint numero_datos, GLuint tamanio, GLvoid * puntero )
    glBindBuffer( tipo, 0 );
 }
 
-VBO::~VBO()
-{
-   delete datos;
-}
-
 GLuint VBO::getID()
 {
    return id_vbo;

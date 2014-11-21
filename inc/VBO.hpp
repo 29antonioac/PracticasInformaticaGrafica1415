@@ -17,7 +17,7 @@ protected:
    GLvoid * datos;
 public:
    VBO( GLuint tipo, GLuint numero_datos, GLuint tamanio, GLvoid * puntero );
-   virtual ~VBO();
+   virtual ~VBO() {};
    GLuint getID();
    GLvoid * getDatos();
 
