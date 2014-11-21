@@ -19,6 +19,11 @@ VBO::VBO( GLuint tipo, GLuint numero_datos, GLuint tamanio, GLvoid * puntero )
    glBindBuffer( tipo, 0 );
 }
 
+VBO::~VBO()
+{
+   delete datos;
+}
+
 GLuint VBO::getID()
 {
    return id_vbo;
@@ -68,6 +73,15 @@ void VBO_Normales::Activar()
    glBindBuffer( tipo, 0 );
 
    glEnableClientState( GL_NORMAL_ARRAY );
+}
+
+void VBO_Vertices::Visualizar()
+{
+   glBindBuffer(tipo, id_vbo);
+   glDrawArrays(GL_POINTS, 0, numero_datos);
+   glBindBuffer(tipo, 0);
+
+   glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void VBO_Triangulos::Visualizar(enum visualizacion modo)

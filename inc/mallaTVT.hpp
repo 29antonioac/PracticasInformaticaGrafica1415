@@ -6,22 +6,28 @@
 #include <vector>
 #include <utility>
 #include <cmath>
+#include <cstdlib>
 #include "tuplas.hpp"
 #include "error-ogl.hpp"
 #include "visualizacion.hpp"
 #include "VBO.hpp"
 #include "Matriz.hpp"
 
+using std::cout;
+using std::endl;
+using std::vector;
+using std::pair;
+
 
 class MallaTVT
 {
 private:
 
-   std::vector<Tupla3f> ver;
-   std::vector<Tupla3i> tri;
+   vector<Tupla3f> ver;
+   vector<Tupla3i> tri;
 
-   std::vector<Tupla3f> colores_vertices, normales_vertices, normales_caras, baricentros;
-   std::vector<std::pair<Tupla3f,Tupla3f> > lineas_normales_caras, lineas_normales_vertices;
+   vector<Tupla3f> colores_vertices, normales_vertices, normales_caras, baricentros;
+   vector<pair<Tupla3f,Tupla3f> > lineas_normales_caras, lineas_normales_vertices;
 
    VBO_Vertices   * vbo_vertices;
    VBO_Triangulos * vbo_triangulos;
@@ -43,10 +49,10 @@ private:
    void VisualizarNormalesCaras();
    void VisualizarNormalesVertices();
 
-   MallaTVT(std::vector<Tupla3f> vertices, std::vector<Tupla3i> caras);
+   MallaTVT(vector<Tupla3f> vertices, vector<Tupla3i> caras);
 
 public:
-   MallaTVT(std::vector<GLfloat> vertices, std::vector<int> caras = std::vector<int>() );
+   MallaTVT(vector<GLfloat> vertices, vector<int> caras = vector<int>() );
    void Visualizar();
    MallaTVT* Revolucion(const unsigned caras);
    MallaTVT* Barrido_Rotacion(const unsigned caras);

@@ -1,9 +1,6 @@
 #include "mallaTVT.hpp"
-#include <cstdlib>
 
-
-
-MallaTVT::MallaTVT(std::vector<GLfloat> vertices, std::vector<int> caras)
+MallaTVT::MallaTVT(vector<GLfloat> vertices, vector<int> caras)
 {
 
    // Pasamos los vértices a vector de Tupla3f
@@ -22,7 +19,7 @@ MallaTVT::MallaTVT(std::vector<GLfloat> vertices, std::vector<int> caras)
    Inicializar();
 }
 
-MallaTVT::MallaTVT(std::vector<Tupla3f> vertices, std::vector<Tupla3i> caras)
+MallaTVT::MallaTVT(vector<Tupla3f> vertices, vector<Tupla3i> caras)
 {
 
    ver = vertices;
@@ -93,13 +90,12 @@ void MallaTVT::CalcularVectoresNormales()
 
       normales_caras.push_back(normal);
 
-
       baricentro[X] = (A[X] + B[X] + C[X])/3;
       baricentro[Y] = (A[Y] + B[Y] + C[Y])/3;
       baricentro[Z] = (A[Z] + B[Z] + C[Z])/3;
       baricentros.push_back(baricentro);
 
-      std::pair<Tupla3f,Tupla3f> linea (baricentro, baricentro + normal * 0.1 * dimension);
+      pair<Tupla3f,Tupla3f> linea (baricentro, baricentro + normal * 0.1 * dimension);
       lineas_normales_caras.push_back(linea);
    }
 
@@ -128,7 +124,7 @@ void MallaTVT::CalcularVectoresNormales()
    {
       normales_vertices[vertice] = (normales_vertices[vertice]).normalized();
 
-      std::pair<Tupla3f,Tupla3f> linea (ver[vertice], ver[vertice] + normales_vertices[vertice] * 0.1 * dimension);
+      pair<Tupla3f,Tupla3f> linea (ver[vertice], ver[vertice] + normales_vertices[vertice] * 0.1 * dimension);
       lineas_normales_vertices.push_back(linea);
    }
 }
@@ -177,7 +173,7 @@ void MallaTVT::Visualizar()
          glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
          break;
       case PUNTOS:
-         glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
+         //glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
          break;
       case AJEDREZ:
          glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
@@ -185,11 +181,16 @@ void MallaTVT::Visualizar()
       case SOLIDO_CARAS:
          glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
          break;
+      default:
+         cout << "Enumerado inválido para modo_dibujo" << endl;
+         exit(-3);
+         break;
 
    }
-
    if (modo_dibujo == SOLIDO_CARAS)
+   {
       VisualizarModoInmediato();
+   }
    else
    {
       // Ver si usamos array de colores o vértices
@@ -205,7 +206,14 @@ void MallaTVT::Visualizar()
 
       vbo_vertices->Activar();
 
-      vbo_triangulos->Visualizar(modo_dibujo);
+      if (modo_dibujo == PUNTOS)
+      {
+         vbo_vertices->Visualizar();
+      }
+      else
+      {
+         vbo_triangulos->Visualizar(modo_dibujo);
+      }
 
       if (!colores_vertices.empty())
          glDisableClientState( GL_COLOR_ARRAY );
@@ -265,7 +273,7 @@ MallaTVT* MallaTVT::Revolucion(const unsigned caras)
 
    float alpha = 2*M_PI/caras;
 
-   std::vector<Tupla3f> centro_tapas;
+   vector<Tupla3f> centro_tapas;
 
 
    if (ver.front()[X] != 0.0f)
@@ -292,11 +300,11 @@ MallaTVT* MallaTVT::Revolucion(const unsigned caras)
 
 
    // Crear matriz de perfiles
-   std::vector<std::vector<Tupla3f> > perfiles;
+   vector<vector<Tupla3f> > perfiles;
 
    perfiles.push_back(ver);
-   std::vector<Tupla3f> perfil_actual;
-   std::vector<int> vertices_fijos;
+   vector<Tupla3f> perfil_actual;
+   vector<int> vertices_fijos;
    Tupla3f vertice_actual;
 
    for (unsigned perfil = 1; perfil < caras; perfil++)
@@ -388,17 +396,17 @@ MallaTVT* MallaTVT::Barrido_Rotacion(const unsigned caras)
 
    float alpha = 2*M_PI/caras;
 
-   std::vector<Tupla3f> centro_tapas;
+   vector<Tupla3f> centro_tapas;
 
    unsigned vertices_perfil = ver.size();
 
 
    // Crear matriz de perfiles
-   std::vector<std::vector<Tupla3f> > perfiles;
+   vector<vector<Tupla3f> > perfiles;
 
    perfiles.push_back(ver);
-   std::vector<Tupla3f> perfil_actual;
-   std::vector<int> vertices_fijos;
+   vector<Tupla3f> perfil_actual;
+   vector<int> vertices_fijos;
    Tupla3f vertice_actual;
 
    for (unsigned perfil = 1; perfil < caras; perfil++)
@@ -491,10 +499,10 @@ MallaTVT* MallaTVT::Barrido_Traslacion(const unsigned caras, const float dx, con
    unsigned vertices_perfil = ver.size();
 
    // Crear matriz de perfiles
-   std::vector<std::vector<Tupla3f> > perfiles;
+   vector<vector<Tupla3f> > perfiles;
 
    perfiles.push_back(ver);
-   std::vector<Tupla3f> perfil_actual;
+   vector<Tupla3f> perfil_actual;
    Tupla3f vertice_actual;
 
    for (unsigned perfil = 1; perfil < caras; perfil++)

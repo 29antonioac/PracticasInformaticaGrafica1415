@@ -17,6 +17,7 @@ protected:
    GLvoid * datos;
 public:
    VBO( GLuint tipo, GLuint numero_datos, GLuint tamanio, GLvoid * puntero );
+   virtual ~VBO();
    GLuint getID();
    GLvoid * getDatos();
 
@@ -29,6 +30,7 @@ public:
    VBO_Vertices(GLuint numero_datos, GLuint tamanio, GLvoid * puntero) : VBO(GL_ARRAY_BUFFER, numero_datos, tamanio, puntero) {}
 
    void Activar();
+   void Visualizar();
 };
 
 class VBO_Colores : virtual public VBO
