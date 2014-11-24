@@ -43,7 +43,6 @@ void MallaTVT::Inicializar()
    CalcularDimension();
    CalcularVectoresNormales();
 
-
    // Asignamos colores a los vértices según su normal
    for (unsigned i = 0; i < ver.size(); i++)
    {
@@ -98,8 +97,6 @@ void MallaTVT::CalcularVectoresNormales()
       pair<Tupla3f,Tupla3f> linea (baricentro, baricentro + normal * 0.1 * dimension);
       lineas_normales_caras.push_back(linea);
    }
-
-
 
    Tupla3f ceros(0.0,0.0,0.0);
 
@@ -162,7 +159,7 @@ void MallaTVT::Visualizar()
 {
 
    // Ponemos un color por defecto por si no hubiera array de colores
-   glColor3f(0.0,0.0,1.0);
+   glColor3f(0.0,1.0,1.0);
 
    switch (modo_dibujo)
    {
@@ -173,7 +170,6 @@ void MallaTVT::Visualizar()
          glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
          break;
       case PUNTOS:
-         //glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
          break;
       case AJEDREZ:
          glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);

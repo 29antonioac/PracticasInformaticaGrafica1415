@@ -2,16 +2,9 @@
 // **
 // ** Informática Gráfica, curso 2014-15
 // ** 
-// ** Práctica 1  (implementación)
+// ** Práctica 2  (implementación)
 // **
 // *********************************************************************
-
-// Práctica 2 NO IMPLEMENTADA
-// Está aquí sólo por motivos de prueba
-// del sistema de cambio de prácticas
-
-//#define c cos(alpha)
-//#define s sin(alpha)
 
 #include <GL/glew.h>
 #include <GL/glut.h>
@@ -37,7 +30,6 @@ MallaTVT * pm_P2;
 // barrido por rotación o barrido por traslación.
 // Si hay más de un define tiene prioridad el que esté más arriba.
 //
-
 
 #define REVOLUCION
 //#define BARRIDO_ROTACION
@@ -110,18 +102,10 @@ for (unsigned i = 0; i < P2_vertices_ply.size(); i+=3)
 #endif
 
    cout << "-----------------------------------" << endl;
-
-
-   
 }
-
-// ---------------------------------------------------------------------
-// función a implementar en la práctica 1  dibujar los objetos
 
 void P2_DibujarObjetos()
 {
-
-
 #if defined REVOLUCION or defined BARRIDO_ROTACION or defined BARRIDO_TRASLACION
    pm_P2->Visualizar();
 #endif
