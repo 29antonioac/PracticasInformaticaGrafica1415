@@ -26,6 +26,7 @@
 #include "error-ogl.hpp"
 #include "practica1.hpp"
 #include "practica2.hpp"
+#include "practica3.hpp"
 #include "mallaTVT.hpp"
 
 using std::cout;
@@ -312,6 +313,8 @@ void FGE_PulsarTeclaEspecial( int tecla, int x_raton, int y_raton )
          DibujarObjetos = P2_DibujarObjetos;
          break;
       case GLUT_KEY_F3:
+         pmActual = pm_P3;
+         DibujarObjetos = P3_DibujarObjetos;
          break;
       case GLUT_KEY_F4:
          break;
