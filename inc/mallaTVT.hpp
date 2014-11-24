@@ -17,6 +17,7 @@ using std::cout;
 using std::endl;
 using std::vector;
 using std::pair;
+using std::max;
 
 
 class MallaTVT

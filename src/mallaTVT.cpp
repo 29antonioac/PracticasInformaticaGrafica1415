@@ -58,18 +58,26 @@ void MallaTVT::Inicializar()
 
 void MallaTVT::CalcularDimension()
 {
-   dimension = 0;
+   float dimension_maxima_ejes[3] = {0.0,0.0,0.0};
+   float dimension_minima_ejes[3] = {0.0,0.0,0.0};
+
    for (unsigned vertice = 0; vertice < ver.size(); vertice++)
    {
       for (unsigned coo = 0; coo < 3; coo++)
       {
-         float dim_actual = fabs(ver[vertice][coo]);
-         if (dim_actual > dimension)
-            dimension = dim_actual;
+         if (ver[vertice][coo] < dimension_minima_ejes[coo])
+            dimension_minima_ejes[coo] = ver[vertice][coo];
+         else if (ver[vertice][coo] > dimension_maxima_ejes[coo])
+            dimension_maxima_ejes[coo] = ver[vertice][coo];
       }
    }
 
-   dimension *= 2;
+   for (unsigned coo = 0; coo < 3; coo++)
+   {
+         dimension_maxima_ejes[coo] -= dimension_minima_ejes[coo];
+   }
+
+   dimension = max(dimension_maxima_ejes[X],max(dimension_maxima_ejes[Y], dimension_maxima_ejes[Z]));
 }
 
 void MallaTVT::CalcularVectoresNormales()
