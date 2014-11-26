@@ -3,7 +3,7 @@
 // ** Informática Gráfica, curso 2014-15
 // ** 
 // **
-// ** Práctica 1  (declaraciones públicas)
+// ** Práctica 2  (declaraciones públicas)
 // **
 // *********************************************************************
 
