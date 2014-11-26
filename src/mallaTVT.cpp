@@ -16,6 +16,13 @@ MallaTVT::MallaTVT(vector<GLfloat> vertices, vector<int> caras)
       tri.push_back(cara);
    }
 
+   for (unsigned i = 3; i < caras.size(); i+=6)
+   {
+      Tupla3i cara(caras[i],caras[i+1],caras[i+2]);
+      tri.push_back(cara);
+   }
+
+
    Inicializar();
 }
 
@@ -52,6 +59,9 @@ void MallaTVT::Inicializar()
 
    this->modo_dibujo = ALAMBRE;
    this->dibujo_normales = NADA;
+
+   color_primario = Tupla3f(0.5,0.5,0.5);
+   color_secundario = Tupla3f(0.0,0.0,0.0);
 
    CrearVBOs();
 }
@@ -146,6 +156,8 @@ void MallaTVT::CrearVBOs()
       tam_lineas_normales_caras = sizeof(float) * elementos_lineas_normales_caras,
       tam_lineas_normales_vertices = sizeof(float) * elementos_lineas_normales_vertices;
 
+   cout << "Tengo " << num_verts << " vértices y " << tri.size() << " triángulos" << endl;
+
    vbo_vertices = new VBO_Vertices(elementos_vertices, tam_ver, ver.data());
    vbo_triangulos = new VBO_Triangulos(elementos_triangulos, tam_tri, tri.data());
    vbo_colores_vertices = new VBO_Colores(elementos_vertices, tam_ver, colores_vertices.data());
@@ -208,7 +220,7 @@ void MallaTVT::Visualizar()
       }
       else
       {
-         vbo_triangulos->Visualizar(modo_dibujo);
+         vbo_triangulos->Visualizar(modo_dibujo, color_primario, color_secundario);
       }
 
       if (!colores_vertices.empty())
@@ -234,7 +246,7 @@ void MallaTVT::VisualizarModoInmediato()
    glBegin( GL_TRIANGLES );
    for (unsigned i = 0; i < tri.size(); i++)
    {
-      if(!normales_caras.empty())
+      if(normales_caras.empty())
       {
          glColor3fv( normales_caras[i].abs().data() );
          glNormal3fv( normales_caras[i].data() );

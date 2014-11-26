@@ -5,6 +5,10 @@
 #include <GL/glut.h>
 #include <iostream>
 #include "visualizacion.hpp"
+#include "tuplas.hpp"
+
+using std::cout;
+using std::endl;
 
 
 class VBO
@@ -55,7 +59,7 @@ public:
    VBO_Triangulos(GLuint numero_datos, GLuint tamanio, GLvoid * puntero) : VBO(GL_ELEMENT_ARRAY_BUFFER, numero_datos, tamanio,  puntero) {}
 
    void Activar();
-   void Visualizar(enum visualizacion modo);
+   void Visualizar(enum visualizacion modo, Tupla3f color_primario, Tupla3f color_secundario);
 };
 
 class VBO_Lineas : virtual public VBO

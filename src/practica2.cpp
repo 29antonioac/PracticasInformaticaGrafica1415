@@ -40,7 +40,7 @@ void Practica2::Inicializar(int argc, char *argv[])
 
 #if defined REVOLUCION
       file = "PLY/arboldenavidad.ply";
-      N = 20;
+      N = 4;
 #elif defined BARRIDO_ROTACION
       file = "PLY/toro.ply";
       N = 20;
