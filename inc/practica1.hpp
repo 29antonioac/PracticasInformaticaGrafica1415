@@ -27,7 +27,6 @@ public:
    void Inicializar(int argc, char * argv[]);
    void CambioModoDibujo(visualizacion modo_dibujo);
    void CambioModoNormales();
-   void DibujarCuboPuntos();
 
    virtual ~Practica1() {};
 //protected:
@@ -42,19 +41,6 @@ private:
 
    vector<float> vertices_ply;
    vector<int> caras_ply;
-/*
-   static const unsigned num_verts_cubo = 8;
-
-   static GLfloat coords_verts_cubo[num_verts_cubo][3] =
-      {  { -0.5, -0.5, +0.5 } ,
-         { +0.5, -0.5, +0.5 } ,
-         { +0.5, +0.5, +0.5 } ,
-         { -0.5, +0.5, +0.5 } ,
-         { -0.5, -0.5, -0.5 } ,
-         { +0.5, -0.5, -0.5 } ,
-         { +0.5, +0.5, -0.5 } ,
-         { -0.5, +0.5, -0.5 }
-      };*/
 };
 
 #endif

@@ -19,24 +19,6 @@ using std::cout;
 using std::endl;
 using std::string;
 using std::vector;
-   
-// ---------------------------------------------------------------------
-//  dibujar vértices del cubo en modo inmediato con begin/end
-
-void Practica1::DibujarCuboPuntos()
-{
-   /*
-   glColor3f( 0.10, 0.15, 0.40 );
-   glPointSize(4);
-
-   glBegin(GL_POINTS);
-   for ( unsigned i= 0 ; i < num_verts_cubo ; i++ )
-   {
-        glVertex3fv( &( coords_verts_cubo[i][0] ) );
-   }
-   glEnd();*/
-   
-}
 
 // ---------------------------------------------------------------------
 // función para implementar en la práctica 1 para inicialización
