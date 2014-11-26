@@ -27,7 +27,7 @@
 #include "practica1.hpp"
 #include "practica2.hpp"
 #include "practica3.hpp"
-#include "mallaTVT.hpp"
+//#include "mallaTVT.hpp"
 
 using std::cout;
 using std::endl;
@@ -66,10 +66,10 @@ int
    ventana_tam_y  = 800 ;  // alto inicial actual de la ventana, en pixels
 
 
-// Puntero a la malla actual
-// Puntero a la función de dibujado actual
-MallaTVT * pmActual;
-void (*DibujarObjetos)();
+// Puntero a la práctica actual
+Practica    * practicaActual;
+Practica1   * practica1 = new Practica1;
+Practica2   * practica2 = new Practica2;
 
 
 
@@ -193,7 +193,7 @@ void FGE_Redibujado()
    FijarCamara();
    LimpiarVentana();
    DibujarEjes() ;
-   DibujarObjetos();
+   practicaActual->DibujarObjetos();
    glutSwapBuffers();
 }
 
@@ -236,26 +236,26 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
          frustum_factor_escala /= 1.05;
          break;
       case 'L':
-         pmActual->CambioModoDibujo(ALAMBRE);
+         practicaActual->CambioModoDibujo(ALAMBRE);
       	break;
       case 'S':
-         pmActual->CambioModoDibujo(SOLIDO);
+         practicaActual->CambioModoDibujo(SOLIDO);
       	break;
       case 'D':
-         pmActual->CambioModoDibujo(SOLIDO_CARAS);
+         practicaActual->CambioModoDibujo(SOLIDO_CARAS);
          break;
       case 'P':
-         pmActual->CambioModoDibujo(PUNTOS);
+         practicaActual->CambioModoDibujo(PUNTOS);
       	break;
       case 'A':
-         pmActual->CambioModoDibujo(AJEDREZ);
+         practicaActual->CambioModoDibujo(AJEDREZ);
          break;
       case 'R':
          camara_angulo_x = 0.0 ;
          camara_angulo_y = 0.0 ;
          break;
       case 'N':
-         pmActual->CambioModoNormales();
+         practicaActual->CambioModoNormales();
          break;
       default:
          redisp = false ;
@@ -303,18 +303,15 @@ void FGE_PulsarTeclaEspecial( int tecla, int x_raton, int y_raton )
       case GLUT_KEY_F1:
          // Reasigno punteros a malla y función de dibujado
          // de la práctica 1
-         pmActual = pm_P1;
-         DibujarObjetos = P1_DibujarObjetos;
+         practicaActual = practica1;
          break;
       case GLUT_KEY_F2:
          // Reasigno punteros a malla y función de dibujado
          // de la práctica 2
-         pmActual = pm_P2;
-         DibujarObjetos = P2_DibujarObjetos;
+         practicaActual = practica2;
          break;
       case GLUT_KEY_F3:
-         pmActual = pm_P3;
-         DibujarObjetos = P3_DibujarObjetos;
+         //pmActual = pm_P3;
          break;
       case GLUT_KEY_F4:
          break;
@@ -519,14 +516,13 @@ void Inicializar( int argc, char *argv[] )
    Inicializa_OpenGL() ;
    
    // inicializar práctica 1: carga el ply
-   P1_Inicializar( argc, argv ) ;
-   P2_Inicializar( argc, argv ) ;
+   practica1->Inicializar( argc, argv ) ;
+   practica2->Inicializar( argc, argv ) ;
 
 
    // asigna como malla actual la de la práctica 1
    // y como función de dibujado la de la práctica 1
-   pmActual = pm_P2;
-   DibujarObjetos = P2_DibujarObjetos;
+   practicaActual = practica1;
 }
 
 // *********************************************************************

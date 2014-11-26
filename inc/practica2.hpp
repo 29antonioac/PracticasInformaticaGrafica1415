@@ -10,12 +10,36 @@
 #ifndef __IG_PRACTICA2_HPP__
 #define __IG_PRACTICA2_HPP__
 
+#include <vector>
 #include "visualizacion.hpp"
 #include "mallaTVT.hpp"
+#include "practica.hpp"
 
-void P2_DibujarObjetos() ;
-void P2_Inicializar( int argc, char *argv[] ) ;
 
-extern MallaTVT * pm_P2;
+class Practica2 : virtual public Practica
+{
+public:
+   /*static Practica2 getInstance()
+   {
+      static Practica2 instance;
+      return instance;
+   }*/
+   void DibujarObjetos();
+   void Inicializar(int argc, char * argv[]);
+   void CambioModoDibujo(visualizacion modo_dibujo);
+   void CambioModoNormales();
+
+   virtual ~Practica2() {};
+//protected:
+   Practica2() {};
+
+   Practica2(Practica2 const&);
+   //void operator=(Practica2 const&);
+
+private:
+
+   MallaTVT * malla;
+   vector<float> vertices_ply;
+};
 
 #endif

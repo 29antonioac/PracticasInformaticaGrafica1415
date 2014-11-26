@@ -30,6 +30,9 @@ private:
    vector<Tupla3f> colores_vertices, normales_vertices, normales_caras, baricentros;
    vector<pair<Tupla3f,Tupla3f> > lineas_normales_caras, lineas_normales_vertices;
 
+   Tupla3f color_primario;
+   Tupla3f color_secundario;
+
    VBO_Vertices   * vbo_vertices;
    VBO_Triangulos * vbo_triangulos;
    VBO_Colores    * vbo_colores_vertices;
