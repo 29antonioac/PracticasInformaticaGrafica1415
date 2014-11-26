@@ -254,7 +254,7 @@ void MallaTVT::VisualizarModoInmediato()
    glBegin( GL_TRIANGLES );
    for (unsigned i = 0; i < tri.size(); i++)
    {
-      if(normales_caras.empty())
+      if(!normales_caras.empty())
       {
          glColor3fv( normales_caras[i].abs().data() );
          glNormal3fv( normales_caras[i].data() );
