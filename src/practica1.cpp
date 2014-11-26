@@ -14,37 +14,18 @@
 #include <vector>
 #include "practica1.hpp"
 #include "file_ply_stl.hpp"
-#include "mallaTVT.hpp"
 
 using std::cout;
 using std::endl;
 using std::string;
 using std::vector;
-
-// ---------------------------------------------------------------------
-// coordenadas de los vértices del cubo:
-
-const unsigned num_verts_cubo = 8 ;
-
-GLfloat coords_verts_cubo[num_verts_cubo][3] = 
-   {  { -0.5, -0.5, +0.5 } ,
-      { +0.5, -0.5, +0.5 } ,
-      { +0.5, +0.5, +0.5 } ,
-      { -0.5, +0.5, +0.5 } ,
-      { -0.5, -0.5, -0.5 } ,
-      { +0.5, -0.5, -0.5 } ,
-      { +0.5, +0.5, -0.5 } ,
-      { -0.5, +0.5, -0.5 }
-   };
-
-
-MallaTVT * pm_P1;
    
 // ---------------------------------------------------------------------
 //  dibujar vértices del cubo en modo inmediato con begin/end
 
-void DibujarCuboPuntos()
+void Practica1::DibujarCuboPuntos()
 {
+   /*
    glColor3f( 0.10, 0.15, 0.40 );
    glPointSize(4);
 
@@ -53,7 +34,7 @@ void DibujarCuboPuntos()
    {
         glVertex3fv( &( coords_verts_cubo[i][0] ) );
    }
-   glEnd();
+   glEnd();*/
    
 }
 
@@ -62,7 +43,7 @@ void DibujarCuboPuntos()
 // se llama una vez al inicio, cuando ya se ha creado la ventana e 
 // incializado OpenGL. El PLY se debe cargar aquí.
 
-void P1_Inicializar( int argc, char *argv[] )
+void Practica1::Inicializar( int argc, char *argv[] )
 {
 
    string file;
@@ -83,11 +64,8 @@ void P1_Inicializar( int argc, char *argv[] )
 
    cout << "Archivo: " << file << endl;
 
-   vector<float> vertices;
-   vector<int> caras;
-
-   ply::read(file.c_str(),vertices,caras);
-   pm_P1 = new MallaTVT(vertices,caras);
+   ply::read(file.c_str(),vertices_ply,caras_ply);
+   malla = new MallaTVT(vertices_ply,caras_ply);
 
    cout << "-----------------------------------" << endl;
 
@@ -98,8 +76,18 @@ void P1_Inicializar( int argc, char *argv[] )
 // ---------------------------------------------------------------------
 // función a implementar en la práctica 1  dibujar los objetos
 
-void P1_DibujarObjetos()
+void Practica1::DibujarObjetos()
 {
    //DibujarCuboPuntos() ;
-   pm_P1->Visualizar();
+   malla->Visualizar();
+}
+
+void Practica1::CambioModoDibujo(visualizacion modo_dibujo)
+{
+   malla->CambioModoDibujo(modo_dibujo);
+}
+
+void Practica1::CambioModoNormales()
+{
+   malla->CambioModoNormales();
 }

@@ -11,19 +11,13 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
-#include <vector>
 #include "practica2.hpp"
 #include "file_ply_stl.hpp"
-#include "mallaTVT.hpp"
 #include "Matriz.hpp"
 
 using std::cout;
 using std::vector;
 using std::string;
-
-vector<float> P2_vertices_ply;
-
-MallaTVT * pm_P2;
 
 // ---------------------------------------------------------------------
 // Estos defines controlan si la práctica se compila para modo revolución,
@@ -35,7 +29,7 @@ MallaTVT * pm_P2;
 //#define BARRIDO_ROTACION
 //#define BARRIDO_TRASLACION
 
-void P2_Inicializar( int argc, char *argv[] )
+void Practica2::Inicializar(int argc, char *argv[])
 {
 
    unsigned N;
@@ -80,47 +74,52 @@ void P2_Inicializar( int argc, char *argv[] )
 
    cout << "Archivo: " << file << endl;
 
-   ply::read_vertices(file.c_str(),P2_vertices_ply);
+   ply::read_vertices(file.c_str(),vertices_ply);
 
 #if defined REVOLUCION or defined BARRIDO_ROTACION or defined BARRIDO_TRASLACION
-   pm_P2 = new MallaTVT(P2_vertices_ply);
+   malla = new MallaTVT(vertices_ply);
 #endif
 
 #if defined REVOLUCION
-   pm_P2 = pm_P2->Revolucion(N);
+   malla = malla->Revolucion(N);
 #elif defined BARRIDO_ROTACION
-   pm_P2 = pm_P2->Barrido_Rotacion(N);
+   malla = malla->Barrido_Rotacion(N);
 #elif defined BARRIDO_TRASLACION
-   pm_P2 = pm_P2->Barrido_Traslacion(N,0.5,0.5,0.5);
+   malla = malla->Barrido_Traslacion(N,0.5,0.5,0.5);
 #endif
 
 #if not defined REVOLUCION and not defined BARRIDO_ROTACION and not defined BARRIDO_TRASLACION
-for (unsigned i = 0; i < P2_vertices_ply.size(); i+=3)
+for (unsigned i = 0; i < vertices_ply.size(); i+=3)
 {
-   cout << "(" << P2_vertices_ply[i] << "," << P2_vertices_ply[i+1] << "," << P2_vertices_ply[i+2] << ")" << endl;
+   cout << "(" << vertices_ply[i] << "," << vertices_ply[i+1] << "," << vertices_ply[i+2] << ")" << endl;
 }
 #endif
 
    cout << "-----------------------------------" << endl;
 }
 
-void P2_DibujarObjetos()
+void Practica2::DibujarObjetos()
 {
 #if defined REVOLUCION or defined BARRIDO_ROTACION or defined BARRIDO_TRASLACION
-   pm_P2->Visualizar();
+   malla->Visualizar();
 #endif
 
 #if not defined REVOLUCION and not defined BARRIDO_ROTACION and not defined BARRIDO_TRASLACION
    glBegin(GL_LINE_STRIP);
-   for (unsigned i = 0; i < P2_vertices_ply.size(); i+=3)
+   for (unsigned i = 0; i < vertices_ply.size(); i+=3)
    {
-      glVertex3f (P2_vertices_ply[i], P2_vertices_ply[i+1], P2_vertices_ply[i+2] );
+      glVertex3f (vertices_ply[i], vertices_ply[i+1], vertices_ply[i+2] );
    }
    glEnd();
 #endif
+}
 
+void Practica2::CambioModoDibujo(visualizacion modo_dibujo)
+{
+   malla->CambioModoDibujo(modo_dibujo);
+}
 
-
-
-
+void Practica2::CambioModoNormales()
+{
+   malla->CambioModoNormales();
 }
