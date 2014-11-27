@@ -27,7 +27,6 @@
 #include "practica1.hpp"
 #include "practica2.hpp"
 #include "practica3.hpp"
-//#include "mallaTVT.hpp"
 
 using std::cout;
 using std::endl;
@@ -226,13 +225,13 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
    bool redisp = true ;
    switch (toupper(tecla))
    {
-      case 'Q' :
+      case 'Q':
          exit( 0 );
          break ;
-      case '+' :
+      case '+':
          frustum_factor_escala *= 1.05;
          break;
-      case '-' :
+      case '-':
          frustum_factor_escala /= 1.05;
          break;
       case 'L':
@@ -301,17 +300,12 @@ void FGE_PulsarTeclaEspecial( int tecla, int x_raton, int y_raton )
          frustum_factor_escala /= 1.05;
          break;
       case GLUT_KEY_F1:
-         // Reasigno punteros a malla y función de dibujado
-         // de la práctica 1
          practicaActual = practica1;
          break;
       case GLUT_KEY_F2:
-         // Reasigno punteros a malla y función de dibujado
-         // de la práctica 2
          practicaActual = practica2;
          break;
       case GLUT_KEY_F3:
-         //pmActual = pm_P3;
          break;
       case GLUT_KEY_F4:
          break;
@@ -515,13 +509,10 @@ void Inicializar( int argc, char *argv[] )
    // opengl: define proyección y atributos iniciales
    Inicializa_OpenGL() ;
    
-   // inicializar práctica 1: carga el ply
+   // inicializar prácticas
    practica1->Inicializar( argc, argv ) ;
    practica2->Inicializar( argc, argv ) ;
 
-
-   // asigna como malla actual la de la práctica 1
-   // y como función de dibujado la de la práctica 1
    practicaActual = practica1;
 }
 
