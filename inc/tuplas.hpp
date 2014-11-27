@@ -26,7 +26,7 @@ class Tupla
 private:
    T coo[N];
 public:
-   inline Tupla<N,T>(){};
+   inline Tupla<N,T>();
    inline Tupla( const T x, const T y, const T z );
    inline Tupla( const T x, const T y, const T z, const T w);
    inline Tupla( const T coot[N] );
@@ -50,18 +50,25 @@ public:
    inline T* data();
 
    // Operador de flujo de salida
-   friend inline ostream& operator<<(ostream &f, const Tupla<N,T> &v)
+   friend inline ostream& operator<<(ostream &flujo, const Tupla<N,T> &t)
    {
-      f << "(";
+      flujo << "(";
       for (unsigned i = 0; i < N - 1; i++)
       {
-         f << v[i] << ",";
+         flujo << t[i] << ",";
       }
-      f << v[N - 1] << ")" << flush;
+      flujo << t[N - 1] << ")" << flush;
 
-      return f;
+      return flujo;
    }
 };
+
+template <unsigned N, class T>
+inline Tupla<N,T>::Tupla()
+{
+   for (unsigned i = 0; i < N; i++)
+      coo[i] = 0;
+}
 
 // Constructor de tupla con 3 elementos
 template <unsigned N,class T>
@@ -88,11 +95,11 @@ inline Tupla<N,T>::Tupla( const T x, const T y, const T z, const T w)
 
 // Constructor de copia usando un array
 template <unsigned N,class T>
-inline Tupla<N,T>::Tupla( const T coot[N] )
+inline Tupla<N,T>::Tupla( const T v[N] )
 {
    for (unsigned i = 0; i < N; i++)
    {
-      coo[i] = coot[i];
+      coo[i] = v[i];
    }
 }
 
