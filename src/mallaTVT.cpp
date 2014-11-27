@@ -116,7 +116,7 @@ void MallaTVT::CalcularVectoresNormales()
       lineas_normales_caras.push_back(linea);
    }
 
-   Tupla3f ceros(0.0,0.0,0.0);
+   Tupla3f ceros;
 
    for (unsigned vertice = 0; vertice < ver.size(); vertice++)
    {
