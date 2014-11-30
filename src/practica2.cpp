@@ -6,8 +6,6 @@
 // **
 // *********************************************************************
 
-#include <GL/glew.h>
-#include <GL/glut.h>
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -40,7 +38,7 @@ void Practica2::Inicializar(int argc, char *argv[])
 
 #if defined REVOLUCION
       file = "PLY/arboldenavidad.ply";
-      N = 4;
+      N = 20;
 #elif defined BARRIDO_ROTACION
       file = "PLY/toro.ply";
       N = 20;

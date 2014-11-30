@@ -10,12 +10,28 @@
 #ifndef __IG_PRACTICA3_HPP__
 #define __IG_PRACTICA3_HPP__
 
-#include "visualizacion.hpp"
-#include "mallaTVT.hpp"
+#include "practica.hpp"
+#include "grafoescena.hpp"
 
-void P3_DibujarObjetos() ;
-void P3_Inicializar( int argc, char *argv[] ) ;
+class Practica3 : virtual public Practica
+{
+public:
 
-extern MallaTVT * pm_P3;
+   void DibujarObjetos();
+   void Inicializar(int argc, char * argv[]);
+   void CambioModoDibujo(visualizacion modo_dibujo);
+   void CambioModoNormales();
+
+   virtual ~Practica3() {};
+
+   Practica3() { modo_dibujo = ALAMBRE; };
+   Practica3(Practica3 const&);
+
+private:
+   visualizacion modo_dibujo;
+   NodoGrafoEscena * raiz;
+   MallaTVT * malla;
+
+};
 
 #endif
