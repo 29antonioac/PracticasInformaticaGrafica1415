@@ -4,7 +4,8 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include <iostream>
-#include "visualizacion.hpp"
+
+#include "enumerados.hpp"
 #include "tuplas.hpp"
 
 using std::cout;
