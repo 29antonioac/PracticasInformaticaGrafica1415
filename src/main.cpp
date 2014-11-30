@@ -69,6 +69,7 @@ int
 Practica    * practicaActual;
 Practica1   * practica1 = new Practica1;
 Practica2   * practica2 = new Practica2;
+Practica3   * practica3 = new Practica3;
 
 
 
@@ -306,6 +307,7 @@ void FGE_PulsarTeclaEspecial( int tecla, int x_raton, int y_raton )
          practicaActual = practica2;
          break;
       case GLUT_KEY_F3:
+         practicaActual = practica3;
          break;
       case GLUT_KEY_F4:
          break;
@@ -512,6 +514,7 @@ void Inicializar( int argc, char *argv[] )
    // inicializar prácticas
    practica1->Inicializar( argc, argv ) ;
    practica2->Inicializar( argc, argv ) ;
+   practica3->Inicializar(argc, argv);
 
    practicaActual = practica1;
 }
