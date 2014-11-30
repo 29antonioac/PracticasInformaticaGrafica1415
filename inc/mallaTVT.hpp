@@ -7,9 +7,10 @@
 #include <utility>
 #include <cmath>
 #include <cstdlib>
+
+#include "enumerados.hpp"
 #include "tuplas.hpp"
 #include "error-ogl.hpp"
-#include "visualizacion.hpp"
 #include "VBO.hpp"
 #include "Matriz.hpp"
 
@@ -53,10 +54,11 @@ private:
    void VisualizarNormalesCaras();
    void VisualizarNormalesVertices();
 
-   MallaTVT(vector<Tupla3f> vertices, vector<Tupla3i> caras);
+
 
 public:
    MallaTVT(vector<GLfloat> vertices, vector<int> caras = vector<int>() );
+   MallaTVT(vector<Tupla3f> vertices, vector<Tupla3i> caras = vector<Tupla3i>());
    void Visualizar();
    MallaTVT* Revolucion(const unsigned caras);
    MallaTVT* Barrido_Rotacion(const unsigned caras);
