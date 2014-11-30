@@ -20,6 +20,8 @@ public:
    Tupla4f operator*(Tupla4f& t);
    Tupla3f operator*(Tupla3f& t);
 
+   float * data();
+
    static Matriz4x4 Identidad();
 
    static Matriz4x4 RotacionEjeX(const float angulo);
@@ -29,7 +31,6 @@ public:
    static Matriz4x4 Escalado(const float sx, const float sy, const float sz);
    static Matriz4x4 Traslacion(const float dx, const float dy, const float dz);
 
-   //Matriz4x4 trasponer();
 };
 
 

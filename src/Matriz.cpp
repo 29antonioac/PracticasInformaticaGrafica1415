@@ -111,6 +111,11 @@ Tupla3f Matriz4x4::operator*(Tupla3f& t)
    return Tupla3f(resultado[0],resultado[1],resultado[2]);
 }
 
+float * Matriz4x4::data()
+{
+   return coe[0];
+}
+
 Matriz4x4 Matriz4x4::Identidad()
 {
    float m[4][4] = {
@@ -191,6 +196,3 @@ Matriz4x4 Matriz4x4::Traslacion(const float dx, const float dy, const float dz)
 
    return Matriz4x4(m,false);
 }
-
-
-//Matriz4x4 Matriz4x4::trasponer();
