@@ -1,6 +1,11 @@
 #ifndef PRACTICA_HPP
 #define PRACTICA_HPP
 
+#include <GL/glew.h>
+#include <GL/glut.h>
+
+#include "enumerados.hpp"
+
 class Practica
 {
 public:
