@@ -5,6 +5,7 @@
 #include <GL/glut.h>
 #include <GL/freeglut_ext.h>
 #include <vector>
+#include <iostream>
 #include "Matriz.hpp"
 #include "mallaTVT.hpp"
 
@@ -48,10 +49,22 @@ private:
   MallaTVT * malla;
 };
 
+class NodoTransformacionParametrizado: public NodoGrafoEscena
+{
+public:
+   NodoTransformacionParametrizado(Matriz4x4 * matriz);
+  ~NodoTransformacionParametrizado() {}
+
+  void Procesa();
+
+private:
+  Matriz4x4 * matrizTransformacion;
+};
+
 class NodoTransformacion: public NodoGrafoEscena
 {
 public:
-   NodoTransformacion(const Matriz4x4& matriz);
+   NodoTransformacion(Matriz4x4 matriz);
   ~NodoTransformacion() {}
 
   void Procesa();

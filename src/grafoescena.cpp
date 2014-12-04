@@ -45,7 +45,7 @@ NodoTerminal::NodoTerminal(figuras figura)
 
 NodoTerminal::NodoTerminal(MallaTVT * malla)
 {
-   this->figura == NINGUNA;
+   this->figura = NINGUNA;
    this->malla = malla;
 }
 
@@ -66,7 +66,22 @@ void NodoTerminal::Procesa()
    NodoGrafoEscena::Procesa();
 }
 
-NodoTransformacion::NodoTransformacion(const Matriz4x4& matriz)
+NodoTransformacionParametrizado::NodoTransformacionParametrizado(Matriz4x4 * matriz)
+{
+   this->matrizTransformacion = matriz;
+}
+
+void NodoTransformacionParametrizado::Procesa()
+{
+ glPushMatrix();
+ glMultMatrixf( matrizTransformacion->data() );
+
+ NodoGrafoEscena::Procesa();
+
+ glPopMatrix();
+}
+
+NodoTransformacion::NodoTransformacion(Matriz4x4 matriz)
 {
    this->matrizTransformacion = matriz;
 }
@@ -80,3 +95,4 @@ void NodoTransformacion::Procesa()
 
  glPopMatrix();
 }
+
