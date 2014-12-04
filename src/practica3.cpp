@@ -101,36 +101,18 @@ void Practica3::Inicializar( int argc, char *argv[] )
    // -------------------------------------------------------------
 
 
-
-
-   /*
-
-   parametros_traslacion = Tupla3f(1.0,1.0,1.0);
-   traslacion = new Matriz4x4(Matriz4x4::Traslacion(parametros_traslacion[0],parametros_traslacion[1],parametros_traslacion[1]));
-   //rotacion_brazos = new Matriz4x4(Matriz4x4::Rotacion(M_PI/4, 1,0,0));
-   rotacion_brazos = new Matriz4x4(Matriz4x4::RotacionEjeX(M_PI/2));
-
-   raiz = new NodoGrafoEscena;
-   NodoGrafoEscena * nodo_semiesfera = new NodoTerminal(semiesfera);
-   NodoGrafoEscena * nodo_traslacion = new NodoTransformacion(traslacion);
-   NodoGrafoEscena * nodo_rotacion_brazos = new NodoTransformacion(rotacion_brazos);
-   NodoGrafoEscena * nodo_cilindro = new NodoTerminal(cilindro);
-   raiz->aniadeHijo(nodo_rotacion_brazos);
-   raiz->aniadeHijo(nodo_cilindro);
-   nodo_rotacion_brazos->aniadeHijo(nodo_traslacion);
-   nodo_traslacion->aniadeHijo(nodo_semiesfera);
-   */
-
    /* Creamos un brazo del Android */
 
    raiz = new NodoGrafoEscena;
 
-   float proporcion_ancho_cuerpo = 2.5;
+   float proporcion_ancho_cuerpo = 2.0;
    float proporcion_alto_cuerpo = 3.0;
-   float proporcion_alto_pierna = 1.0;
+   float proporcion_alto_pierna = 1.2;
+   float proporcion_alto_brazo = 1.2;
    float proporcion_ancho_pierna = 0.5;
-   float proporcion_alto_cabeza = proporcion_alto_cuerpo / 2;
-   float proporcion_alto_brazo = proporcion_alto_cuerpo / 3;
+   float proporcion_ancho_brazo = 0.5;
+   float proporcion_altura_cabeza = proporcion_alto_cuerpo / 2;
+   float proporcion_altura_brazo = proporcion_alto_cuerpo / 3;
 
    NodoGrafoEscena * pierna = new NodoGrafoEscena;
    NodoGrafoEscena * brazo = new NodoGrafoEscena;
@@ -139,14 +121,17 @@ void Practica3::Inicializar( int argc, char *argv[] )
 
    NodoGrafoEscena * nodo_escalado_cilindro_pierna = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_pierna,proporcion_alto_pierna,proporcion_ancho_pierna));
    NodoGrafoEscena * nodo_escalado_cilindro_cuerpo = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_cuerpo,proporcion_alto_cuerpo,proporcion_ancho_cuerpo));
-   NodoGrafoEscena * nodo_escalado_cilindro_brazo = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_pierna,proporcion_alto_pierna,proporcion_ancho_pierna));
-   NodoGrafoEscena * nodo_escalado_semiesfera_cabeza = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_cuerpo,proporcion_alto_cabeza,proporcion_ancho_cuerpo));
+   NodoGrafoEscena * nodo_escalado_cilindro_brazo = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_brazo,proporcion_alto_brazo,proporcion_ancho_brazo));
+   NodoGrafoEscena * nodo_escalado_semiesfera_cabeza = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_cuerpo,proporcion_altura_cabeza,proporcion_ancho_cuerpo));
+   NodoGrafoEscena * nodo_escalado_semiesfera_superior_brazo = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_brazo,proporcion_ancho_brazo,proporcion_ancho_brazo));
+   NodoGrafoEscena * nodo_escalado_semiesfera_inferior_brazo = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_brazo,proporcion_ancho_brazo,proporcion_ancho_brazo));
+   NodoGrafoEscena * nodo_escalado_semiesfera_pierna = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_pierna,proporcion_ancho_pierna,proporcion_ancho_pierna));;
 
    NodoGrafoEscena * nodo_traslacion_pierna_izquierda = new NodoTransformacion(Matriz4x4::Traslacion(-(proporcion_ancho_cuerpo-1.3),-proporcion_alto_pierna,0.0));
    NodoGrafoEscena * nodo_traslacion_pierna_derecha = new NodoTransformacion(Matriz4x4::Traslacion(proporcion_ancho_cuerpo-1.3,-proporcion_alto_pierna,0.0));
-   NodoGrafoEscena * nodo_traslacion_semiesfera_brazo = new NodoTransformacion(Matriz4x4::Traslacion(0.0,1.0,0.0)); // Esta no varía ya que el escalado se hará sobre todo el brazo
-   NodoGrafoEscena * nodo_traslacion_brazo_izquierdo = new NodoTransformacion(Matriz4x4::Traslacion(-(proporcion_ancho_cuerpo+proporcion_ancho_pierna),proporcion_alto_brazo,0.0));
-   NodoGrafoEscena * nodo_traslacion_brazo_derecho = new NodoTransformacion(Matriz4x4::Traslacion(proporcion_ancho_cuerpo+proporcion_ancho_pierna,proporcion_alto_brazo,0.0));
+   NodoGrafoEscena * nodo_traslacion_semiesfera_brazo = new NodoTransformacion(Matriz4x4::Traslacion(0.0,proporcion_alto_brazo,0.0)); // Esta no varía ya que el escalado se hará sobre todo el brazo
+   NodoGrafoEscena * nodo_traslacion_brazo_izquierdo = new NodoTransformacion(Matriz4x4::Traslacion(-(proporcion_ancho_cuerpo+proporcion_ancho_brazo),proporcion_altura_brazo,0.0));
+   NodoGrafoEscena * nodo_traslacion_brazo_derecho = new NodoTransformacion(Matriz4x4::Traslacion(proporcion_ancho_cuerpo+proporcion_ancho_brazo,proporcion_altura_brazo,0.0));
 
    NodoGrafoEscena * nodo_traslacion_cabeza = new NodoTransformacion(Matriz4x4::Traslacion(0.0,proporcion_alto_cuerpo + 0.15, 0.0));
 
@@ -154,18 +139,24 @@ void Practica3::Inicializar( int argc, char *argv[] )
 
    /* Pierna del Android */
 
-   pierna->aniadeHijo(nodo_cilindro);
-   pierna->aniadeHijo(nodo_rotacion_pi);
-      nodo_rotacion_pi->aniadeHijo(nodo_semiesfera);
+   pierna->aniadeHijo(nodo_escalado_cilindro_pierna);
+      nodo_escalado_cilindro_pierna->aniadeHijo(nodo_cilindro);
+   pierna->aniadeHijo(nodo_escalado_semiesfera_pierna);
+      nodo_escalado_semiesfera_pierna->aniadeHijo(nodo_rotacion_pi);
+         nodo_rotacion_pi->aniadeHijo(nodo_semiesfera);
 
    /* Brazo del Android */
 
-   brazo->aniadeHijo(pierna);
+   brazo->aniadeHijo(nodo_escalado_cilindro_brazo);
+      nodo_escalado_cilindro_brazo->aniadeHijo(nodo_cilindro);
+
    brazo->aniadeHijo(nodo_traslacion_semiesfera_brazo);
-      nodo_traslacion_semiesfera_brazo->aniadeHijo(nodo_semiesfera);
+      nodo_traslacion_semiesfera_brazo->aniadeHijo(nodo_escalado_semiesfera_superior_brazo);
+         nodo_escalado_semiesfera_superior_brazo->aniadeHijo(nodo_semiesfera);
+   brazo->aniadeHijo(nodo_escalado_semiesfera_inferior_brazo);
+      nodo_escalado_semiesfera_inferior_brazo->aniadeHijo(nodo_rotacion_pi);  // Esta rotación ya tiene una semiesfera (la de la pierna)
 
    /* Todo el Android */
-
 
    // Cuerpo
    raiz->aniadeHijo(nodo_escalado_cilindro_cuerpo);
@@ -173,25 +164,28 @@ void Practica3::Inicializar( int argc, char *argv[] )
 
    // Pierna izquierda
    raiz->aniadeHijo(nodo_traslacion_pierna_izquierda);
-      nodo_traslacion_pierna_izquierda->aniadeHijo(nodo_escalado_cilindro_pierna);
-         nodo_escalado_cilindro_pierna->aniadeHijo(pierna);
+      nodo_traslacion_pierna_izquierda->aniadeHijo(pierna);
 
    // Pierna derecha
    raiz->aniadeHijo(nodo_traslacion_pierna_derecha);
-   nodo_traslacion_pierna_derecha->aniadeHijo(nodo_escalado_cilindro_pierna);
-      nodo_escalado_cilindro_pierna->aniadeHijo(pierna);
-
+      nodo_traslacion_pierna_derecha->aniadeHijo(pierna);
 
    // Cabeza
    raiz->aniadeHijo(nodo_traslacion_cabeza);
       nodo_traslacion_cabeza->aniadeHijo(nodo_escalado_semiesfera_cabeza);
          nodo_escalado_semiesfera_cabeza->aniadeHijo(nodo_semiesfera);
 
-
    // Brazo izquierdo
    raiz->aniadeHijo(nodo_traslacion_brazo_izquierdo);
-      nodo_traslacion_brazo_izquierdo->aniadeHijo(nodo_escalado_cilindro_brazo);
-      nodo_escalado_cilindro_brazo->aniadeHijo(brazo);
+      nodo_traslacion_brazo_izquierdo->aniadeHijo(brazo);
+   raiz->aniadeHijo(nodo_traslacion_brazo_derecho);
+      nodo_traslacion_brazo_derecho->aniadeHijo(brazo);
+
+   // Ojos
+
+
+
+   // Antenas
 
 
 
