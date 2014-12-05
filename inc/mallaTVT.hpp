@@ -46,6 +46,8 @@ private:
 
    float dimension;
 
+   bool color_fijo;
+
    void CalcularVectoresNormales();
    void CalcularDimension();
    void CrearVBOs();
@@ -66,6 +68,7 @@ public:
    enum visualizacion getModo();
    void CambioModoDibujo ( enum visualizacion modo ) ;
    void CambioModoNormales();
+   void CambioColorFijo();
 };
 
 #endif

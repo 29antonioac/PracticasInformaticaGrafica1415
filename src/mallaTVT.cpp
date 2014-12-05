@@ -57,11 +57,13 @@ void MallaTVT::Inicializar()
       colores_vertices.push_back(color);
    }
 
-   this->modo_dibujo = ALAMBRE;
+   this->modo_dibujo = SOLIDO;
    this->dibujo_normales = NADA;
 
-   color_primario = Tupla3f(0.5,0.5,0.5);
+   color_primario = Tupla3f(0.0,1.0,0.0);
    color_secundario = Tupla3f(0.0,0.0,0.0);
+
+   color_fijo = false;
 
    CrearVBOs();
 }
@@ -177,9 +179,7 @@ void MallaTVT::CrearVBOs()
 
 void MallaTVT::Visualizar()
 {
-
-   // Ponemos un color por defecto por si no hubiera array de colores
-   glColor3f(0.0,1.0,1.0);
+   glColor3fv(color_primario.data());
 
    switch (modo_dibujo)
    {
@@ -210,7 +210,7 @@ void MallaTVT::Visualizar()
    else
    {
       // Ver si usamos array de colores o vértices
-      if (!colores_vertices.empty())
+      if (!colores_vertices.empty() && !color_fijo)
       {
          vbo_colores_vertices->Activar();
       }
@@ -637,4 +637,12 @@ void MallaTVT::CambioModoNormales()
       dibujo_normales = AMBAS;
    else
       dibujo_normales = NADA;
+}
+
+void MallaTVT::CambioColorFijo()
+{
+   if (color_fijo)
+      color_fijo = false;
+   else
+      color_fijo = true;
 }
