@@ -35,6 +35,8 @@ public:
    inline Tupla<N,T>& operator+= (const Tupla<N,T> & t2) ;
    inline Tupla<N,T> operator - ( const Tupla<N,T> & t2 );
    inline Tupla<N,T>& operator-= (const Tupla<N,T> & t2) ;
+   inline Tupla<N,T> operator + (T a);
+   inline Tupla<N,T> operator - (T a);
    inline Tupla<N,T> operator * ( T a );
    inline Tupla<N,T> operator / ( T a );
    inline T operator | ( const Tupla<N,T> & t2 );
@@ -162,7 +164,27 @@ inline Tupla<N,T>& Tupla<N,T>::operator-= (const Tupla<N,T> & t2)
 
    return *this;
 }
+template <unsigned N,class T>
+inline Tupla<N,T> Tupla<N,T>::operator + (T a)
+{
+   Tupla<N,T> suma;
+   for (unsigned i = 0; i < N; i++)
+   {
+      suma[i] = coo[i]+a;
+   }
+   return suma;
+}
 
+template <unsigned N,class T>
+inline Tupla<N,T> Tupla<N,T>::operator - (T a)
+{
+   Tupla<N,T> diferencia;
+   for (unsigned i = 0; i < N; i++)
+   {
+      diferencia[i] = coo[i]-a;
+   }
+   return diferencia;
+}
 // Producto de tupla por escalar
 template <unsigned N,class T>
 inline Tupla<N,T> Tupla<N,T>::operator * ( T a )
