@@ -315,8 +315,6 @@ void Practica3::CambioGradoLibertad(int grado_libertad)
       velocidad_angular_piernas = fabs(velocidad_angular_piernas) * signo;
       float angulo_rotacion_piernas_futuro = angulo_rotacion_piernas + velocidad_angular_piernas;
 
-      cout << "HOLA" << endl;
-
       if (angulo_rotacion_piernas_futuro <= 4*M_PI/3
             && angulo_rotacion_piernas_futuro >= 2*M_PI/3)
          angulo_rotacion_piernas = angulo_rotacion_piernas_futuro;
