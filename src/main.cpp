@@ -194,6 +194,7 @@ void FGE_Redibujado()
    LimpiarVentana();
    DibujarEjes() ;
    practicaActual->DibujarObjetos();
+   glFinish();
    glutSwapBuffers();
 }
 
@@ -256,6 +257,33 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
          break;
       case 'N':
          practicaActual->CambioModoNormales();
+         break;
+      case 'F':
+         practicaActual->CambioColorFijo();
+         break;
+      case 'Z':
+         if (practicaActual == practica3)
+            practica3->CambioGradoLibertad(1);
+         break;
+      case 'X':
+         if (practicaActual == practica3)
+            practica3->CambioGradoLibertad(-1);
+         break;
+      case 'C':
+         if (practicaActual == practica3)
+            practica3->CambioGradoLibertad(2);
+         break;
+      case 'V':
+         if (practicaActual == practica3)
+            practica3->CambioGradoLibertad(-2);
+         break;
+      case 'B':
+         if (practicaActual == practica3)
+            practica3->CambioGradoLibertad(3);
+         break;
+      case 'M':
+         if (practicaActual == practica3)
+            practica3->CambioGradoLibertad(-3);
          break;
       default:
          redisp = false ;
@@ -388,6 +416,17 @@ void FGE_MoverRaton(int x, int y)
    }
 }
 
+void Animar()
+{
+
+   if (practicaActual == practica3)
+      practica3->CambioGradoLibertad(1);
+
+   glutPostRedisplay();
+
+
+}
+
 // *********************************************************************
 // **
 // ** Funciones de inicialización
@@ -435,6 +474,10 @@ void Inicializa_GLUT( int argc, char * argv[] )
    // Añadido para mover la pantalla con ratón
    glutMouseFunc( FGE_PulsarRaton );
    glutMotionFunc( FGE_MoverRaton );
+
+   // Añadido para animar
+   //glutIdleFunc(Animar);
+   //glutTimerFunc(500,Animar,0);
 }
 
 // ---------------------------------------------------------------------
@@ -516,7 +559,7 @@ void Inicializar( int argc, char *argv[] )
    practica2->Inicializar( argc, argv ) ;
    practica3->Inicializar(argc, argv);
 
-   practicaActual = practica1;
+   practicaActual = practica3;
 }
 
 // *********************************************************************
