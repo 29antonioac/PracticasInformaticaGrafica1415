@@ -22,6 +22,7 @@ public:
    void Inicializar(int argc, char * argv[]);
    void CambioModoDibujo(visualizacion modo_dibujo);
    void CambioModoNormales();
+   void CambioColorFijo();
 
    virtual ~Practica1() {};
 

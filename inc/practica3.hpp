@@ -23,6 +23,7 @@ public:
    void CambioModoDibujo(visualizacion modo_dibujo);
    void CambioModoNormales();
    void CambioGradoLibertad(int grado_libertad);
+   void CambioColorFijo();
 
    virtual ~Practica3() {};
 
@@ -35,8 +36,13 @@ private:
    NodoGrafoEscena * raiz;
    MallaTVT * semiesfera, * cilindro;
 
-   Matriz4x4 * rotacion_brazos, * rotacion_piernas, * rotacion_cabeza, * traslacion;
-   Tupla3f parametros_rotacion_brazos, parametros_rotacion_piernas, parametros_rotacion_cabeza, parametros_traslacion;
+   Matriz4x4 * rotacion_brazo_izquierdo, * rotacion_brazo_derecho, * rotacion_pierna_izquierda, * rotacion_pierna_derecha,
+      * rotacion_cuerpo, * traslacion;
+   Tupla3f parametros_rotacion_brazo_izquierdo, parametros_rotacion_brazo_derecho,
+      parametros_rotacion_pierna_izquierda, parametros_rotacion_pierna_derecha, parametros_traslacion;
+
+   float angulo_rotacion_cuerpo, angulo_rotacion_brazos, angulo_rotacion_piernas;
+   float velocidad_angular_brazos, velocidad_angular_piernas;
 
 };
 
