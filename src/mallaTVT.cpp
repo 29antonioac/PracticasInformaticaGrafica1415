@@ -54,7 +54,8 @@ void MallaTVT::Inicializar()
    for (unsigned i = 0; i < ver.size(); i++)
    {
       Tupla3f color(normales_vertices[i].abs());
-      colores_vertices.push_back(color);
+      //colores_vertices.push_back(color);
+      colores_vertices.push_back(Tupla3f(0.0,color[Y],0.0));
    }
 
    this->modo_dibujo = SOLIDO;
