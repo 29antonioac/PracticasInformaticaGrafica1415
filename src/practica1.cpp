@@ -32,7 +32,7 @@ void Practica1::Inicializar( int argc, char *argv[] )
    {
       file = "./PLY/ant.ply";
    }
-   else if (argc == 4)
+   else if (argc == 5)
    {
       file = string(argv[1]);
    }
@@ -70,4 +70,9 @@ void Practica1::CambioModoDibujo(visualizacion modo_dibujo)
 void Practica1::CambioModoNormales()
 {
    malla->CambioModoNormales();
+}
+
+void Practica1::CambioColorFijo()
+{
+   malla->CambioColorFijo();
 }
