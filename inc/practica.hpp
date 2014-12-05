@@ -13,6 +13,7 @@ public:
    virtual void DibujarObjetos() = 0;
    virtual void CambioModoDibujo(enum visualizacion) = 0;
    virtual void CambioModoNormales() = 0;
+   virtual void CambioColorFijo() = 0;
 protected:
    Practica() {};
    Practica(Practica const&);
