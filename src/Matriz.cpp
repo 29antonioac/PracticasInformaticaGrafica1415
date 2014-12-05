@@ -57,7 +57,7 @@ Matriz4x4& Matriz4x4::operator=(const Matriz4x4& m)
    return *this;
 }
 
-Matriz4x4 Matriz4x4::operator*(Matriz4x4& m)
+Matriz4x4 Matriz4x4::operator*(const Matriz4x4& m)
 {
    Matriz4x4 resultado;
 
@@ -173,6 +173,37 @@ Matriz4x4 Matriz4x4::RotacionEjeZ(const float angulo)
    return Matriz4x4(m,false);
 }
 
+Matriz4x4 Matriz4x4::RotacionEje(const float angulo, const float ex, const float ey, const float ez)
+{
+   float c = cosf(angulo);
+   float s = sinf(angulo);
+
+   float hx = (1-c)*ex;
+   float hy = (1-c)*ey;
+   float hz = (1-c)*ez;
+
+   float m[4][4] = {
+         {hx*ex+c,hx*ey-s*ez,hx*ez+s*ey,0},
+         {hy*ex+s*ez,hy*ey+c,hy*ez-s*ex,0},
+         {hz*ex-s*ey,hz*ey+s*ex,hz*ez+c,0},
+         {0,0,0,1}
+   };
+
+   return Matriz4x4(m,false);
+}
+
+Matriz4x4 Matriz4x4::RotacionEje(const float angulo, const Tupla3f eje)
+{
+   return Matriz4x4::RotacionEje(angulo, eje[X], eje[Y], eje[Z]);
+}
+
+/*Matriz4x4 Matriz4x4::RotacionPunto(const float angulo, const Tupla3f punto, const Tupla3f origen)
+{
+   Matriz4x4 traslacion_origen = Matriz4x4::Traslacion(punto[X]-origen[X], punto[Y] - origen[Y], punto[Z] - origen[Z]);
+   Matriz4x4 rotacion = Matriz4x4::Rotacion
+   return Matriz4x4::Traslacion()
+}*/
+
 Matriz4x4 Matriz4x4::Escalado(const float sx, const float sy, const float sz)
 {
    float m[4][4] = {
@@ -185,6 +216,11 @@ Matriz4x4 Matriz4x4::Escalado(const float sx, const float sy, const float sz)
    return Matriz4x4(m,false);
 }
 
+Matriz4x4 Matriz4x4::Escalado(const Tupla3f parametros)
+{
+   return Matriz4x4::Escalado(parametros[X], parametros[Y], parametros[Z]);
+}
+
 Matriz4x4 Matriz4x4::Traslacion(const float dx, const float dy, const float dz)
 {
    float m[4][4] = {
@@ -195,4 +231,9 @@ Matriz4x4 Matriz4x4::Traslacion(const float dx, const float dy, const float dz)
    };
 
    return Matriz4x4(m,false);
+}
+
+Matriz4x4 Matriz4x4::Traslacion(const Tupla3f parametros)
+{
+   return Matriz4x4::Traslacion(parametros[X], parametros[Y], parametros[Z]);
 }
