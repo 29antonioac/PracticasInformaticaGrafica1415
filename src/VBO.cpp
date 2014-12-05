@@ -98,8 +98,7 @@ void VBO_Triangulos::Visualizar(enum visualizacion modo, Tupla3f color_primario,
       glDrawElements( GL_TRIANGLES, num_impares, GL_UNSIGNED_INT, NULL ) ;
 
       glColor3fv(color_secundario.data());
-      //glDrawElements( GL_TRIANGLES, num_pares, GL_UNSIGNED_INT, (const void *) (num_impares*sizeof(GLuint)) ) ;
-      glDrawElements( GL_TRIANGLES, numero_datos, GL_UNSIGNED_INT, NULL ) ;
+      glDrawElements( GL_TRIANGLES, num_pares, GL_UNSIGNED_INT, (const void *) (num_impares*sizeof(GLuint)) ) ;
       glBindBuffer(tipo,0);
    }
 
