@@ -187,14 +187,10 @@ void MallaTVT::Visualizar()
       case ALAMBRE:
          glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
          break;
-      case SOLIDO:
-         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-         break;
       case PUNTOS:
          break;
+      case SOLIDO:
       case AJEDREZ:
-         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-         break;
       case SOLIDO_CARAS:
          glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
          break;
@@ -210,14 +206,19 @@ void MallaTVT::Visualizar()
    }
    else
    {
+      bool color_vertices = false;
+      bool normal_vertices = false;
+
       // Ver si usamos array de colores o vértices
-      if (!colores_vertices.empty() && !color_fijo)
+      if (!color_fijo && !colores_vertices.empty())
       {
+         color_vertices = true;
          vbo_colores_vertices->Activar();
       }
 
       if (!normales_vertices.empty())
       {
+         normal_vertices = true;
          vbo_normales_vertices->Activar();
       }
 
@@ -232,9 +233,9 @@ void MallaTVT::Visualizar()
          vbo_triangulos->Visualizar(modo_dibujo, color_primario, color_secundario);
       }
 
-      if (!colores_vertices.empty())
+      if (color_vertices)
          glDisableClientState( GL_COLOR_ARRAY );
-      if (!normales_vertices.empty())
+      if (normal_vertices)
          glDisableClientState( GL_NORMAL_ARRAY );
    }
 
