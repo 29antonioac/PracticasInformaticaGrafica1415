@@ -375,7 +375,7 @@ void Animar()
 {
 
    if (practicaActual == practica3)
-      practica3->CambioGradoLibertad(1);
+      practica3->Animar();
 
    glutPostRedisplay();
 
@@ -431,7 +431,7 @@ void Inicializa_GLUT( int argc, char * argv[] )
    glutMotionFunc( FGE_MoverRaton );
 
    // Añadido para animar
-   //glutIdleFunc(Animar);
+   glutIdleFunc(Animar);
    //glutTimerFunc(500,Animar,0);
 }
 
