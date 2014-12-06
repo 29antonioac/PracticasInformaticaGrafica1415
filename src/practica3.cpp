@@ -42,11 +42,8 @@ Practica3::Practica3()
    angulo_rotacion_cuerpo = M_PI;
    angulo_rotacion_brazos = M_PI;
    angulo_rotacion_piernas = M_PI;
-   parametros_traslacion = Tupla3f(1.0,0.0,0.0);
 
-   //incremento_angulo_rotacion_brazos = incremento_angulo_rotacion_piernas = incremento_angulo_rotacion_cuerpo = 2*M_PI/100;
-
-   velocidad_angular_cuerpo = velocidad_angular_brazos = velocidad_angular_piernas = 0;
+   distancia_eje_Y = velocidad_angular_cuerpo = velocidad_angular_brazos = velocidad_angular_piernas = 0;
 
    rotacion_cuerpo = rotacion_brazo_izquierdo = rotacion_brazo_derecho = rotacion_pierna_izquierda = rotacion_pierna_derecha = traslacion = NULL;
 }
@@ -176,14 +173,14 @@ void Practica3::Inicializar( int argc, char *argv[] )
 
    // Nodos parametrizados (son iguales pero en vez de guardar la matriz directamente guardan un puntero
 
-   parametros_traslacion = Tupla3f(4*proporcion_ancho_cuerpo, 0.0, 0.0);
+   //parametros_traslacion = Tupla3f(4*proporcion_ancho_cuerpo, 0.0, 0.0);
 
    rotacion_pierna_izquierda = new Matriz4x4(Matriz4x4::RotacionEjeZ(angulo_rotacion_piernas));
    rotacion_pierna_derecha = new Matriz4x4(Matriz4x4::RotacionEjeZ(angulo_rotacion_piernas));
    rotacion_brazo_izquierdo = new Matriz4x4(Matriz4x4::RotacionEjeZ(angulo_rotacion_brazos));
    rotacion_brazo_derecho = new Matriz4x4(Matriz4x4::RotacionEjeZ(angulo_rotacion_brazos));
    rotacion_cuerpo = new Matriz4x4(Matriz4x4::RotacionEjeY(angulo_rotacion_cuerpo));
-   traslacion = new Matriz4x4(Matriz4x4::Traslacion(parametros_traslacion));
+   traslacion = new Matriz4x4(Matriz4x4::Traslacion(distancia_eje_Y,0.0,0.0));
 
    NodoGrafoEscena * nodo_parametrizado_rotacion_pierna_izquierda = new NodoTransformacionParametrizado(rotacion_pierna_izquierda);
    NodoGrafoEscena * nodo_parametrizado_rotacion_pierna_derecha = new NodoTransformacionParametrizado(rotacion_pierna_derecha);
@@ -350,6 +347,13 @@ void Practica3::CambioGradoLibertad(int grado_libertad)
       *rotacion_pierna_izquierda = Matriz4x4::RotacionEjeX(angulo_rotacion_piernas);
       *rotacion_pierna_derecha = Matriz4x4::RotacionEjeX(-angulo_rotacion_piernas);
    }
+   else if (grado_libertad == 4 || grado_libertad == -4)
+   {
+      float inc = incremento_traslacion_cuerpo * signo(grado_libertad);
+      distancia_eje_Y += inc;
+
+      *traslacion = Matriz4x4::Traslacion(distancia_eje_Y,0.0,0.0);
+   }
 
 }
 
@@ -408,6 +412,12 @@ bool Practica3::GestionarEvento(unsigned char tecla)
          break;
       case 'c':
          CambioGradoLibertad(-3);
+         break;
+      case 'V':
+         CambioGradoLibertad(4);
+         break;
+      case 'v':
+         CambioGradoLibertad(-4);
          break;
       case 'b':
          velocidad_angular_cuerpo -= incremento_velocidad_rotacion_cuerpo;

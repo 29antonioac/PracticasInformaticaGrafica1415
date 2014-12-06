@@ -40,16 +40,16 @@ private:
 
    Matriz4x4 * rotacion_brazo_izquierdo, * rotacion_brazo_derecho, * rotacion_pierna_izquierda, * rotacion_pierna_derecha,
       * rotacion_cuerpo, * traslacion;
-   Tupla3f parametros_rotacion_brazo_izquierdo, parametros_rotacion_brazo_derecho,
-      parametros_rotacion_pierna_izquierda, parametros_rotacion_pierna_derecha, parametros_traslacion;
 
    static constexpr float incremento_angulo_rotacion_cuerpo = 2*M_PI/100,
          incremento_angulo_rotacion_brazos = 2*M_PI/100,
          incremento_angulo_rotacion_piernas = 2*M_PI/100,
          incremento_velocidad_rotacion_cuerpo = 2*M_PI/500,
          incremento_velocidad_rotacion_brazos = 2*M_PI/500,
-         incremento_velocidad_rotacion_piernas = 2*M_PI/500;
-   float angulo_rotacion_cuerpo, angulo_rotacion_brazos, angulo_rotacion_piernas;
+         incremento_velocidad_rotacion_piernas = 2*M_PI/500,
+         incremento_traslacion_cuerpo = 0.25;
+
+   float distancia_eje_Y, angulo_rotacion_cuerpo, angulo_rotacion_brazos, angulo_rotacion_piernas;
    float velocidad_angular_cuerpo, velocidad_angular_brazos, velocidad_angular_piernas;
 
 };
