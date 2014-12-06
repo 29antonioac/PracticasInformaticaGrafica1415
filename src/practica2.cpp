@@ -17,11 +17,15 @@ using std::cout;
 using std::vector;
 using std::string;
 
-// ---------------------------------------------------------------------
-// Estos defines controlan si la práctica se compila para modo revolución,
-// barrido por rotación o barrido por traslación.
-// Si hay más de un define tiene prioridad el que esté más arriba.
+Practica2::Practica2()
+{
+   malla = NULL;
+}
 
+Practica2::~Practica2()
+{
+   delete malla;
+}
 
 void Practica2::Inicializar(int argc, char *argv[])
 {

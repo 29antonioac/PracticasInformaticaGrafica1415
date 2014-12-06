@@ -26,9 +26,9 @@ public:
    void CambioColorFijo();
    bool GestionarEvento(unsigned char tecla);
 
-   virtual ~Practica2() {};
+   virtual ~Practica2();
 
-   Practica2() {};
+   Practica2();
    Practica2(Practica2 const&);              // No se implementa para evitar copias
    Practica2& operator=(Practica2 const&);   // No se implementa para evitar asignaciones
 

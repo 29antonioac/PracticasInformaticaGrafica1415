@@ -38,6 +38,12 @@ Practica3::Practica3()
    rotacion_cuerpo = rotacion_brazo_izquierdo = rotacion_brazo_derecho = rotacion_pierna_izquierda = rotacion_pierna_derecha = traslacion = NULL;
 }
 
+Practica3::~Practica3()
+{
+   delete raiz, semiesfera, cilindro, rotacion_cuerpo,
+      rotacion_brazo_izquierdo, rotacion_brazo_derecho, rotacion_pierna_izquierda, rotacion_pierna_derecha, traslacion;
+}
+
 void Practica3::Inicializar( int argc, char *argv[] )
 {
 
@@ -89,6 +95,7 @@ void Practica3::Inicializar( int argc, char *argv[] )
    float proporcion_ancho_pierna = 0.5;
    float proporcion_ancho_brazo = 0.5;
    float proporcion_ancho_antena = 0.1;
+   float proporcion_ancho_alto_ojo = 0.1;
 
    float separacion_cuerpo_cabeza = 0.15;
 
@@ -195,6 +202,18 @@ void Practica3::Inicializar( int argc, char *argv[] )
          nodo_parametrizado_rotacion_brazo_derecho->aniadeHijo(brazo);
 
    // Ojos
+   Matriz4x4 matriz_traslacion_ojo_izquierdo = Matriz4x4::Identidad();
+   matriz_traslacion_ojo_izquierdo = matriz_traslacion_ojo_izquierdo * Matriz4x4::Traslacion(0.0,proporcion_alto_cuerpo + separacion_cuerpo_cabeza, 0.0);
+   matriz_traslacion_ojo_izquierdo = matriz_traslacion_ojo_izquierdo * Matriz4x4::RotacionEjeZ(-M_PI/4);
+   matriz_traslacion_ojo_izquierdo = matriz_traslacion_ojo_izquierdo * Matriz4x4::RotacionEjeX(-M_PI/5);
+   matriz_traslacion_ojo_izquierdo = matriz_traslacion_ojo_izquierdo * Matriz4x4::Traslacion(0.0,proporcion_alto_cabeza,0.0);
+   matriz_traslacion_ojo_izquierdo = matriz_traslacion_ojo_izquierdo * Matriz4x4::Escalado(proporcion_ancho_alto_ojo,proporcion_ancho_alto_ojo,proporcion_ancho_alto_ojo);
+
+   NodoGrafoEscena * nodo_traslacion_ojo_izquierdo = new NodoTransformacion(matriz_traslacion_ojo_izquierdo);
+
+   Android->aniadeHijo(nodo_traslacion_ojo_izquierdo);
+      nodo_traslacion_ojo_izquierdo->aniadeHijo(nodo_semiesfera);
+
 
 
 
@@ -218,7 +237,6 @@ void Practica3::Inicializar( int argc, char *argv[] )
       nodo_traslacion_antena_izquierda->aniadeHijo(nodo_cilindro);
    Android->aniadeHijo(nodo_traslacion_antena_derecha);
       nodo_traslacion_antena_derecha->aniadeHijo(nodo_cilindro);
-
 
    raiz->aniadeHijo(nodo_parametrizado_rotacion_cuerpo);
       nodo_parametrizado_rotacion_cuerpo->aniadeHijo(nodo_parametrizado_traslacion);

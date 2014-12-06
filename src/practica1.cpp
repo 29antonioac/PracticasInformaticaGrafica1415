@@ -18,10 +18,15 @@ using std::endl;
 using std::string;
 using std::vector;
 
-// ---------------------------------------------------------------------
-// función para implementar en la práctica 1 para inicialización
-// se llama una vez al inicio, cuando ya se ha creado la ventana e 
-// incializado OpenGL. El PLY se debe cargar aquí.
+Practica1::Practica1()
+{
+   malla = NULL;
+}
+
+Practica1::~Practica1()
+{
+   delete malla;
+}
 
 void Practica1::Inicializar( int argc, char *argv[] )
 {
