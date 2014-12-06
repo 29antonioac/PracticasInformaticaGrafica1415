@@ -225,9 +225,9 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
 {
 
    bool redisp = true ;
-   switch (toupper(tecla))
+   switch (tecla)
    {
-      case 'Q':
+      case 'q':
          exit( 0 );
          break ;
       case '+':
@@ -236,57 +236,12 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
       case '-':
          frustum_factor_escala /= 1.05;
          break;
-      case 'L':
-         practicaActual->CambioModoDibujo(ALAMBRE);
-      	break;
-      case 'S':
-         practicaActual->CambioModoDibujo(SOLIDO);
-      	break;
-      case 'D':
-         practicaActual->CambioModoDibujo(SOLIDO_CARAS);
-         break;
-      case 'P':
-         practicaActual->CambioModoDibujo(PUNTOS);
-      	break;
-      case 'A':
-         practicaActual->CambioModoDibujo(AJEDREZ);
-         break;
-      case 'R':
+      case 'r':
          camara_angulo_x = 0.0 ;
          camara_angulo_y = 0.0 ;
          break;
-      case 'N':
-         practicaActual->CambioModoNormales();
-         break;
-      case 'F':
-         practicaActual->CambioColorFijo();
-         break;
-      case 'Z':
-         if (practicaActual == practica3)
-            practica3->CambioGradoLibertad(1);
-         break;
-      case 'X':
-         if (practicaActual == practica3)
-            practica3->CambioGradoLibertad(-1);
-         break;
-      case 'C':
-         if (practicaActual == practica3)
-            practica3->CambioGradoLibertad(2);
-         break;
-      case 'V':
-         if (practicaActual == practica3)
-            practica3->CambioGradoLibertad(-2);
-         break;
-      case 'B':
-         if (practicaActual == practica3)
-            practica3->CambioGradoLibertad(3);
-         break;
-      case 'M':
-         if (practicaActual == practica3)
-            practica3->CambioGradoLibertad(-3);
-         break;
       default:
-         redisp = false ;
+         redisp = practicaActual->GestionarEvento(tecla) ;
          break ;
    }
    

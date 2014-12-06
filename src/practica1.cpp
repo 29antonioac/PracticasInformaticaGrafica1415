@@ -76,3 +76,36 @@ void Practica1::CambioColorFijo()
 {
    malla->CambioColorFijo();
 }
+
+bool Practica1::GestionarEvento(unsigned char tecla)
+{
+   bool redisp = true;
+   switch(toupper(tecla))
+   {
+      case 'L':
+         CambioModoDibujo(ALAMBRE);
+         break;
+      case 'S':
+         CambioModoDibujo(SOLIDO);
+         break;
+      case 'D':
+         CambioModoDibujo(SOLIDO_CARAS);
+         break;
+      case 'P':
+         CambioModoDibujo(PUNTOS);
+         break;
+      case 'A':
+         CambioModoDibujo(AJEDREZ);
+         break;
+      case 'N':
+         CambioModoNormales();
+         break;
+      case 'F':
+         CambioColorFijo();
+         break;
+      default:
+         redisp = false;
+         break;
+   }
+   return redisp;
+}

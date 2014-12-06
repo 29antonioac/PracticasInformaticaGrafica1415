@@ -24,6 +24,7 @@ public:
    void CambioModoNormales();
    void CambioGradoLibertad(int grado_libertad);
    void CambioColorFijo();
+   bool GestionarEvento(unsigned char tecla);
 
    virtual ~Practica3() {};
 

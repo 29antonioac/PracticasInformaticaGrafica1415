@@ -14,6 +14,7 @@ public:
    virtual void CambioModoDibujo(enum visualizacion) = 0;
    virtual void CambioModoNormales() = 0;
    virtual void CambioColorFijo() = 0;
+   virtual bool GestionarEvento(unsigned char tecla) = 0;
 protected:
    Practica() {};
    Practica(Practica const&);

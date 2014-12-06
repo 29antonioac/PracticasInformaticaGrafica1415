@@ -28,13 +28,14 @@ Practica3::Practica3()
    semiesfera = NULL;
    cilindro = NULL;
 
-   angulo_rotacion_cuerpo = angulo_rotacion_brazos = M_PI;
+   angulo_rotacion_cuerpo = 0;
+   angulo_rotacion_brazos = M_PI;
    angulo_rotacion_piernas = M_PI;
    parametros_traslacion = Tupla3f(1.0,0.0,0.0);
 
    velocidad_angular_brazos = velocidad_angular_piernas = 2*M_PI/100;
 
-   //rotacion_cabeza = rotacion_brazos = rotacion_piernas = traslacion = NULL;
+   rotacion_cuerpo = rotacion_brazo_izquierdo = rotacion_brazo_derecho = rotacion_pierna_izquierda = rotacion_pierna_derecha = traslacion = NULL;
 }
 
 void Practica3::Inicializar( int argc, char *argv[] )
@@ -132,7 +133,7 @@ void Practica3::Inicializar( int argc, char *argv[] )
    rotacion_pierna_derecha = new Matriz4x4(Matriz4x4::RotacionEjeZ(angulo_rotacion_piernas));
    rotacion_brazo_izquierdo = new Matriz4x4(Matriz4x4::RotacionEjeZ(angulo_rotacion_brazos));
    rotacion_brazo_derecho = new Matriz4x4(Matriz4x4::RotacionEjeZ(angulo_rotacion_brazos));
-   rotacion_cuerpo = new Matriz4x4(Matriz4x4::RotacionEjeY(0));
+   rotacion_cuerpo = new Matriz4x4(Matriz4x4::RotacionEjeY(angulo_rotacion_cuerpo));
    traslacion = new Matriz4x4(Matriz4x4::Traslacion(parametros_traslacion));
 
    NodoGrafoEscena * nodo_parametrizado_rotacion_pierna_izquierda = new NodoTransformacionParametrizado(rotacion_pierna_izquierda);
@@ -143,7 +144,7 @@ void Practica3::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * nodo_parametrizado_traslacion = new NodoTransformacionParametrizado(traslacion);
 
 
-   /* Pierna del Android */
+   // Pierna del Android
 
    pierna->aniadeHijo(nodo_escalado_cilindro_pierna);
       nodo_escalado_cilindro_pierna->aniadeHijo(nodo_cilindro);
@@ -151,7 +152,7 @@ void Practica3::Inicializar( int argc, char *argv[] )
       nodo_traslacion_semiesfera_pierna->aniadeHijo(nodo_escalado_semiesfera_pierna);
          nodo_escalado_semiesfera_pierna->aniadeHijo(nodo_semiesfera);
 
-   /* Brazo del Android */
+   // Brazo del Android
 
    brazo->aniadeHijo(nodo_escalado_cilindro_brazo);
       nodo_escalado_cilindro_brazo->aniadeHijo(nodo_cilindro);
@@ -162,7 +163,7 @@ void Practica3::Inicializar( int argc, char *argv[] )
       nodo_escalado_semiesfera_inferior_brazo->aniadeHijo(nodo_rotacion_pi);
          nodo_rotacion_pi->aniadeHijo(nodo_semiesfera);
 
-   /* Todo el Android */
+   // Todo el Android
 
    // Cuerpo
    Android->aniadeHijo(nodo_escalado_cilindro_cuerpo);
@@ -235,15 +236,11 @@ void Practica3::DibujarObjetos()
       case ALAMBRE:
          glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
          break;
-      case SOLIDO:
-         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-         break;
       case PUNTOS:
          glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
          break;
+      case SOLIDO:
       case AJEDREZ:
-         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-         break;
       case SOLIDO_CARAS:
          glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
          break;
@@ -261,9 +258,9 @@ void Practica3::CambioModoDibujo(visualizacion modo_dibujo)
 {
    this->modo_dibujo = modo_dibujo;
    if (this->semiesfera != NULL)
-      this->semiesfera->CambioModoDibujo(modo_dibujo);
+      this->semiesfera->CambioModoDibujo(this->modo_dibujo);
    if (this->cilindro != NULL)
-         this->cilindro->CambioModoDibujo(modo_dibujo);
+         this->cilindro->CambioModoDibujo(this->modo_dibujo);
 }
 
 void Practica3::CambioModoNormales()
@@ -331,4 +328,59 @@ void Practica3::CambioColorFijo()
       this->semiesfera->CambioColorFijo();
    if (this->cilindro != NULL)
       this->cilindro->CambioColorFijo();
+}
+
+bool Practica3::GestionarEvento(unsigned char tecla)
+{
+   bool redisp = true;
+
+   switch(tecla)
+   {
+      // Cambio de modo de dibujo (igual que en prácticas 1 y 2)
+      case 'l':
+         CambioModoDibujo(ALAMBRE);
+         break;
+      case 's':
+         CambioModoDibujo(SOLIDO);
+         break;
+      case 'd':
+         CambioModoDibujo(SOLIDO_CARAS);
+         break;
+      case 'p':
+         CambioModoDibujo(PUNTOS);
+         break;
+      case 'a':
+         CambioModoDibujo(AJEDREZ);
+         break;
+      case 'n':
+         CambioModoNormales();
+         break;
+      case 'f':
+         CambioColorFijo();
+         break;
+
+      // Control de grados de libertad
+      case 'Z':
+         CambioGradoLibertad(1);
+         break;
+      case 'z':
+         CambioGradoLibertad(-1);
+         break;
+      case 'X':
+         CambioGradoLibertad(2);
+         break;
+      case 'x':
+         CambioGradoLibertad(-2);
+         break;
+      case 'C':
+         CambioGradoLibertad(3);
+         break;
+      case 'c':
+         CambioGradoLibertad(-3);
+         break;
+      default:
+         redisp = false;
+         break;
+   }
+   return redisp;
 }

@@ -23,12 +23,13 @@ public:
    void CambioModoDibujo(visualizacion modo_dibujo);
    void CambioModoNormales();
    void CambioColorFijo();
+   bool GestionarEvento(unsigned char tecla);
 
    virtual ~Practica1() {};
 
    Practica1() {};
-
-   Practica1(Practica1 const&);
+   Practica1(Practica1 const&);              // No se implementa para evitar copias
+   Practica1& operator=(Practica1 const&);   // No se implementa para evitar asignaciones
 
 private:
 
