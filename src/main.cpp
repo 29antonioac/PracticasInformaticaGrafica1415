@@ -72,6 +72,7 @@ Practica2   * practica2 = new Practica2;
 Practica3   * practica3 = new Practica3;
 
 bool debug = false;
+bool ayuda = false;
 
 
 
@@ -179,9 +180,72 @@ void LimpiarVentana()
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
-void Debug()
+void Debug_Ayuda()
 {
-   practicaActual->Debug();
+
+   glMatrixMode(GL_PROJECTION);
+   glPushMatrix();
+   glLoadIdentity();
+   gluOrtho2D(0.0, ventana_tam_x, 0.0, ventana_tam_y);
+   glMatrixMode(GL_MODELVIEW);
+   glPushMatrix();
+   glLoadIdentity();
+   glColor3f(1.0f, 0.0f, 0.0f);
+
+   void * font = GLUT_BITMAP_9_BY_15;
+   vector<string> strings_ayuda;
+   strings_ayuda.push_back("F6 activa/desactiva modo debug");
+   strings_ayuda.push_back("F7 activa/desactiva mensaje con controles del programa");
+   strings_ayuda.push_back("Ambos ralentizan en mayor o menor medida el renderizado");
+
+   unsigned num_lineas = 0;
+   for (auto &s: strings_ayuda)
+   {
+      glRasterPos2i(10, ventana_tam_y - 15*(num_lineas + 1));
+      for (auto &c: s)
+      {
+        glutBitmapCharacter(font, c);
+      }
+      num_lineas++;
+   }
+
+   if (ayuda)
+   {
+      vector<string> strings_control;
+      strings_control.push_back("Disponible control con flechas de teclado, +/- y raton ");
+      practicaActual->Ayuda(strings_control);
+      strings_control.push_back("F: Alternar entre color fijo (solo modo solido)");
+      strings_control.push_back("H: Alternar modo dibujo normales");
+      strings_control.push_back("A: Modo ajedrez");
+      strings_control.push_back("P: Modo puntos");
+      strings_control.push_back("D: Modo solido con atributos de caras");
+      strings_control.push_back("S: Modo solido");
+      strings_control.push_back("L: Modo alambre");
+      strings_control.push_back("R: Resetear camara");
+      strings_control.push_back("Q: Salir");
+
+      float separacion = glutBitmapWidth(font, 'F') * strings_control[0].length();
+      unsigned num_lineas = 0;
+      for (auto &s: strings_control)
+      {
+         glRasterPos2i(ventana_tam_x - separacion - 5, 10+15*num_lineas);
+         for (auto &c: s)
+         {
+           glutBitmapCharacter(font, c);
+         }
+         num_lineas++;
+      }
+   }
+
+   if (debug)
+      practicaActual->Debug();
+
+   glMatrixMode(GL_MODELVIEW);
+   glPopMatrix();
+   glMatrixMode(GL_PROJECTION);
+   glPopMatrix();
+   glEnable(GL_TEXTURE_2D);
+
 }
 
 
@@ -201,7 +265,7 @@ void FGE_Redibujado()
    LimpiarVentana();
    DibujarEjes() ;
    practicaActual->DibujarObjetos();
-   if (debug) Debug();
+   Debug_Ayuda();
    glFinish();
    glutSwapBuffers();
 }
@@ -247,6 +311,27 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
       case 'r':
          camara_angulo_x = 0.0 ;
          camara_angulo_y = 0.0 ;
+         break;
+      case 'l':
+         practicaActual->CambioModoDibujo(ALAMBRE);
+         break;
+      case 's':
+         practicaActual->CambioModoDibujo(SOLIDO);
+         break;
+      case 'd':
+         practicaActual->CambioModoDibujo(SOLIDO_CARAS);
+         break;
+      case 'p':
+         practicaActual->CambioModoDibujo(PUNTOS);
+         break;
+      case 'a':
+         practicaActual->CambioModoDibujo(AJEDREZ);
+         break;
+      case 'h':
+         practicaActual->CambioModoNormales();
+         break;
+      case 'f':
+         practicaActual->CambioColorFijo();
          break;
       default:
          redisp = practicaActual->GestionarEvento(tecla) ;
@@ -307,6 +392,10 @@ void FGE_PulsarTeclaEspecial( int tecla, int x_raton, int y_raton )
       case GLUT_KEY_F6:
          if (debug) debug = false;
          else debug = true;
+         break;
+      case GLUT_KEY_F7:
+         if (ayuda) ayuda = false;
+         else ayuda = true;
          break;
       default:
          redisp = false ;
@@ -516,14 +605,14 @@ void Inicializa_OpenGL( )
 void Inicializar( int argc, char *argv[] )
 {
    // glut (crea la ventana)
-   Inicializa_GLUT( argc, argv ) ;
+   Inicializa_GLUT(argc, argv) ;
    
    // opengl: define proyección y atributos iniciales
    Inicializa_OpenGL() ;
    
    // inicializar prácticas
-   practica1->Inicializar( argc, argv ) ;
-   practica2->Inicializar( argc, argv ) ;
+   practica1->Inicializar(argc, argv);
+   practica2->Inicializar(argc, argv);
    practica3->Inicializar(argc, argv);
 
    practicaActual = practica3;
@@ -539,7 +628,7 @@ void Inicializar( int argc, char *argv[] )
 int main( int argc, char *argv[] )
 {
    // incializar el programa
-   Inicializar( argc, argv ) ;
+   Inicializar(argc, argv);
    
    // llamar al bucle de gestión de eventos de glut, tiene el 
    // control hasta el final de la aplicación

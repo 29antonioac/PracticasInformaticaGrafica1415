@@ -20,6 +20,7 @@ using std::cout;
 using std::endl;
 using std::string;
 using std::vector;
+using std::to_string;
 
 template <class T>
 inline T signo (T valor)
@@ -386,29 +387,6 @@ bool Practica3::GestionarEvento(unsigned char tecla)
 
    switch(tecla)
    {
-      // Cambio de modo de dibujo (igual que en prácticas 1 y 2)
-      case 'l':
-         CambioModoDibujo(ALAMBRE);
-         break;
-      case 's':
-         CambioModoDibujo(SOLIDO);
-         break;
-      case 'd':
-         CambioModoDibujo(SOLIDO_CARAS);
-         break;
-      case 'p':
-         CambioModoDibujo(PUNTOS);
-         break;
-      case 'a':
-         CambioModoDibujo(AJEDREZ);
-         break;
-      /*case 'n':
-         CambioModoNormales();
-         break;*/
-      case 'f':
-         CambioColorFijo();
-         break;
-
       // Control de grados de libertad
       case 'Z':
          CambioGradoLibertad(1);
@@ -490,15 +468,6 @@ void Practica3::Animar()
 
 void Practica3::Debug()
 {
-   glMatrixMode(GL_PROJECTION);
-   glPushMatrix();
-   glLoadIdentity();
-   gluOrtho2D(0.0, 1024, 0.0, 800);
-   glMatrixMode(GL_MODELVIEW);
-   glPushMatrix();
-   glLoadIdentity();
-   glColor3f(1.0f, 0.0f, 0.0f);
-
    string str_color_fijo;
    if (semiesfera->ColorFijo())
       str_color_fijo = "Si";
@@ -506,13 +475,14 @@ void Practica3::Debug()
       str_color_fijo = "No";
 
    vector<string> debug_strings;
-   debug_strings.push_back(string("Velocidad angular piernas: " + std::to_string(velocidad_angular_piernas)));
-   debug_strings.push_back(string("Velocidad angular brazos: " + std::to_string(velocidad_angular_brazos)));
-   debug_strings.push_back(string("Velocidad angular cuerpo: " + std::to_string(velocidad_angular_cuerpo)));
-   debug_strings.push_back(string("Angulo de rotacion piernas: " + std::to_string(angulo_rotacion_piernas)));
-   debug_strings.push_back(string("Angulo de rotacion brazos: " + std::to_string(angulo_rotacion_brazos)));
-   debug_strings.push_back(string("Angulo de rotacion cuerpo: " + std::to_string(angulo_rotacion_cuerpo)));
-   debug_strings.push_back(string("Distancia al eje Y: " + std::to_string(distancia_eje_Y)));
+   debug_strings.push_back(string("Velocidad angular piernas: " + to_string(velocidad_angular_piernas)));
+   debug_strings.push_back(string("Velocidad angular brazos: " + to_string(velocidad_angular_brazos)));
+   debug_strings.push_back(string("Velocidad angular cuerpo: " + to_string(velocidad_angular_cuerpo)));
+   debug_strings.push_back(string("Angulo de rotacion piernas: " + to_string(angulo_rotacion_piernas)));
+   debug_strings.push_back(string("Angulo de rotacion brazos: " + to_string(angulo_rotacion_brazos)));
+   debug_strings.push_back(string("Angulo de rotacion cuerpo: " + to_string(angulo_rotacion_cuerpo)));
+   debug_strings.push_back(string("Distancia al eje Y: " + to_string(distancia_eje_Y)));
+   debug_strings.push_back(string("Modo de normales: " + enumToString(semiesfera->getModoNormales())));
    debug_strings.push_back(string("Color fijo: " + str_color_fijo));
    debug_strings.push_back(string("Modo de dibujo: " + enumToString(modo_dibujo)));
    debug_strings.push_back(string("Practica 3"));
@@ -525,13 +495,19 @@ void Practica3::Debug()
       {
         glutBitmapCharacter(font, c);
       }
-      //glutStrokeString(font,s.c_str());
       num_lineas++;
-
    }
-   glMatrixMode(GL_MODELVIEW);
-   glPopMatrix();
-   glMatrixMode(GL_PROJECTION);
-   glPopMatrix();
-   //glEnable(GL_TEXTURE_2D);
+}
+
+void Practica3::Ayuda(vector<string> & strings_control)
+{
+   strings_control.push_back("M/m para modificar velocidad de rotacion de las piernas");
+   strings_control.push_back("N/n para modificar velocidad de rotacion de los brazos");
+   strings_control.push_back("B/b para modificar velocidad de rotacion del cuerpo");
+   strings_control.push_back("V/v para modificar distancia al eje Y");
+   strings_control.push_back("C/c para modificar rotacion de las piernas");
+   strings_control.push_back("X/x para modificar rotacion de los brazos");
+   strings_control.push_back("Z/z para modificar rotacion del cuerpo");
+
+
 }

@@ -83,27 +83,7 @@ bool Practica1::GestionarEvento(unsigned char tecla)
    bool redisp = true;
    switch(toupper(tecla))
    {
-      case 'L':
-         CambioModoDibujo(ALAMBRE);
-         break;
-      case 'S':
-         CambioModoDibujo(SOLIDO);
-         break;
-      case 'D':
-         CambioModoDibujo(SOLIDO_CARAS);
-         break;
-      case 'P':
-         CambioModoDibujo(PUNTOS);
-         break;
-      case 'A':
-         CambioModoDibujo(AJEDREZ);
-         break;
-      case 'N':
-         CambioModoNormales();
-         break;
-      case 'F':
-         CambioColorFijo();
-         break;
+   // Dejamos implementado el switch por si añadimos alguna tecla a esta práctica en particular
       default:
          redisp = false;
          break;
@@ -113,14 +93,6 @@ bool Practica1::GestionarEvento(unsigned char tecla)
 
 void Practica1::Debug()
 {
-   glMatrixMode(GL_PROJECTION);
-   glPushMatrix();
-   glLoadIdentity();
-   gluOrtho2D(0.0, 1024, 0.0, 800);
-   glMatrixMode(GL_MODELVIEW);
-   glPushMatrix();
-   glLoadIdentity();
-   glColor3f(1.0f, 0.0f, 0.0f);
 
    string str_color_fijo;
    if (malla->ColorFijo())
@@ -132,7 +104,7 @@ void Practica1::Debug()
    debug_strings.push_back(string("Modo de normales: " + enumToString(malla->getModoNormales())));
    debug_strings.push_back(string("Color fijo: " + str_color_fijo));
    debug_strings.push_back(string("Modo de dibujo: " + enumToString(malla->getModoDibujo())));
-   debug_strings.push_back(string("Perfil cargado: " + file));
+   debug_strings.push_back(string("Archivo cargado: " + file));
    debug_strings.push_back(string("Practica 1"));
    void * font = GLUT_BITMAP_9_BY_15;
    unsigned num_lineas = 0;
@@ -146,9 +118,10 @@ void Practica1::Debug()
       num_lineas++;
 
    }
-   glMatrixMode(GL_MODELVIEW);
-   glPopMatrix();
-   glMatrixMode(GL_PROJECTION);
-   glPopMatrix();
-   //glEnable(GL_TEXTURE_2D);
+
+}
+
+void Practica1::Ayuda(vector<string> & strings_control)
+{
+
 }

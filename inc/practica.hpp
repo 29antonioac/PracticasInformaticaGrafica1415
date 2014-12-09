@@ -6,6 +6,9 @@
 
 #include "enumerados.hpp"
 
+using std::vector;
+using std::string;
+
 class Practica
 {
 public:
@@ -16,6 +19,7 @@ public:
    virtual void CambioColorFijo() = 0;
    virtual bool GestionarEvento(unsigned char tecla) = 0;
    virtual void Debug() = 0;
+   virtual void Ayuda(vector<string> & strings_control) = 0;
 protected:
    Practica() {};
    Practica(Practica const&);
