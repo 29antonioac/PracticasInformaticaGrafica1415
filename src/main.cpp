@@ -71,6 +71,8 @@ Practica1   * practica1 = new Practica1;
 Practica2   * practica2 = new Practica2;
 Practica3   * practica3 = new Practica3;
 
+bool debug = false;
+
 
 
 
@@ -177,6 +179,11 @@ void LimpiarVentana()
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
+void Debug()
+{
+   practicaActual->Debug();
+}
+
 
 // *********************************************************************
 // **
@@ -194,6 +201,7 @@ void FGE_Redibujado()
    LimpiarVentana();
    DibujarEjes() ;
    practicaActual->DibujarObjetos();
+   if (debug) Debug();
    glFinish();
    glutSwapBuffers();
 }
@@ -295,6 +303,10 @@ void FGE_PulsarTeclaEspecial( int tecla, int x_raton, int y_raton )
       case GLUT_KEY_F4:
          break;
       case GLUT_KEY_F5:
+         break;
+      case GLUT_KEY_F6:
+         if (debug) debug = false;
+         else debug = true;
          break;
       default:
          redisp = false ;

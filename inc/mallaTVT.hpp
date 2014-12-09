@@ -65,10 +65,12 @@ public:
    MallaTVT* Revolucion(const unsigned caras);
    MallaTVT* Barrido_Rotacion(const unsigned caras);
    MallaTVT* Barrido_Traslacion(const unsigned caras, const float dx, const float dy, const float dz);
-   enum visualizacion getModo();
+   visualizacion getModoDibujo();
+   normales getModoNormales();
    void CambioModoDibujo ( enum visualizacion modo ) ;
    void CambioModoNormales();
    void CambioColorFijo();
+   bool ColorFijo();
 };
 
 #endif

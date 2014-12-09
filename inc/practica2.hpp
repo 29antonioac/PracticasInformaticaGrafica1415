@@ -25,6 +25,7 @@ public:
    void CambioModoNormales();
    void CambioColorFijo();
    bool GestionarEvento(unsigned char tecla);
+   void Debug();
 
    virtual ~Practica2();
 
@@ -36,6 +37,9 @@ private:
 
    MallaTVT * malla;
    vector<float> vertices_ply;
+
+   unsigned N,M;
+   string file;
 };
 
 #endif

@@ -30,9 +30,6 @@ Practica1::~Practica1()
 
 void Practica1::Inicializar( int argc, char *argv[] )
 {
-
-   string file;
-   
    if (argc == 1)
    {
       file = "./PLY/ant.ply";
@@ -63,7 +60,6 @@ void Practica1::Inicializar( int argc, char *argv[] )
 
 void Practica1::DibujarObjetos()
 {
-   //DibujarCuboPuntos() ;
    malla->Visualizar();
 }
 
@@ -113,4 +109,46 @@ bool Practica1::GestionarEvento(unsigned char tecla)
          break;
    }
    return redisp;
+}
+
+void Practica1::Debug()
+{
+   glMatrixMode(GL_PROJECTION);
+   glPushMatrix();
+   glLoadIdentity();
+   gluOrtho2D(0.0, 1024, 0.0, 800);
+   glMatrixMode(GL_MODELVIEW);
+   glPushMatrix();
+   glLoadIdentity();
+   glColor3f(1.0f, 0.0f, 0.0f);
+
+   string str_color_fijo;
+   if (malla->ColorFijo())
+      str_color_fijo = "Si";
+   else
+      str_color_fijo = "No";
+
+   vector<string> debug_strings;
+   debug_strings.push_back(string("Modo de normales: " + enumToString(malla->getModoNormales())));
+   debug_strings.push_back(string("Color fijo: " + str_color_fijo));
+   debug_strings.push_back(string("Modo de dibujo: " + enumToString(malla->getModoDibujo())));
+   debug_strings.push_back(string("Perfil cargado: " + file));
+   debug_strings.push_back(string("Practica 1"));
+   void * font = GLUT_BITMAP_9_BY_15;
+   unsigned num_lineas = 0;
+   for (auto &s: debug_strings)
+   {
+      glRasterPos2i(10, 10+15*num_lineas);
+      for (auto &c: s)
+      {
+        glutBitmapCharacter(font, c);
+      }
+      num_lineas++;
+
+   }
+   glMatrixMode(GL_MODELVIEW);
+   glPopMatrix();
+   glMatrixMode(GL_PROJECTION);
+   glPopMatrix();
+   //glEnable(GL_TEXTURE_2D);
 }

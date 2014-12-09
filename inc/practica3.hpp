@@ -26,6 +26,7 @@ public:
    void Animar();
    void CambioColorFijo();
    bool GestionarEvento(unsigned char tecla);
+   void Debug();
 
    virtual ~Practica3();
 
@@ -49,6 +50,7 @@ private:
          incremento_velocidad_rotacion_piernas = 2*M_PI/500,
          incremento_traslacion_cuerpo = 0.25;
 
+   float direccion_rotacion_brazos, direccion_rotacion_piernas;
    float distancia_eje_Y, angulo_rotacion_cuerpo, angulo_rotacion_brazos, angulo_rotacion_piernas;
    float velocidad_angular_cuerpo, velocidad_angular_brazos, velocidad_angular_piernas;
 

@@ -43,6 +43,7 @@ Practica3::Practica3()
    angulo_rotacion_brazos = M_PI;
    angulo_rotacion_piernas = M_PI;
 
+   direccion_rotacion_brazos = direccion_rotacion_piernas = 1;
    distancia_eje_Y = velocidad_angular_cuerpo = velocidad_angular_brazos = velocidad_angular_piernas = 0;
 
    rotacion_cuerpo = rotacion_brazo_izquierdo = rotacion_brazo_derecho = rotacion_pierna_izquierda = rotacion_pierna_derecha = traslacion = NULL;
@@ -50,8 +51,15 @@ Practica3::Practica3()
 
 Practica3::~Practica3()
 {
-   delete raiz, semiesfera, cilindro, rotacion_cuerpo,
-      rotacion_brazo_izquierdo, rotacion_brazo_derecho, rotacion_pierna_izquierda, rotacion_pierna_derecha, traslacion;
+   delete raiz;
+   delete semiesfera;
+   delete cilindro;
+   delete rotacion_cuerpo;
+   delete rotacion_brazo_izquierdo;
+   delete rotacion_brazo_derecho;
+   delete rotacion_pierna_izquierda;
+   delete rotacion_pierna_derecha;
+   delete traslacion;
 }
 
 void Practica3::Inicializar( int argc, char *argv[] )
@@ -90,6 +98,7 @@ void Practica3::Inicializar( int argc, char *argv[] )
 
    // ------------------------------------------------------------------------
 
+   this->modo_dibujo = semiesfera->getModoDibujo();
 
    // Creamos un brazo del Android
 
@@ -98,7 +107,7 @@ void Practica3::Inicializar( int argc, char *argv[] )
    float proporcion_alto_cuerpo = 3.0;
    float proporcion_alto_pierna = 1.2;
    float proporcion_alto_brazo = 1.2;
-   float proporcion_alto_antena = 1.0;
+   float proporcion_alto_antena = 0.7;
    float proporcion_alto_cabeza = proporcion_alto_cuerpo / 2;
    float proporcion_ancho_cuerpo = 2.0;
    float proporcion_ancho_pierna = 0.5;
@@ -120,13 +129,11 @@ void Practica3::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * nodo_escalado_cilindro_pierna = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_pierna,proporcion_alto_pierna,proporcion_ancho_pierna));
    NodoGrafoEscena * nodo_escalado_cilindro_cuerpo = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_cuerpo,proporcion_alto_cuerpo,proporcion_ancho_cuerpo));
    NodoGrafoEscena * nodo_escalado_cilindro_brazo = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_brazo,proporcion_alto_brazo,proporcion_ancho_brazo));
-   NodoGrafoEscena * nodo_escalado_cilindro_antena = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_antena,proporcion_alto_antena,proporcion_ancho_antena));
+
    NodoGrafoEscena * nodo_escalado_semiesfera_cabeza = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_cuerpo,proporcion_alto_cabeza,proporcion_ancho_cuerpo));
    NodoGrafoEscena * nodo_escalado_semiesfera_superior_brazo = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_brazo,proporcion_ancho_brazo,proporcion_ancho_brazo));
    NodoGrafoEscena * nodo_escalado_semiesfera_inferior_brazo = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_brazo,proporcion_ancho_brazo,proporcion_ancho_brazo));
    NodoGrafoEscena * nodo_escalado_semiesfera_pierna = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_pierna,proporcion_ancho_pierna,proporcion_ancho_pierna));;
-
-
 
    NodoGrafoEscena * nodo_traslacion_pierna_izquierda = new NodoTransformacion(Matriz4x4::Traslacion(-(proporcion_ancho_cuerpo-1.3),0.0,0.0));
    NodoGrafoEscena * nodo_traslacion_pierna_derecha = new NodoTransformacion(Matriz4x4::Traslacion(proporcion_ancho_cuerpo-1.3,0.0,0.0));
@@ -138,7 +145,6 @@ void Practica3::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * nodo_traslacion_cabeza = new NodoTransformacion(Matriz4x4::Traslacion(0.0,proporcion_alto_cuerpo + separacion_cuerpo_cabeza, 0.0));
 
    NodoGrafoEscena * nodo_rotacion_pi = new NodoTransformacion(Matriz4x4::RotacionEjeX(M_PI));
-   NodoGrafoEscena * nodo_rotacion_antena_izquierda = new NodoTransformacion(Matriz4x4::RotacionEjeZ(-M_PI/12));
 
    // Matrices de transformacion para las antenas
 
@@ -152,8 +158,8 @@ void Practica3::Inicializar( int argc, char *argv[] )
    matriz_rotacion_antena_derecha = matriz_rotacion_antena_derecha * Matriz4x4::Traslacion(0.0,proporcion_alto_cabeza,0.0);
    matriz_rotacion_antena_derecha = matriz_rotacion_antena_derecha * Matriz4x4::Escalado(proporcion_ancho_antena,proporcion_alto_antena,proporcion_ancho_antena);
 
-   NodoGrafoEscena * nodo_traslacion_antena_izquierda = new NodoTransformacion(matriz_rotacion_antena_izquierda);
-   NodoGrafoEscena * nodo_traslacion_antena_derecha = new NodoTransformacion(matriz_rotacion_antena_derecha);
+   NodoGrafoEscena * nodo_transformacion_antena_izquierda = new NodoTransformacion(matriz_rotacion_antena_izquierda);
+   NodoGrafoEscena * nodo_transformacion_antena_derecha = new NodoTransformacion(matriz_rotacion_antena_derecha);
 
    // Matrices de transformacion para los ojos
    Matriz4x4 matriz_transformacion_ojo_izquierdo = Matriz4x4::Identidad();
@@ -171,9 +177,7 @@ void Practica3::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * nodo_transformacion_ojo_izquierdo = new NodoTransformacion(matriz_transformacion_ojo_izquierdo);
    NodoGrafoEscena * nodo_transformacion_ojo_derecho = new NodoTransformacion(matriz_transformacion_ojo_derecho);
 
-   // Nodos parametrizados (son iguales pero en vez de guardar la matriz directamente guardan un puntero
-
-   //parametros_traslacion = Tupla3f(4*proporcion_ancho_cuerpo, 0.0, 0.0);
+   // Nodos parametrizados (son iguales pero, en vez de guardar la matriz directamente, guardan un puntero)
 
    rotacion_pierna_izquierda = new Matriz4x4(Matriz4x4::RotacionEjeZ(angulo_rotacion_piernas));
    rotacion_pierna_derecha = new Matriz4x4(Matriz4x4::RotacionEjeZ(angulo_rotacion_piernas));
@@ -213,10 +217,10 @@ void Practica3::Inicializar( int argc, char *argv[] )
 
    cabeza->aniadeHijo(nodo_escalado_semiesfera_cabeza);
       nodo_escalado_semiesfera_cabeza->aniadeHijo(nodo_semiesfera);
-   cabeza->aniadeHijo(nodo_traslacion_antena_izquierda);
-      nodo_traslacion_antena_izquierda->aniadeHijo(nodo_cilindro);
-   cabeza->aniadeHijo(nodo_traslacion_antena_derecha);
-      nodo_traslacion_antena_derecha->aniadeHijo(nodo_cilindro);
+   cabeza->aniadeHijo(nodo_transformacion_antena_izquierda);
+      nodo_transformacion_antena_izquierda->aniadeHijo(nodo_cilindro);
+   cabeza->aniadeHijo(nodo_transformacion_antena_derecha);
+      nodo_transformacion_antena_derecha->aniadeHijo(nodo_cilindro);
    cabeza->aniadeHijo(nodo_transformacion_ojo_izquierdo);
       nodo_transformacion_ojo_izquierdo->aniadeHijo(nodo_semiesfera);
    cabeza->aniadeHijo(nodo_transformacion_ojo_derecho);
@@ -261,6 +265,8 @@ void Practica3::Inicializar( int argc, char *argv[] )
 
 }
 
+#define DEBUG
+
 void Practica3::DibujarObjetos()
 {
    switch (modo_dibujo)
@@ -284,6 +290,10 @@ void Practica3::DibujarObjetos()
    }
 
    raiz->Procesa();
+
+#ifdef DEBUG
+
+#endif
 }
 
 void Practica3::CambioModoDibujo(visualizacion modo_dibujo)
@@ -320,6 +330,9 @@ void Practica3::CambioGradoLibertad(int grado_libertad)
       float inc = incremento_angulo_rotacion_cuerpo * signo(grado_libertad);
       angulo_rotacion_cuerpo += inc;
 
+      if (angulo_rotacion_cuerpo > 2*M_PI) angulo_rotacion_cuerpo -= 2*M_PI;
+      if (angulo_rotacion_cuerpo < 0) angulo_rotacion_cuerpo += 2*M_PI;
+
       *rotacion_cuerpo = Matriz4x4::RotacionEjeY(angulo_rotacion_cuerpo);
 
    }
@@ -351,6 +364,8 @@ void Practica3::CambioGradoLibertad(int grado_libertad)
    {
       float inc = incremento_traslacion_cuerpo * signo(grado_libertad);
       distancia_eje_Y += inc;
+
+      if (distancia_eje_Y < 0) distancia_eje_Y = 0;
 
       *traslacion = Matriz4x4::Traslacion(distancia_eje_Y,0.0,0.0);
    }
@@ -421,21 +436,27 @@ bool Practica3::GestionarEvento(unsigned char tecla)
          break;
       case 'b':
          velocidad_angular_cuerpo -= incremento_velocidad_rotacion_cuerpo;
+         if (velocidad_angular_cuerpo < 0) velocidad_angular_cuerpo = 0;
          break;
       case 'B':
          velocidad_angular_cuerpo += incremento_velocidad_rotacion_cuerpo;
+         if (velocidad_angular_cuerpo > M_PI/30) velocidad_angular_cuerpo = M_PI/30;
          break;
       case 'n':
          velocidad_angular_brazos -= incremento_velocidad_rotacion_brazos;
+         if (velocidad_angular_brazos < 0) velocidad_angular_brazos = 0;
          break;
       case 'N':
          velocidad_angular_brazos += incremento_velocidad_rotacion_brazos;
+         if (velocidad_angular_brazos > M_PI/30) velocidad_angular_brazos = M_PI/30;
          break;
       case 'm':
          velocidad_angular_piernas -= incremento_velocidad_rotacion_piernas;
+         if (velocidad_angular_piernas < 0) velocidad_angular_piernas = 0;
          break;
       case 'M':
          velocidad_angular_piernas += incremento_velocidad_rotacion_piernas;
+         if (velocidad_angular_piernas > M_PI/30) velocidad_angular_piernas = M_PI/30;
          break;
       default:
          redisp = false;
@@ -448,19 +469,69 @@ void Practica3::Animar()
 {
    if (!(angulo_rotacion_brazos <= 4*M_PI/3
                && angulo_rotacion_brazos >= 2*M_PI/3))
-            velocidad_angular_brazos *= -1;
+            direccion_rotacion_brazos *= -1;
 
    if (!(angulo_rotacion_piernas <= 4*M_PI/3
                   && angulo_rotacion_piernas >= 2*M_PI/3))
-               velocidad_angular_piernas *= -1;
+               direccion_rotacion_piernas *= -1;
+
+   if (angulo_rotacion_cuerpo > 2*M_PI) angulo_rotacion_cuerpo -= 2*M_PI;
 
    angulo_rotacion_cuerpo  += velocidad_angular_cuerpo;
-   angulo_rotacion_brazos  += velocidad_angular_brazos;
-   angulo_rotacion_piernas += velocidad_angular_piernas;
+   angulo_rotacion_brazos  += velocidad_angular_brazos * direccion_rotacion_brazos;
+   angulo_rotacion_piernas += velocidad_angular_piernas * direccion_rotacion_piernas;
 
    *rotacion_cuerpo = Matriz4x4::RotacionEjeY(angulo_rotacion_cuerpo);
    *rotacion_brazo_izquierdo = Matriz4x4::RotacionEjeX(angulo_rotacion_brazos);
    *rotacion_brazo_derecho = Matriz4x4::RotacionEjeX(-angulo_rotacion_brazos);
    *rotacion_pierna_izquierda = Matriz4x4::RotacionEjeX(angulo_rotacion_piernas);
    *rotacion_pierna_derecha = Matriz4x4::RotacionEjeX(-angulo_rotacion_piernas);
+}
+
+void Practica3::Debug()
+{
+   glMatrixMode(GL_PROJECTION);
+   glPushMatrix();
+   glLoadIdentity();
+   gluOrtho2D(0.0, 1024, 0.0, 800);
+   glMatrixMode(GL_MODELVIEW);
+   glPushMatrix();
+   glLoadIdentity();
+   glColor3f(1.0f, 0.0f, 0.0f);
+
+   string str_color_fijo;
+   if (semiesfera->ColorFijo())
+      str_color_fijo = "Si";
+   else
+      str_color_fijo = "No";
+
+   vector<string> debug_strings;
+   debug_strings.push_back(string("Velocidad angular piernas: " + std::to_string(velocidad_angular_piernas)));
+   debug_strings.push_back(string("Velocidad angular brazos: " + std::to_string(velocidad_angular_brazos)));
+   debug_strings.push_back(string("Velocidad angular cuerpo: " + std::to_string(velocidad_angular_cuerpo)));
+   debug_strings.push_back(string("Angulo de rotacion piernas: " + std::to_string(angulo_rotacion_piernas)));
+   debug_strings.push_back(string("Angulo de rotacion brazos: " + std::to_string(angulo_rotacion_brazos)));
+   debug_strings.push_back(string("Angulo de rotacion cuerpo: " + std::to_string(angulo_rotacion_cuerpo)));
+   debug_strings.push_back(string("Distancia al eje Y: " + std::to_string(distancia_eje_Y)));
+   debug_strings.push_back(string("Color fijo: " + str_color_fijo));
+   debug_strings.push_back(string("Modo de dibujo: " + enumToString(modo_dibujo)));
+   debug_strings.push_back(string("Practica 3"));
+   void * font = GLUT_BITMAP_9_BY_15;
+   unsigned num_lineas = 0;
+   for (auto &s: debug_strings)
+   {
+      glRasterPos2i(10, 10+15*num_lineas);
+      for (auto &c: s)
+      {
+        glutBitmapCharacter(font, c);
+      }
+      //glutStrokeString(font,s.c_str());
+      num_lineas++;
+
+   }
+   glMatrixMode(GL_MODELVIEW);
+   glPopMatrix();
+   glMatrixMode(GL_PROJECTION);
+   glPopMatrix();
+   //glEnable(GL_TEXTURE_2D);
 }

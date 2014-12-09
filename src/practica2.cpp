@@ -30,8 +30,6 @@ Practica2::~Practica2()
 void Practica2::Inicializar(int argc, char *argv[])
 {
 
-   unsigned N,M;
-   string file;
 
    if (argc == 1)
    {
@@ -130,4 +128,56 @@ bool Practica2::GestionarEvento(unsigned char tecla)
          break;
    }
    return redisp;
+}
+
+void Practica2::Debug()
+{
+   glMatrixMode(GL_PROJECTION);
+   glPushMatrix();
+   glLoadIdentity();
+   gluOrtho2D(0.0, 1024, 0.0, 800);
+   glMatrixMode(GL_MODELVIEW);
+   glPushMatrix();
+   glLoadIdentity();
+   glColor3f(1.0f, 0.0f, 0.0f);
+
+   string str_color_fijo;
+   if (malla->ColorFijo())
+      str_color_fijo = "Si";
+   else
+      str_color_fijo = "No";
+
+   string str_modo;
+   if (M == 0)
+      str_modo = "Revolucion";
+   else if (M == 1)
+      str_modo = "Barrido rotacion";
+   else if (M == 2)
+      str_modo = "Barrido traslacion";
+
+   vector<string> debug_strings;
+   debug_strings.push_back(string("Modo de normales: " + enumToString(malla->getModoNormales())));
+   debug_strings.push_back(string("Color fijo: " + str_color_fijo));
+   debug_strings.push_back(string("Modo de dibujo: " + enumToString(malla->getModoDibujo())));
+   debug_strings.push_back(string("Modo: " + str_modo));
+   debug_strings.push_back(string("Numero de perfiles: " + std::to_string(N)));
+   debug_strings.push_back(string("Perfil cargado: " + file));
+   debug_strings.push_back(string("Practica 2"));
+   void * font = GLUT_BITMAP_9_BY_15;
+   unsigned num_lineas = 0;
+   for (auto &s: debug_strings)
+   {
+      glRasterPos2i(10, 10+15*num_lineas);
+      for (auto &c: s)
+      {
+        glutBitmapCharacter(font, c);
+      }
+      num_lineas++;
+
+   }
+   glMatrixMode(GL_MODELVIEW);
+   glPopMatrix();
+   glMatrixMode(GL_PROJECTION);
+   glPopMatrix();
+   //glEnable(GL_TEXTURE_2D);
 }

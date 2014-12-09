@@ -24,6 +24,7 @@ public:
    void CambioModoNormales();
    void CambioColorFijo();
    bool GestionarEvento(unsigned char tecla);
+   void Debug();
 
    virtual ~Practica1();
 
@@ -37,6 +38,8 @@ private:
 
    vector<float> vertices_ply;
    vector<int> caras_ply;
+
+   string file;
 };
 
 #endif

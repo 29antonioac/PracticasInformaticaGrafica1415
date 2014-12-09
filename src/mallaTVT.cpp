@@ -167,8 +167,6 @@ void MallaTVT::CrearVBOs()
       tam_lineas_normales_caras = sizeof(float) * elementos_lineas_normales_caras,
       tam_lineas_normales_vertices = sizeof(float) * elementos_lineas_normales_vertices;
 
-   cout << "Tengo " << num_verts << " vértices y " << tri.size() << " triángulos" << endl;
-
    vbo_vertices = new VBO_Vertices(elementos_vertices, tam_ver, ver.data());
    vbo_triangulos = new VBO_Triangulos(elementos_triangulos, tam_tri, tri.data());
    vbo_colores_vertices = new VBO_Colores(elementos_vertices, tam_ver, colores_vertices.data());
@@ -619,9 +617,14 @@ MallaTVT* MallaTVT::Barrido_Traslacion(const unsigned caras, const float dx, con
    return res;
 }
 
-enum visualizacion MallaTVT::getModo()
+visualizacion MallaTVT::getModoDibujo()
 {
    return modo_dibujo;
+}
+
+normales MallaTVT::getModoNormales()
+{
+   return dibujo_normales;
 }
 
 void MallaTVT::CambioModoDibujo(enum visualizacion modo_dibujo)
@@ -647,4 +650,9 @@ void MallaTVT::CambioColorFijo()
       color_fijo = false;
    else
       color_fijo = true;
+}
+
+bool MallaTVT::ColorFijo()
+{
+   return color_fijo;
 }
