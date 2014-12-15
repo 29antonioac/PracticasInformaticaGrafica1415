@@ -338,5 +338,18 @@ inline Tupla3f operator * ( const Tupla3f & t1, const Tupla3f & t2 )
       );
 }
 
+template <unsigned N, class T>
+inline Tupla<N+1,T> AniadeW(const Tupla<N,T> t, const float w)
+{
+   Tupla<N+1,T> resultado;
+   assert(w == 1.0 || w == 0.0);
+
+   for (unsigned i = 0; i < N; i++)
+      resultado[i] = t[i];
+   resultado[N] = w;
+
+   return resultado;
+}
+
 
 #endif

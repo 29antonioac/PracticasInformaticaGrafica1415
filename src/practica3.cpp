@@ -12,8 +12,9 @@
 #include <vector>
 #include <cmath>
 #include "practica3.hpp"
+
+#include "../inc/MallaTVT.hpp"
 #include "file_ply_stl.hpp"
-#include "mallaTVT.hpp"
 #include "Matriz.hpp"
 
 using std::cout;

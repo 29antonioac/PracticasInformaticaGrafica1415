@@ -4,34 +4,35 @@
 #include "tuplas.hpp"
 
 using std::vector;
+using std::cout;
 
 class FuenteLuz
 {
 protected:
    static unsigned numero_fuentes;
    int id_luz;
-   Tupla3f componente_ambiental, componente_difusa, componente_especular;
+   Tupla4f componente_ambiental, componente_difusa, componente_especular;
 
 public:
    FuenteLuz(Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular);
    virtual void Activar() = 0;
    virtual ~FuenteLuz() {};
+   static unsigned getFuentes() { return numero_fuentes; }
 
 };
 
 class FuenteLuzPosicional : virtual public FuenteLuz
 {
-protected:
-   Tupla3f posicion;
+private:
+   Tupla4f posicion;
 public:
    FuenteLuzPosicional(Tupla3f posicion, Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular);
    void Activar();
-   Tupla3f getPos();
 };
 
 class FuenteLuzDireccional : virtual public FuenteLuz
 {
-protected:
+private:
    float alpha, beta;
 
 public:
@@ -41,7 +42,9 @@ public:
 
 class ColeccionFuentesLuz
 {
+private:
    vector<FuenteLuz *> fuentes;
+public:
    void Activar();
    void Agregar(FuenteLuz * fuente);
 };

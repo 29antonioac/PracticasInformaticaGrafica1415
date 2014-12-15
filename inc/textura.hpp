@@ -2,6 +2,7 @@
 #define TEXTURA_HPP
 
 #include "jpg_imagen.hpp"
+#include <GL/gl.h>
 
 class Textura
 {

@@ -1,4 +1,4 @@
-#include "mallaTVT.hpp"
+#include "../inc/MallaTVT.hpp"
 
 MallaTVT::MallaTVT(vector<GLfloat> vertices, vector<int> caras)
 {

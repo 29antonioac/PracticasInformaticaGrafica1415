@@ -480,6 +480,9 @@ void Animar()
 
    if (practicaActual == practica3)
       practica3->Animar();
+   else if (practicaActual == practica4)
+      practica4->Animar();
+
 
    glutPostRedisplay();
 
@@ -619,7 +622,7 @@ void Inicializar( int argc, char *argv[] )
    practica3->Inicializar(argc, argv);
    practica4->Inicializar(argc, argv);
 
-   practicaActual = practica3;
+   practicaActual = practica4;
 }
 
 // *********************************************************************

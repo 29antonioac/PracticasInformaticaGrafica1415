@@ -11,7 +11,8 @@
 #define __IG_PRACTICA1_HPP__
 
 #include <vector>
-#include "mallaTVT.hpp"
+
+#include "MallaTVT.hpp"
 #include "practica.hpp"
 
 class Practica1 : virtual public Practica

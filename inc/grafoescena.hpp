@@ -6,8 +6,9 @@
 #include <GL/freeglut_ext.h>
 #include <vector>
 #include <iostream>
+
+#include "MallaTVT.hpp"
 #include "Matriz.hpp"
-#include "mallaTVT.hpp"
 
 using std::vector;
 

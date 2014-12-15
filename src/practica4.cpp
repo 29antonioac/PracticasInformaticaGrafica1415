@@ -12,8 +12,9 @@
 #include <vector>
 #include <cmath>
 #include "practica4.hpp"
+
+#include "../inc/MallaTVT.hpp"
 #include "file_ply_stl.hpp"
-#include "mallaTVT.hpp"
 #include "Matriz.hpp"
 #include "FuenteLuz.hpp"
 
@@ -263,17 +264,37 @@ void Practica4::Inicializar( int argc, char *argv[] )
          nodo_parametrizado_traslacion->aniadeHijo(Android);
 
    // Luces, cámara y acción!
-   glMatrixMode(GL_MODELVIEW);
-   glPushMatrix();
 
-   glEnable(GL_LIGHTING);
+   glLightModeli( GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE );
+   glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR ) ;
+   glLightModeli( GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE );
 
-   ColeccionFuentesLuz fuentes;
-   FuenteLuzPosicional * fuenteprueba = new FuenteLuzPosicional(Tupla3f(-7.0,0.0,0.0), Tupla3f (0.5,0.0,0.0), Tupla3f (0.0,0.5,0.4), Tupla3f (1.0,0.2,0.1));
+   //unsigned FuenteLuz::numero_fuentes = 0;
 
-   fuenteprueba->Activar();
+   cout << "Número de fuentes: " << FuenteLuz::getFuentes() << endl;
 
-   glPopMatrix();
+   Tupla3f posicion(-7.0,0.0,0.0);
+   Tupla3f otraposicion(7.0,0.0,0.0);
+
+   //Tupla3f ambiente(0.0,1.0,0.0); Tupla3f difusa(1.0,0.5,0.7); Tupla3f especular(0.0,0.7,0.0);
+
+   Tupla3f ambiente(0.0,0.0,0.0); Tupla3f difusa(1.0,1.0,1.0); Tupla3f especular(1.0,1.0,1.0);
+
+   fuente1 = new FuenteLuzPosicional(posicion, ambiente, difusa, especular); fuentes.Agregar(fuente1);
+
+   cout << "Número de fuentes: " << FuenteLuz::getFuentes() << endl;
+
+   fuente2 = new FuenteLuzPosicional(otraposicion, ambiente, difusa, especular); fuentes.Agregar(fuente2);
+   cout << "Número de fuentes: " << FuenteLuz::getFuentes() << endl;
+
+   Tupla3f comp_emision(0.0,1.0,0.0); Tupla3f comp_amb(0.2,0.2,0.2); Tupla3f comp_dif(0.8,0.8,0.8); Tupla3f comp_esp(0.0,0.0,0.0);
+
+   float exp_esp = 1;
+
+   mat = new Material(comp_emision, comp_amb, comp_dif, comp_esp, exp_esp);
+
+   //fuenteprueba->Activar();
+
 
 
 }
@@ -301,7 +322,22 @@ void Practica4::DibujarObjetos()
 
    }
 
+   glEnable( GL_LIGHTING );
+      glEnable( GL_NORMALIZE );
+      glDisable( GL_COLOR_MATERIAL );
+      //glLightModeli( GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE );
+      //glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR ) ;
+      //glLightModeli( GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE );
+   glMatrixMode(GL_MODELVIEW);
+   glPushMatrix();
+   fuentes.Activar();
+   mat->Activar();
    raiz->Procesa();
+   glPopMatrix();
+
+   glDisable( GL_LIGHTING );
+         glDisable( GL_NORMALIZE );
+         glEnable( GL_COLOR_MATERIAL );
 
 }
 

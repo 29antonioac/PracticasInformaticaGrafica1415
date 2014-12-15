@@ -6,9 +6,9 @@ unsigned FuenteLuz::numero_fuentes = 0;
 
 FuenteLuz::FuenteLuz(Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular)
 {
-   this->componente_ambiental = componente_ambiental;
-   this->componente_difusa = componente_difusa;
-   this->componente_especular = componente_especular;
+   this->componente_ambiental = AniadeW(componente_ambiental,1.0);
+   this->componente_difusa = AniadeW(componente_difusa,1.0);
+   this->componente_especular = AniadeW(componente_especular,1.0);
    this->id_luz = GL_LIGHT0 + numero_fuentes;
    numero_fuentes++;
 }
@@ -16,7 +16,7 @@ FuenteLuz::FuenteLuz(Tupla3f componente_ambiental, Tupla3f componente_difusa, Tu
 FuenteLuzPosicional::FuenteLuzPosicional(Tupla3f posicion, Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular)
    : FuenteLuz::FuenteLuz(componente_ambiental, componente_difusa, componente_especular)
 {
-   this->posicion = posicion;
+   this->posicion = AniadeW(posicion,1.0);
 }
 
 FuenteLuzDireccional::FuenteLuzDireccional(float alpha, float beta, Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular)
@@ -40,18 +40,12 @@ void FuenteLuzPosicional::Activar()
    glLightfv(id_luz, GL_SPECULAR,this->componente_especular.data());
 }
 
-Tupla3f FuenteLuzPosicional::getPos()
-{
-   return posicion;
-}
 
 void ColeccionFuentesLuz::Activar()
 {
    for (unsigned i = 0; i < fuentes.size(); i++)
    {
-      glEnable(GL_LIGHT0 + i);
-      //fuentes[i]->Activar();
-      //glLightfv(GL_LIGHT0 + i, GL_POSITION, fuentes[i]->getPos());
+      fuentes[i]->Activar();
    }
 }
 

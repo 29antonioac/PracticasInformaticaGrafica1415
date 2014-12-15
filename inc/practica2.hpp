@@ -11,7 +11,8 @@
 #define __IG_PRACTICA2_HPP__
 
 #include <vector>
-#include "mallaTVT.hpp"
+
+#include "MallaTVT.hpp"
 #include "practica.hpp"
 
 
