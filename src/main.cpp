@@ -27,6 +27,7 @@
 #include "practica1.hpp"
 #include "practica2.hpp"
 #include "practica3.hpp"
+#include "practica4.hpp"
 
 using std::cout;
 using std::endl;
@@ -70,6 +71,7 @@ Practica    * practicaActual;
 Practica1   * practica1 = new Practica1;
 Practica2   * practica2 = new Practica2;
 Practica3   * practica3 = new Practica3;
+Practica4   * practica4 = new Practica4;
 
 bool debug = false;
 bool ayuda = false;
@@ -386,6 +388,7 @@ void FGE_PulsarTeclaEspecial( int tecla, int x_raton, int y_raton )
          practicaActual = practica3;
          break;
       case GLUT_KEY_F4:
+         practicaActual = practica4;
          break;
       case GLUT_KEY_F5:
          break;
@@ -614,6 +617,7 @@ void Inicializar( int argc, char *argv[] )
    practica1->Inicializar(argc, argv);
    practica2->Inicializar(argc, argv);
    practica3->Inicializar(argc, argv);
+   practica4->Inicializar(argc, argv);
 
    practicaActual = practica3;
 }

@@ -28,7 +28,7 @@ headers             := $(wildcard $(INC)/*.hpp $(INC)/*.hh $(INC)/*.h)
 ##units_ext           :=  main practica1 error-ogl
 comp_version		:= -std=c++11
 
-gl_libs_base        := -lGLEW -lglut -lGLU 
+gl_libs_base        := -lGLEW -lglut -lGLU -ljpeg
 gl_lib_file         := -lGL
 
 gl_lib_file_nv      := /usr/lib/nvidia-331/libGL.so
