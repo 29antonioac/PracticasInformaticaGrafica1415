@@ -68,7 +68,7 @@ Practica4::~Practica4()
 void Practica4::Inicializar( int argc, char *argv[] )
 {
 
-
+/*
    // ----------------- Creamos una semiesfera por revolución -----------------
 
    vector<Tupla3f> vertices_semiesfera;
@@ -296,6 +296,19 @@ void Practica4::Inicializar( int argc, char *argv[] )
    //fuenteprueba->Activar();
 
 
+*/
+
+   // Luces, cámara y acción!
+
+   glLightModeli( GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE );
+   glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR ) ;
+   glLightModeli( GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE );
+
+   // Cargar ply del cuerpo de la lata
+
+
+
+
 
 }
 
@@ -323,21 +336,21 @@ void Practica4::DibujarObjetos()
    }
 
    glEnable( GL_LIGHTING );
-      glEnable( GL_NORMALIZE );
-      glDisable( GL_COLOR_MATERIAL );
-      //glLightModeli( GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE );
-      //glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR ) ;
-      //glLightModeli( GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE );
+   glEnable( GL_NORMALIZE );
+   glDisable( GL_COLOR_MATERIAL );
+
    glMatrixMode(GL_MODELVIEW);
    glPushMatrix();
+   /*
    fuentes.Activar();
    mat->Activar();
    raiz->Procesa();
+   */
    glPopMatrix();
 
    glDisable( GL_LIGHTING );
-         glDisable( GL_NORMALIZE );
-         glEnable( GL_COLOR_MATERIAL );
+   glDisable( GL_NORMALIZE );
+   glEnable( GL_COLOR_MATERIAL );
 
 }
 
@@ -358,6 +371,7 @@ void Practica4::CambioModoNormales()
       this->cilindro->CambioModoNormales();
 }
 
+/*
 void Practica4::CambioGradoLibertad(int grado_libertad)
 {
 
@@ -416,6 +430,7 @@ void Practica4::CambioGradoLibertad(int grado_libertad)
    }
 
 }
+*/
 
 void Practica4::CambioColorFijo()
 {
@@ -487,6 +502,7 @@ bool Practica4::GestionarEvento(unsigned char tecla)
    return redisp;
 }
 
+/*
 void Practica4::Animar()
 {
    if (!(angulo_rotacion_brazos <= 4*M_PI/3
@@ -508,7 +524,7 @@ void Practica4::Animar()
    *rotacion_brazo_derecho = Matriz4x4::RotacionEjeX(-angulo_rotacion_brazos);
    *rotacion_pierna_izquierda = Matriz4x4::RotacionEjeX(angulo_rotacion_piernas);
    *rotacion_pierna_derecha = Matriz4x4::RotacionEjeX(-angulo_rotacion_piernas);
-}
+}*/
 
 void Practica4::Debug()
 {

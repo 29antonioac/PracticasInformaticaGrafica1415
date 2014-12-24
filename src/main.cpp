@@ -246,7 +246,6 @@ void Debug_Ayuda()
    glPopMatrix();
    glMatrixMode(GL_PROJECTION);
    glPopMatrix();
-   glEnable(GL_TEXTURE_2D);
 
 }
 
@@ -480,8 +479,8 @@ void Animar()
 
    if (practicaActual == practica3)
       practica3->Animar();
-   else if (practicaActual == practica4)
-      practica4->Animar();
+   //else if (practicaActual == practica4)
+   //   practica4->Animar();
 
 
    glutPostRedisplay();

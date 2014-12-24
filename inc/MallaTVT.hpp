@@ -13,6 +13,7 @@
 #include "error-ogl.hpp"
 #include "VBO.hpp"
 #include "Matriz.hpp"
+#include "Material.hpp"
 
 using std::cout;
 using std::endl;
@@ -43,6 +44,8 @@ private:
 
    visualizacion modo_dibujo;
    normales dibujo_normales;
+
+   Material * material;
 
    float dimension;
 

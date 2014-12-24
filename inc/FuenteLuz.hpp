@@ -34,7 +34,6 @@ class FuenteLuzDireccional : virtual public FuenteLuz
 {
 private:
    float alpha, beta;
-
 public:
    FuenteLuzDireccional(float alpha, float beta, Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular);
    void Activar();
