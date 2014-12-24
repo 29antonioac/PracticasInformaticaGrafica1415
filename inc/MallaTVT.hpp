@@ -46,6 +46,7 @@ private:
    normales dibujo_normales;
 
    Material * material;
+   vector<pair<Tupla3f,Tupla3f> > coordenadas_textura;
 
    float dimension;
 

@@ -29,6 +29,19 @@ FuenteLuzDireccional::FuenteLuzDireccional(float alpha, float beta, Tupla3f comp
 void FuenteLuzDireccional::Activar()
 {
    glEnable(id_luz);
+
+   const float[4] ejeZ = {0.0,0.0,1.0,0.0}
+
+   glMatrixMode(GL_MODELVIEW);
+   glPushMatrix();
+
+   	   glLoadIdentity();
+
+   	   glRotatef(this->alpha, 0.0,1.0,0.0);
+   	   glRotatef(this->beta, -1.0,0.0,0.0);
+   	   glLightf(id_luz, GL_POSITION, ejeZ);
+
+   glPopMatrix();
 }
 
 void FuenteLuzPosicional::Activar()
