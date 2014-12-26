@@ -20,7 +20,7 @@ using std::vector;
 
 Practica1::Practica1()
 {
-   malla = NULL;
+   malla = nullptr;
 }
 
 Practica1::~Practica1()

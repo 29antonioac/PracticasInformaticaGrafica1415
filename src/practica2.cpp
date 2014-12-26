@@ -19,7 +19,7 @@ using std::string;
 
 Practica2::Practica2()
 {
-   malla = NULL;
+   malla = nullptr;
 }
 
 Practica2::~Practica2()

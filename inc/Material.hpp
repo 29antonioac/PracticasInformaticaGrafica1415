@@ -13,7 +13,7 @@ private:
 
 public:
    Material(Tupla3f componente_emision, Tupla3f componente_ambiental, Tupla3f componente_difusa,
-         Tupla3f componente_especular, float exponente_especular, Textura * textura = NULL);
+         Tupla3f componente_especular, float exponente_especular, Textura * textura = nullptr);
    void Activar();
 };
 

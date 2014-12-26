@@ -25,4 +25,13 @@ void Material::Activar()
    glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
    glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+
+   //std::cout << "Material activado" << std::endl;
+   if (textura != nullptr)
+   {
+      //std::cout << "Activando textura" << std::endl;
+      textura->Activar();
+   }
+   //else
+      //glDisable(GL_TEXTURE_2D);
 }

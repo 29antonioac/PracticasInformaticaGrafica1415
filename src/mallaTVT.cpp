@@ -1,8 +1,7 @@
-#include "../inc/MallaTVT.hpp"
+#include "MallaTVT.hpp"
 
-MallaTVT::MallaTVT(vector<GLfloat> vertices, vector<int> caras)
+MallaTVT::MallaTVT(vector<GLfloat> vertices, vector<int> caras, Material * material)
 {
-
    // Pasamos los vértices a vector de Tupla3f
    for (unsigned i = 0; i < vertices.size(); i+=3)
    {
@@ -22,13 +21,13 @@ MallaTVT::MallaTVT(vector<GLfloat> vertices, vector<int> caras)
       tri.push_back(cara);
    }
 
+   this->material = material;
 
    Inicializar();
 }
 
-MallaTVT::MallaTVT(vector<Tupla3f> vertices, vector<Tupla3i> caras)
+MallaTVT::MallaTVT(vector<Tupla3f> vertices, vector<Tupla3i> caras, Material * material)
 {
-
    ver = vertices;
 
    // Pasamos las caras a vectores de Tupla3f
@@ -42,7 +41,61 @@ MallaTVT::MallaTVT(vector<Tupla3f> vertices, vector<Tupla3i> caras)
       tri.push_back(caras[i]);
    }
 
+   this->material = material;
+
    Inicializar();
+}
+/*
+MallaTVT::MallaTVT(vector<Tupla3f> vertices, Material * material)
+{
+   ver = vertices;
+
+   this->material = material;
+
+   Inicializar();
+}*/
+
+MallaTVT::MallaTVT(MallaTVT * malla)
+{
+   // Copiar vértices y triángulos
+   this->ver = malla->ver;
+   this->tri = malla->tri;
+
+   // Copiar colores, normales y baricentros
+   this->colores_vertices  = malla->colores_vertices;
+   this->normales_vertices = malla->normales_vertices;
+   this->normales_caras    = malla->normales_caras;
+   this->baricentros       = malla->baricentros;
+
+   // Copiar líneas de las normales
+   this->lineas_normales_caras      = malla->lineas_normales_caras;
+   this->lineas_normales_vertices   = malla->lineas_normales_vertices;
+
+   // Copiar VBO (copia NO profunda, se copian punteros)
+   this->vbo_vertices                  = malla->vbo_vertices;
+   this->vbo_triangulos                = malla->vbo_triangulos;
+   this->vbo_colores_vertices          = malla->vbo_colores_vertices;
+   this->vbo_normales_vertices         = malla->vbo_normales_vertices;
+   this->vbo_lineas_normales_caras     = malla->vbo_lineas_normales_caras;
+   this->vbo_lineas_normales_vertices  = malla->vbo_lineas_normales_vertices;
+
+   // Copiar modo de dibujo y de normales
+   this->modo_dibujo       = malla->modo_dibujo;
+   this->dibujo_normales   = malla-> dibujo_normales;
+
+   // Copiar material (copia NO profunda, se copia puntero)
+   this->material = malla->material;
+
+   // Copiar coordenadas de textura, dimensión y booleano de color fijo
+   this->coordenadas_textura = malla->coordenadas_textura;
+   this->dimension      = malla->dimension;
+   this->color_fijo     = malla->color_fijo;
+
+}
+
+void MallaTVT::SetMaterial(Material * material)
+{
+   this->material = material;
 }
 
 void MallaTVT::Inicializar()
@@ -180,40 +233,15 @@ void MallaTVT::Visualizar()
 {
    glColor3fv(color_primario.data());
 
-   switch (modo_dibujo)
-   {
-      case ALAMBRE:
-         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-         break;
-      case PUNTOS:
-         break;
-      case SOLIDO:
-      case AJEDREZ:
-      case SOLIDO_CARAS:
-         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-         break;
-      default:
-         cout << "Enumerado inválido para modo_dibujo" << endl;
-         exit(-3);
-         break;
+   bool color_vertices = false;
+   bool normal_vertices = false;
 
-   }
-   if (modo_dibujo == SOLIDO_CARAS)
-   {
-      VisualizarModoInmediato();
-   }
-   else
-   {
-      bool color_vertices = false;
-      bool normal_vertices = false;
+   // Pendiente de reorganizar
 
-      // Ver si usamos array de colores o vértices
-      if (!color_fijo && !colores_vertices.empty())
-      {
-         color_vertices = true;
-         vbo_colores_vertices->Activar();
-      }
-
+   if (material != nullptr)
+   {
+      material->Activar();
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       if (!normales_vertices.empty())
       {
          normal_vertices = true;
@@ -222,15 +250,65 @@ void MallaTVT::Visualizar()
 
       vbo_vertices->Activar();
 
-      if (modo_dibujo == PUNTOS)
+
+      vbo_triangulos->Visualizar(modo_dibujo, color_primario, color_secundario);
+
+   }
+   else
+   {
+
+      // -----------------
+
+      switch (modo_dibujo)
       {
-         vbo_vertices->Visualizar();
+         case ALAMBRE:
+            glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+            break;
+         case PUNTOS:
+            break;
+         case SOLIDO:
+         case AJEDREZ:
+         case SOLIDO_CARAS:
+            glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+            break;
+         default:
+            cout << "Enumerado inválido para modo_dibujo" << endl;
+            exit(-3);
+            break;
+
+      }
+      if (modo_dibujo == SOLIDO_CARAS)
+      {
+         VisualizarModoInmediato();
       }
       else
       {
-         vbo_triangulos->Visualizar(modo_dibujo, color_primario, color_secundario);
-      }
 
+
+         // Ver si usamos array de colores o vértices
+         if (!color_fijo && !colores_vertices.empty())
+         {
+            color_vertices = true;
+            vbo_colores_vertices->Activar();
+         }
+
+         if (!normales_vertices.empty())
+         {
+            normal_vertices = true;
+            vbo_normales_vertices->Activar();
+         }
+
+         vbo_vertices->Activar();
+
+         if (modo_dibujo == PUNTOS)
+         {
+            vbo_vertices->Visualizar();
+         }
+         else
+         {
+            vbo_triangulos->Visualizar(modo_dibujo, color_primario, color_secundario);
+         }
+      }
       if (color_vertices)
          glDisableClientState( GL_COLOR_ARRAY );
       if (normal_vertices)
@@ -246,6 +324,7 @@ void MallaTVT::Visualizar()
    {
       VisualizarNormalesVertices();
    }
+
 
 }
 

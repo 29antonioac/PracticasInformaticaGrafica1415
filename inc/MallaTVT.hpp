@@ -63,15 +63,18 @@ private:
 
 
 public:
-   MallaTVT(vector<GLfloat> vertices, vector<int> caras = vector<int>() );
-   MallaTVT(vector<Tupla3f> vertices, vector<Tupla3i> caras = vector<Tupla3i>());
+   MallaTVT(vector<GLfloat> vertices, vector<int> caras = vector<int>(), Material * material = nullptr);
+   MallaTVT(vector<Tupla3f> vertices, vector<Tupla3i> caras = vector<Tupla3i>(), Material * material = nullptr);
+   //MallaTVT(vector<Tupla3f> vertices, Material * material = nullptr);
+   MallaTVT(MallaTVT * malla);
+   void SetMaterial(Material * material);
    void Visualizar();
    MallaTVT* Revolucion(const unsigned caras);
    MallaTVT* Barrido_Rotacion(const unsigned caras);
    MallaTVT* Barrido_Traslacion(const unsigned caras, const float dx, const float dy, const float dz);
    visualizacion getModoDibujo();
    normales getModoNormales();
-   void CambioModoDibujo ( enum visualizacion modo ) ;
+   void CambioModoDibujo ( visualizacion modo ) ;
    void CambioModoNormales();
    void CambioColorFijo();
    bool ColorFijo();

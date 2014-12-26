@@ -40,7 +40,7 @@ void NodoGrafoEscena::aniadeHijo( NodoGrafoEscena* nodo )
 NodoTerminal::NodoTerminal(figuras figura)
 {
    this->figura = figura;
-   this->malla = NULL;
+   this->malla = nullptr;
 }
 
 NodoTerminal::NodoTerminal(MallaTVT * malla)
@@ -51,7 +51,7 @@ NodoTerminal::NodoTerminal(MallaTVT * malla)
 
 void NodoTerminal::Procesa()
 {
-   if (malla == NULL)
+   if (malla == nullptr)
    {
       if (figura == ICOSAEDRO)
          glutSolidIcosahedron();

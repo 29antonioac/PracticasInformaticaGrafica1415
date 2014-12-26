@@ -40,8 +40,12 @@ public:
 private:
    visualizacion modo_dibujo;
 
+   MallaTVT * peon_madera, * peon_blanco, * peon_negro, * cuerpo_lata, * tapa;
+   NodoGrafoEscena * raiz;
+   Material * material_peon_blanco, * material_peon_negro, * material_peon_madera, * material_cuerpo_lata, * material_tapa;
 
-   FuenteLuzPosicional * fuente1, * fuente2;
+   FuenteLuzPosicional * fuente_posicional;
+   FuenteLuzDireccional* fuente_direccional;
    ColeccionFuentesLuz fuentes;
 
 };

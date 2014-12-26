@@ -37,9 +37,9 @@ inline T signo (T valor)
 Practica3::Practica3()
 {
    modo_dibujo = ALAMBRE;
-   raiz = NULL;
-   semiesfera = NULL;
-   cilindro = NULL;
+   raiz = nullptr;
+   semiesfera = nullptr;
+   cilindro = nullptr;
 
    angulo_rotacion_cuerpo = M_PI;
    angulo_rotacion_brazos = M_PI;
@@ -48,7 +48,7 @@ Practica3::Practica3()
    direccion_rotacion_brazos = direccion_rotacion_piernas = 1;
    distancia_eje_Y = velocidad_angular_cuerpo = velocidad_angular_brazos = velocidad_angular_piernas = 0;
 
-   rotacion_cuerpo = rotacion_brazo_izquierdo = rotacion_brazo_derecho = rotacion_pierna_izquierda = rotacion_pierna_derecha = traslacion = NULL;
+   rotacion_cuerpo = rotacion_brazo_izquierdo = rotacion_brazo_derecho = rotacion_pierna_izquierda = rotacion_pierna_derecha = traslacion = nullptr;
 }
 
 Practica3::~Practica3()
@@ -301,17 +301,17 @@ void Practica3::DibujarObjetos()
 void Practica3::CambioModoDibujo(visualizacion modo_dibujo)
 {
    this->modo_dibujo = modo_dibujo;
-   if (this->semiesfera != NULL)
+   if (this->semiesfera != nullptr)
       this->semiesfera->CambioModoDibujo(this->modo_dibujo);
-   if (this->cilindro != NULL)
+   if (this->cilindro != nullptr)
       this->cilindro->CambioModoDibujo(this->modo_dibujo);
 }
 
 void Practica3::CambioModoNormales()
 {
-   if (this->semiesfera != NULL)
+   if (this->semiesfera != nullptr)
       this->semiesfera->CambioModoNormales();
-   if (this->cilindro != NULL)
+   if (this->cilindro != nullptr)
       this->cilindro->CambioModoNormales();
 }
 
@@ -376,9 +376,9 @@ void Practica3::CambioGradoLibertad(int grado_libertad)
 
 void Practica3::CambioColorFijo()
 {
-   if (this->semiesfera != NULL)
+   if (this->semiesfera != nullptr)
       this->semiesfera->CambioColorFijo();
-   if (this->cilindro != NULL)
+   if (this->cilindro != nullptr)
       this->cilindro->CambioColorFijo();
 }
 

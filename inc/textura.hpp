@@ -3,6 +3,9 @@
 
 #include "jpg_imagen.hpp"
 #include <GL/gl.h>
+#include <string>
+
+using std::string;
 
 class Textura
 {
@@ -12,6 +15,7 @@ private:
    unsigned modo_generacion_coordenadas_textura;
    float cs[4], ct[4];
 public:
+   Textura (string archivo, unsigned modo_generacion_coordenadas_textura, float cs[4], float ct[4]);
    void Activar();
 };
 

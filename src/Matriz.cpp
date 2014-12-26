@@ -197,13 +197,6 @@ Matriz4x4 Matriz4x4::RotacionEje(const float angulo, const Tupla3f eje)
    return Matriz4x4::RotacionEje(angulo, eje[X], eje[Y], eje[Z]);
 }
 
-/*Matriz4x4 Matriz4x4::RotacionPunto(const float angulo, const Tupla3f punto, const Tupla3f origen)
-{
-   Matriz4x4 traslacion_origen = Matriz4x4::Traslacion(punto[X]-origen[X], punto[Y] - origen[Y], punto[Z] - origen[Z]);
-   Matriz4x4 rotacion = Matriz4x4::Rotacion
-   return Matriz4x4::Traslacion()
-}*/
-
 Matriz4x4 Matriz4x4::Escalado(const float sx, const float sy, const float sz)
 {
    float m[4][4] = {

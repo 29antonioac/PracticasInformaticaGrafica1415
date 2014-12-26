@@ -38,20 +38,13 @@ inline T signo (T valor)
 Practica4::Practica4()
 {
    modo_dibujo = ALAMBRE;
-   /*
-   raiz = NULL;
-   semiesfera = NULL;
-   cilindro = NULL;
 
-   angulo_rotacion_cuerpo = M_PI;
-   angulo_rotacion_brazos = M_PI;
-   angulo_rotacion_piernas = M_PI;
-
-   direccion_rotacion_brazos = direccion_rotacion_piernas = 1;
-   distancia_eje_Y = velocidad_angular_cuerpo = velocidad_angular_brazos = velocidad_angular_piernas = 0;
-
-   rotacion_cuerpo = rotacion_brazo_izquierdo = rotacion_brazo_derecho = rotacion_pierna_izquierda = rotacion_pierna_derecha = traslacion = NULL;
-*/
+   fuente_posicional = nullptr;
+   fuente_direccional = nullptr;
+   peon_madera = peon_blanco = peon_negro = cuerpo_lata = tapa = nullptr;
+   raiz = nullptr;
+   material_peon_madera = material_peon_blanco = material_peon_negro =
+         material_cuerpo_lata = material_tapa = nullptr;
 
 }
 
@@ -79,10 +72,100 @@ void Practica4::Inicializar( int argc, char *argv[] )
    glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR ) ;
    glLightModeli( GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE );
 
+   float alpha = M_PI / 6;
+   float beta = alpha;
+   Tupla3f luz_componente_ambiental(1.0,1.0,1.0);
+   Tupla3f luz_componente_difusa(0.2,0.4,0.5);
+   Tupla3f luz_componente_especular(0.5,0.5,0.5);
+
+   fuente_direccional = new FuenteLuzDireccional(alpha, beta, luz_componente_ambiental, luz_componente_difusa, luz_componente_especular);
+   fuentes.Agregar(fuente_direccional);
+
    // Cargar ply del cuerpo de la lata
 
+   // Cargar ply del peón
+   vector<GLfloat> vertices_ply_peon, vertices_ply_lata, vertices_ply_tapa;
+   ply::read_vertices("PLY/peon.ply", vertices_ply_peon);
+
+   // Crear material del peon blanco (sin textura, material puramente difuso sin brillo especular)
+   Tupla3f peon_blanco_componente_emision(0.9,0.9,0.9);  // Color blanco
+   Tupla3f peon_blanco_componente_ambiental(0.0,0.0,0.0);
+   Tupla3f peon_blanco_componente_difusa(0.8,0.8,0.8);
+   Tupla3f peon_blanco_componente_especular(0.0,0.0,0.0);
+   float peon_blanco_exponente_especular = 0.0;
+
+   material_peon_blanco = new Material(peon_blanco_componente_emision, peon_blanco_componente_ambiental,
+         peon_blanco_componente_difusa, peon_blanco_componente_especular, peon_blanco_exponente_especular);
+
+   // Crear material del peón negro (sin textura, material especular sin apenas reflectividad difusa)
+   Tupla3f peon_negro_componente_emision(0.0,0.0,0.0);  // Color negro
+   Tupla3f peon_negro_componente_ambiental(0.0,0.0,0.0);
+   Tupla3f peon_negro_componente_difusa(0.1,0.1,0.1);
+   Tupla3f peon_negro_componente_especular(1.0,1.0,1.0);
+   float peon_negro_exponente_especular = 30.0;
+
+   material_peon_negro = new Material(peon_negro_componente_emision, peon_negro_componente_ambiental,
+         peon_negro_componente_difusa, peon_negro_componente_especular, peon_negro_exponente_especular);
+
+   // Crear material del peón de madera (con textura generada automáticamente, material difuso-especular)
+   Tupla3f peon_madera_componente_emision(0.0,0.0,0.0);  // El color da igual (hay textura)
+   Tupla3f peon_madera_componente_ambiental(0.0,0.0,0.0);
+   Tupla3f peon_madera_componente_difusa(0.1,0.1,0.1);
+   Tupla3f peon_madera_componente_especular(1.0,1.0,1.0);
+   float peon_madera_exponente_especular = 30.0;
+
+   float cs[4] = {1.0,0.0,0.0,0.0}; // Vector ex
+   float ct[4] = {0.0,1.0,0.0,0.0}; // Vector ey
+
+   Textura * textura_peon_madera = new Textura("img/text-madera.jpg",1,cs,ct);
 
 
+
+   material_peon_madera = new Material(peon_madera_componente_emision, peon_madera_componente_ambiental,
+         peon_madera_componente_difusa, peon_madera_componente_especular, peon_madera_exponente_especular,textura_peon_madera);
+
+
+
+
+   // Crear peones
+/*
+   peon_blanco = new MallaTVT(vertices_ply_peon);
+   peon_blanco = peon_blanco->Revolucion(20);
+   peon_blanco->SetMaterial(material_peon_blanco);
+
+
+   peon_negro = new MallaTVT(vertices_ply_peon);
+   peon_negro = peon_negro->Revolucion(20);
+   peon_negro->SetMaterial(material_peon_negro);
+*/
+   peon_madera = new MallaTVT(vertices_ply_peon);
+   peon_madera = peon_madera->Revolucion(20);
+   peon_madera->SetMaterial(material_peon_madera);
+
+
+
+   raiz = new NodoGrafoEscena;
+   NodoGrafoEscena * nodo_traslacion_peon_madera = new NodoTransformacion(Matriz4x4::RotacionEjeY(-M_PI/2) * Matriz4x4::Traslacion(0.0,0.0,3.0));
+   NodoGrafoEscena * nodo_traslacion_peon_blanco = new NodoTransformacion(Matriz4x4::Traslacion(0.0,0.0,2.0));
+   NodoGrafoEscena * nodo_traslacion_peon_negro = new NodoTransformacion(Matriz4x4::RotacionEjeY(M_PI/2) * Matriz4x4::Traslacion(0.0,0.0,3.0));
+   //NodoGrafoEscena * nodo_peon_blanco = new NodoTerminal(peon_blanco);
+   //NodoGrafoEscena * nodo_peon_negro = new NodoTerminal(peon_negro);
+   NodoGrafoEscena * nodo_peon_madera = new NodoTerminal(peon_madera);
+
+   /*
+   raiz->aniadeHijo(nodo_traslacion_peon_blanco);
+      nodo_traslacion_peon_blanco->aniadeHijo(nodo_peon_blanco);
+
+   raiz->aniadeHijo(nodo_traslacion_peon_negro);
+      nodo_traslacion_peon_negro->aniadeHijo(nodo_peon_negro);
+      */
+
+   raiz->aniadeHijo(nodo_traslacion_peon_madera);
+      nodo_traslacion_peon_madera->aniadeHijo(nodo_peon_madera);
+
+
+
+      glEnable( GL_TEXTURE_2D );
 
 
 }
@@ -90,6 +173,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
 void Practica4::DibujarObjetos()
 {
+   /*
    switch (modo_dibujo)
    {
       case ALAMBRE:
@@ -108,19 +192,20 @@ void Practica4::DibujarObjetos()
          exit(-3);
          break;
 
-   }
+   }*/
 
    glEnable( GL_LIGHTING );
    glEnable( GL_NORMALIZE );
+   //glEnable( GL_TEXTURE_2D );
    glDisable( GL_COLOR_MATERIAL );
 
-   glMatrixMode(GL_MODELVIEW);
-   glPushMatrix();
-
-   glPopMatrix();
+   // Dibujar aquí
+   fuentes.Activar();
+   raiz->Procesa();
 
    glDisable( GL_LIGHTING );
    glDisable( GL_NORMALIZE );
+   //glDisable(GL_TEXTURE_2D);
    glEnable( GL_COLOR_MATERIAL );
 
 }
@@ -191,11 +276,12 @@ void Practica4::Debug()
    debug_strings.push_back(string("Angulo de rotacion brazos: " + to_string(angulo_rotacion_brazos)));
    debug_strings.push_back(string("Angulo de rotacion cuerpo: " + to_string(angulo_rotacion_cuerpo)));
    debug_strings.push_back(string("Distancia al eje Y: " + to_string(distancia_eje_Y)));
-   debug_strings.push_back(string("Modo de normales: " + enumToString(semiesfera->getModoNormales())));
+   */
+   debug_strings.push_back(string("Modo de normales: " + enumToString(peon_madera->getModoNormales())));
    debug_strings.push_back(string("Color fijo: " + str_color_fijo));
    debug_strings.push_back(string("Modo de dibujo: " + enumToString(modo_dibujo)));
-   debug_strings.push_back(string("Practica 3"));
-   */
+   debug_strings.push_back(string("Practica 4"));
+
    void * font = GLUT_BITMAP_9_BY_15;
 
    unsigned num_lineas = 0;
