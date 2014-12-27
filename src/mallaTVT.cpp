@@ -240,8 +240,8 @@ void MallaTVT::Visualizar()
 
    if (material != nullptr)
    {
-      material->Activar();
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
       if (!normales_vertices.empty())
       {
          normal_vertices = true;
@@ -250,6 +250,7 @@ void MallaTVT::Visualizar()
 
       vbo_vertices->Activar();
 
+      material->Activar();
 
       vbo_triangulos->Visualizar(modo_dibujo, color_primario, color_secundario);
 

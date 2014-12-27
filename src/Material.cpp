@@ -20,18 +20,19 @@ void Material::Activar()
    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, componente_especular.data());
    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, exponente_especular);
 
-   glColorMaterial(GL_FRONT_AND_BACK, GL_EMISSION);
-   glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-   glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-   glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
-   glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-
-   //std::cout << "Material activado" << std::endl;
-   if (textura != nullptr)
+   if (textura == nullptr)
    {
-      //std::cout << "Activando textura" << std::endl;
+      glDisable(GL_TEXTURE_2D);
+      glColorMaterial(GL_FRONT_AND_BACK, GL_EMISSION);
+      glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
+      glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+      glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
+      glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+   }
+   else
+   {
+      glEnable(GL_TEXTURE_2D);
       textura->Activar();
    }
-   //else
-      //glDisable(GL_TEXTURE_2D);
+
 }

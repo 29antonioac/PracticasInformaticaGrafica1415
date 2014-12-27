@@ -17,14 +17,10 @@ Textura::Textura(string archivo, unsigned modo_generacion_coordenadas_textura, f
    }
 
    glGenTextures(1, &id_textura);
+   glBindTexture(GL_TEXTURE_2D, id_textura);
+   // Crear mipmaps de textura
    gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, img->tamX(), img->tamY(), GL_RGB, GL_UNSIGNED_BYTE, img->leerPixels());
-}
-
-void Textura::Activar()
-{
-   //glEnable(GL_TEXTURE_2D);
-   gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, img->tamX(), img->tamY(), GL_RGB, GL_UNSIGNED_BYTE, img->leerPixels());
-
+   // Generar texturas
    if (modo_generacion_coordenadas_textura == 0)
    {
       // Desactivada generación automática, usar tabla de coordenadas de textura
@@ -50,5 +46,15 @@ void Textura::Activar()
       glTexGenfv(GL_S, GL_EYE_PLANE, cs);
       glTexGenfv(GL_T, GL_EYE_PLANE, ct);
    }
+   //--------------------
+   glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Textura::Activar()
+{
+   glEnable(GL_TEXTURE_2D);
+
    glBindTexture(GL_TEXTURE_2D, id_textura);
+
+
 }

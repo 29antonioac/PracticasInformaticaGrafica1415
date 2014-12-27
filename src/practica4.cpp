@@ -108,7 +108,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
          peon_negro_componente_difusa, peon_negro_componente_especular, peon_negro_exponente_especular);
 
    // Crear material del peón de madera (con textura generada automáticamente, material difuso-especular)
-   Tupla3f peon_madera_componente_emision(0.0,0.0,0.0);  // El color da igual (hay textura)
+   Tupla3f peon_madera_componente_emision(1.0,1.0,1.0);  // El color da igual (hay textura)
    Tupla3f peon_madera_componente_ambiental(0.0,0.0,0.0);
    Tupla3f peon_madera_componente_difusa(0.1,0.1,0.1);
    Tupla3f peon_madera_componente_especular(1.0,1.0,1.0);
@@ -119,8 +119,6 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
    Textura * textura_peon_madera = new Textura("img/text-madera.jpg",1,cs,ct);
 
-
-
    material_peon_madera = new Material(peon_madera_componente_emision, peon_madera_componente_ambiental,
          peon_madera_componente_difusa, peon_madera_componente_especular, peon_madera_exponente_especular,textura_peon_madera);
 
@@ -128,44 +126,38 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
 
    // Crear peones
-/*
+
    peon_blanco = new MallaTVT(vertices_ply_peon);
    peon_blanco = peon_blanco->Revolucion(20);
    peon_blanco->SetMaterial(material_peon_blanco);
 
-
    peon_negro = new MallaTVT(vertices_ply_peon);
    peon_negro = peon_negro->Revolucion(20);
    peon_negro->SetMaterial(material_peon_negro);
-*/
+
    peon_madera = new MallaTVT(vertices_ply_peon);
    peon_madera = peon_madera->Revolucion(20);
    peon_madera->SetMaterial(material_peon_madera);
-
 
 
    raiz = new NodoGrafoEscena;
    NodoGrafoEscena * nodo_traslacion_peon_madera = new NodoTransformacion(Matriz4x4::RotacionEjeY(-M_PI/2) * Matriz4x4::Traslacion(0.0,0.0,3.0));
    NodoGrafoEscena * nodo_traslacion_peon_blanco = new NodoTransformacion(Matriz4x4::Traslacion(0.0,0.0,2.0));
    NodoGrafoEscena * nodo_traslacion_peon_negro = new NodoTransformacion(Matriz4x4::RotacionEjeY(M_PI/2) * Matriz4x4::Traslacion(0.0,0.0,3.0));
-   //NodoGrafoEscena * nodo_peon_blanco = new NodoTerminal(peon_blanco);
-   //NodoGrafoEscena * nodo_peon_negro = new NodoTerminal(peon_negro);
+   NodoGrafoEscena * nodo_peon_blanco = new NodoTerminal(peon_blanco);
+   NodoGrafoEscena * nodo_peon_negro = new NodoTerminal(peon_negro);
    NodoGrafoEscena * nodo_peon_madera = new NodoTerminal(peon_madera);
 
-   /*
+
    raiz->aniadeHijo(nodo_traslacion_peon_blanco);
       nodo_traslacion_peon_blanco->aniadeHijo(nodo_peon_blanco);
 
    raiz->aniadeHijo(nodo_traslacion_peon_negro);
       nodo_traslacion_peon_negro->aniadeHijo(nodo_peon_negro);
-      */
+
 
    raiz->aniadeHijo(nodo_traslacion_peon_madera);
       nodo_traslacion_peon_madera->aniadeHijo(nodo_peon_madera);
-
-
-
-      glEnable( GL_TEXTURE_2D );
 
 
 }
@@ -173,30 +165,8 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
 void Practica4::DibujarObjetos()
 {
-   /*
-   switch (modo_dibujo)
-   {
-      case ALAMBRE:
-         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-         break;
-      case PUNTOS:
-         glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-         break;
-      case SOLIDO:
-      case AJEDREZ:
-      case SOLIDO_CARAS:
-         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-         break;
-      default:
-         cout << "Enumerado inválido para modo_dibujo" << endl;
-         exit(-3);
-         break;
-
-   }*/
-
    glEnable( GL_LIGHTING );
    glEnable( GL_NORMALIZE );
-   //glEnable( GL_TEXTURE_2D );
    glDisable( GL_COLOR_MATERIAL );
 
    // Dibujar aquí
@@ -205,7 +175,6 @@ void Practica4::DibujarObjetos()
 
    glDisable( GL_LIGHTING );
    glDisable( GL_NORMALIZE );
-   //glDisable(GL_TEXTURE_2D);
    glEnable( GL_COLOR_MATERIAL );
 
 }
