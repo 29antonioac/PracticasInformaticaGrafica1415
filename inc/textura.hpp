@@ -17,6 +17,7 @@ private:
 public:
    Textura (string archivo, unsigned modo_generacion_coordenadas_textura, float cs[4], float ct[4]);
    bool Activar();
+   unsigned getModo();
 };
 
 #endif

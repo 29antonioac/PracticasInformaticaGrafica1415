@@ -39,10 +39,10 @@ bool Material::Activar()
    return respuesta;
 }
 
-bool Material::HayTextura()
+bool Material::NecesitoCoordenadasTextura()
 {
-   if (textura == nullptr)
-      return false;
-   else
+   if (textura != nullptr && textura->getModo() == 0)
       return true;
+   else
+      return false;
 }
