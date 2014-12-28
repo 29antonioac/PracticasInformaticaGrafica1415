@@ -232,6 +232,7 @@ void MallaTVT::Visualizar()
 
    bool color_vertices = false;
    bool normal_vertices = false;
+   bool coordenadas_textura;
 
    // Pendiente de reorganizar
 
@@ -247,7 +248,9 @@ void MallaTVT::Visualizar()
 
       vbo_vertices->Activar();
 
-      material->Activar();
+      coordenadas_textura = material->Activar();
+
+      if (coordenadas_textura) vbo_coordenadas_textura->Activar();
 
       vbo_triangulos->Visualizar(modo_dibujo, color_primario, color_secundario);
 
@@ -255,7 +258,6 @@ void MallaTVT::Visualizar()
    else
    {
       glDisable(GL_TEXTURE_2D);
-      // -----------------
 
       switch (modo_dibujo)
       {
@@ -311,6 +313,8 @@ void MallaTVT::Visualizar()
          glDisableClientState( GL_COLOR_ARRAY );
       if (normal_vertices)
          glDisableClientState( GL_NORMAL_ARRAY );
+      if (coordenadas_textura)
+         glDisableClientState( GL_TEXTURE_COORD_ARRAY );
    }
 
    if (dibujo_normales == AMBAS || dibujo_normales == CARAS )

@@ -12,8 +12,9 @@ Material::Material(Tupla3f componente_emision, Tupla3f componente_ambiental,
    this->exponente_especular = exponente_especular;
 }
 
-void Material::Activar()
+bool Material::Activar()
 {
+   bool respuesta = false;
    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, componente_emision.data());
    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, componente_ambiental.data());
    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, componente_difusa.data());
@@ -32,7 +33,16 @@ void Material::Activar()
    else
    {
       glEnable(GL_TEXTURE_2D);
-      textura->Activar();
+      respuesta = textura->Activar();
    }
 
+   return respuesta;
+}
+
+bool Material::HayTextura()
+{
+   if (textura == nullptr)
+      return false;
+   else
+      return true;
 }

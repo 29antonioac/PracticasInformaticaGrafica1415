@@ -27,7 +27,6 @@ Textura::Textura(string archivo, unsigned modo_generacion_coordenadas_textura, f
    }
    else if (modo_generacion_coordenadas_textura == 1) // Generación de coordenadas en coordenadas de objeto
    {
-      std::cout << "Activo textura" << std::endl;
       glEnable(GL_TEXTURE_GEN_S);
       glEnable(GL_TEXTURE_GEN_T);
       glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
@@ -50,11 +49,16 @@ Textura::Textura(string archivo, unsigned modo_generacion_coordenadas_textura, f
    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Textura::Activar()
+bool Textura::Activar()
 {
    glEnable(GL_TEXTURE_2D);
 
    glBindTexture(GL_TEXTURE_2D, id_textura);
+
+   if (modo_generacion_coordenadas_textura == 0)
+      return true;
+   else
+      return false;
 
 
 }
