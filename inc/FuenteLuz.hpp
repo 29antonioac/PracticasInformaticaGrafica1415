@@ -37,6 +37,10 @@ private:
 public:
    FuenteLuzDireccional(float alpha, float beta, Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular);
    void Activar();
+   float getAlpha();
+   float getBeta();
+   void ModificaAlpha(int signo);
+   void ModificaBeta(int signo);
 };
 
 class ColeccionFuentesLuz

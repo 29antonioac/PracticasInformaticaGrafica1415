@@ -44,6 +44,31 @@ void FuenteLuzDireccional::Activar()
    glPopMatrix();
 }
 
+void FuenteLuzDireccional::ModificaAlpha(int signo)
+{
+	assert(signo == 1 || signo == -1);
+	//if (alpha > 2*M_PI) alpha -= 2*M_PI;
+	//else if (alpha < -2*M_PI) alpha += 2*M_PI;
+	alpha += signo*M_PI/6;
+}
+
+void FuenteLuzDireccional::ModificaBeta(int signo)
+{
+	assert(signo == 1 || signo == -1);
+	//if (beta > 2*M_PI) beta -= 2*M_PI;
+	//else if (beta < -2*M_PI) beta += 2*M_PI;
+	beta += signo*M_PI/6;
+}
+
+float FuenteLuzDireccional::getAlpha()
+{
+   return alpha;
+}
+float FuenteLuzDireccional::getBeta()
+{
+   return beta;
+}
+
 void FuenteLuzPosicional::Activar()
 {
    glEnable(id_luz);

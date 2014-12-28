@@ -88,9 +88,9 @@ void Practica4::Inicializar( int argc, char *argv[] )
    ply::read_vertices("PLY/peon.ply", vertices_ply_peon);
 
    // Crear material del peon blanco (sin textura, material puramente difuso sin brillo especular)
-   Tupla3f peon_blanco_componente_emision(0.9,0.9,0.9);  // Color blanco
+   Tupla3f peon_blanco_componente_emision(0.8,0.8,0.8);  // Color blanco
    Tupla3f peon_blanco_componente_ambiental(0.0,0.0,0.0);
-   Tupla3f peon_blanco_componente_difusa(0.8,0.8,0.8);
+   Tupla3f peon_blanco_componente_difusa(0.4,0.4,0.4);
    Tupla3f peon_blanco_componente_especular(0.0,0.0,0.0);
    float peon_blanco_exponente_especular = 0.0;
 
@@ -108,7 +108,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
          peon_negro_componente_difusa, peon_negro_componente_especular, peon_negro_exponente_especular);
 
    // Crear material del peón de madera (con textura generada automáticamente, material difuso-especular)
-   Tupla3f peon_madera_componente_emision(1.0,1.0,1.0);  // El color da igual (hay textura)
+   Tupla3f peon_madera_componente_emision(1.0,1.0,1.0);  // Color blanco puro
    Tupla3f peon_madera_componente_ambiental(0.0,0.0,0.0);
    Tupla3f peon_madera_componente_difusa(0.1,0.1,0.1);
    Tupla3f peon_madera_componente_especular(1.0,1.0,1.0);
@@ -131,12 +131,12 @@ void Practica4::Inicializar( int argc, char *argv[] )
    peon_blanco = peon_blanco->Revolucion(20);
    peon_blanco->SetMaterial(material_peon_blanco);
 
-   peon_negro = new MallaTVT(vertices_ply_peon);
-   peon_negro = peon_negro->Revolucion(20);
+   peon_negro = new MallaTVT(peon_blanco);
+   //peon_negro = peon_negro->Revolucion(20);
    peon_negro->SetMaterial(material_peon_negro);
 
-   peon_madera = new MallaTVT(vertices_ply_peon);
-   peon_madera = peon_madera->Revolucion(20);
+   peon_madera = new MallaTVT(peon_blanco);
+   //peon_madera = peon_madera->Revolucion(20);
    peon_madera->SetMaterial(material_peon_madera);
 
 
@@ -215,10 +215,22 @@ bool Practica4::GestionarEvento(unsigned char tecla)
 {
    bool redisp = true;
 
-   switch(tecla)
+   switch(toupper(tecla))
    {
-      // Control de grados de libertad
-
+      // Control de luz direccional
+      case 'Z':
+         fuente_direccional->ModificaBeta(1);
+         break;
+      case 'X':
+         cout << "Pulso Z" << endl;
+         fuente_direccional->ModificaBeta(-1);
+         break;
+      case 'C':
+         fuente_direccional->ModificaAlpha(1);
+         break;
+      case 'V':
+         fuente_direccional->ModificaAlpha(-1);
+         break;
       default:
          redisp = false;
          break;
@@ -243,9 +255,10 @@ void Practica4::Debug()
    debug_strings.push_back(string("Velocidad angular cuerpo: " + to_string(velocidad_angular_cuerpo)));
    debug_strings.push_back(string("Angulo de rotacion piernas: " + to_string(angulo_rotacion_piernas)));
    debug_strings.push_back(string("Angulo de rotacion brazos: " + to_string(angulo_rotacion_brazos)));
-   debug_strings.push_back(string("Angulo de rotacion cuerpo: " + to_string(angulo_rotacion_cuerpo)));
-   debug_strings.push_back(string("Distancia al eje Y: " + to_string(distancia_eje_Y)));
    */
+   debug_strings.push_back(string("Beta: " + to_string(fuente_direccional->getBeta())));
+   debug_strings.push_back(string("Alpha: " + to_string(fuente_direccional->getAlpha())));
+
    debug_strings.push_back(string("Modo de normales: " + enumToString(peon_madera->getModoNormales())));
    debug_strings.push_back(string("Color fijo: " + str_color_fijo));
    debug_strings.push_back(string("Modo de dibujo: " + enumToString(modo_dibujo)));
