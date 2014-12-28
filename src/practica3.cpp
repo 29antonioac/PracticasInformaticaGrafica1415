@@ -80,8 +80,8 @@ void Practica3::Inicializar( int argc, char *argv[] )
    for (unsigned i = 1; i <= vertices_perfil_semiesfera; i++)
       vertices_semiesfera.push_back(Matriz4x4::RotacionEjeZ(incremento_perfil_semiesfera)*vertices_semiesfera[i-1]);
 
-   semiesfera = new MallaTVT(vertices_semiesfera);
-   semiesfera = semiesfera->Revolucion(20);
+   semiesfera = new MallaTVT(PERFIL,vertices_semiesfera);
+   semiesfera->Revolucion(20);
 
    // ----------------- Creamos un cilindro por revolución -----------------
 
@@ -95,8 +95,8 @@ void Practica3::Inicializar( int argc, char *argv[] )
    for (unsigned i = 1; i <= vertices_perfil_cilindro; i++)
          vertices_cilindro.push_back(Matriz4x4::Traslacion(0.0,incremento_perfil_cilindro,0.0)*vertices_cilindro[i-1]);
 
-   cilindro = new MallaTVT(vertices_cilindro);
-   cilindro = cilindro->Revolucion(20);
+   cilindro = new MallaTVT(PERFIL,vertices_cilindro);
+   cilindro->Revolucion(20);
 
    // ------------------------------------------------------------------------
 

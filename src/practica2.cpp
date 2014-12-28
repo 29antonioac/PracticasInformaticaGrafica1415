@@ -64,15 +64,15 @@ void Practica2::Inicializar(int argc, char *argv[])
    ply::read_vertices(file.c_str(),vertices_ply);
 
 
-   malla = new MallaTVT(vertices_ply);
+   malla = new MallaTVT(PERFIL,vertices_ply);
 
 
    if (M == 0)
-      malla = malla->Revolucion(N);
+      malla->Revolucion(N);
    else if (M == 1)
-      malla = malla->Barrido_Rotacion(N);
+      malla->Barrido_Rotacion(N);
    else if (M == 2)
-      malla = malla->Barrido_Traslacion(N,0.5,0.5,0.5);
+      malla->Barrido_Traslacion(N,0.5,0.5,0.5);
 
    cout << "-----------------------------------" << endl;
 }

@@ -47,7 +47,7 @@ void Practica1::Inicializar( int argc, char *argv[] )
    cout << "Archivo: " << file << endl;
 
    ply::read(file.c_str(),vertices_ply,caras_ply);
-   malla = new MallaTVT(vertices_ply,caras_ply);
+   malla = new MallaTVT(MALLA,vertices_ply,caras_ply);
 
    cout << "-----------------------------------" << endl;
 

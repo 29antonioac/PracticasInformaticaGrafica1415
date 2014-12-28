@@ -1,6 +1,6 @@
 #include "MallaTVT.hpp"
 
-MallaTVT::MallaTVT(vector<GLfloat> vertices, vector<int> caras, Material * material)
+MallaTVT::MallaTVT(tipo_malla tipo, vector<GLfloat> vertices, vector<int> caras, Material * material)
 {
    // Pasamos los vértices a vector de Tupla3f
    for (unsigned i = 0; i < vertices.size(); i+=3)
@@ -22,11 +22,12 @@ MallaTVT::MallaTVT(vector<GLfloat> vertices, vector<int> caras, Material * mater
    }
 
    this->material = material;
+   this->tipo = tipo;
 
    Inicializar();
 }
 
-MallaTVT::MallaTVT(vector<Tupla3f> vertices, vector<Tupla3i> caras, Material * material)
+MallaTVT::MallaTVT(tipo_malla tipo, vector<Tupla3f> vertices, vector<Tupla3i> caras, Material * material)
 {
    ver = vertices;
 
@@ -42,6 +43,7 @@ MallaTVT::MallaTVT(vector<Tupla3f> vertices, vector<Tupla3i> caras, Material * m
    }
 
    this->material = material;
+   this->tipo = tipo;
 
    Inicializar();
 }
@@ -69,10 +71,14 @@ MallaTVT::MallaTVT(MallaTVT * malla)
    this->vbo_normales_vertices         = malla->vbo_normales_vertices;
    this->vbo_lineas_normales_caras     = malla->vbo_lineas_normales_caras;
    this->vbo_lineas_normales_vertices  = malla->vbo_lineas_normales_vertices;
+   this->vbo_coordenadas_textura       = malla->vbo_coordenadas_textura;
 
    // Copiar modo de dibujo y de normales
    this->modo_dibujo       = malla->modo_dibujo;
    this->dibujo_normales   = malla-> dibujo_normales;
+
+   // Copiar tipo de malla
+   this->tipo = malla->tipo;
 
    // Copiar material (copia NO profunda, se copia puntero)
    this->material = malla->material;
@@ -91,6 +97,15 @@ void MallaTVT::SetMaterial(Material * material)
 
 void MallaTVT::Inicializar()
 {
+   // Borramos todos los vectores (los vamos a recalcular)
+   colores_vertices.clear();
+   normales_caras.clear();
+   normales_vertices.clear();
+   baricentros.clear();
+   lineas_normales_caras.clear();
+   lineas_normales_vertices.clear();
+   coordenadas_textura.clear();
+
    CalcularDimension();
    CalcularVectoresNormales();
 
@@ -109,6 +124,10 @@ void MallaTVT::Inicializar()
    color_secundario = Tupla3f(0.0,0.0,0.0);
 
    color_fijo = false;
+
+   // Vemos si hay que calcular tabla de coordenadas de textura
+   //if (tipo == REVOLUCION && material->HayTextura())
+   //   CalcularCoordenadasTextura();
 
    CrearVBOs();
 }
@@ -185,10 +204,31 @@ void MallaTVT::CalcularVectoresNormales()
    for (unsigned vertice = 0; vertice < ver.size(); vertice++)
    {
       normales_vertices[vertice] = (normales_vertices[vertice]).normalized();
+      //cout << "Normal vértice " << vertice << ": " << normales_vertices[vertice] << endl;
 
       pair<Tupla3f,Tupla3f> linea (ver[vertice], ver[vertice] + normales_vertices[vertice] * 0.1 * dimension);
       lineas_normales_vertices.push_back(linea);
    }
+}
+
+void MallaTVT::CalcularCoordenadasTextura(unsigned vertices_perfil)
+{
+   /*
+   // A partir de este punto se supone que el objeto es de revolución
+   vector<float> distancias;
+   distancias.push_back(0.0);
+
+   for (unsigned i = 1; i < vertices_perfil; i++)
+   {
+      Tupla3f distancia = (ver[i] - ver[i-1]).len();
+      distancias.push_back(distancias[i-1] + distancia);
+   }
+
+   for (unsigned i = 0; i < ver.size(); i++)
+   {
+
+   }
+*/
 }
 
 void MallaTVT::CrearVBOs()
@@ -232,7 +272,7 @@ void MallaTVT::Visualizar()
 
    bool color_vertices = false;
    bool normal_vertices = false;
-   bool coordenadas_textura;
+   bool coordenadas_textura = false;
 
    // Pendiente de reorganizar
 
@@ -365,7 +405,7 @@ void MallaTVT::VisualizarNormalesVertices()
    vbo_lineas_normales_vertices->Visualizar();
 }
 
-MallaTVT* MallaTVT::Revolucion(const unsigned caras)
+void MallaTVT::Revolucion(const unsigned caras, bool tapas)
 {
 
    float alpha = 2*M_PI/caras;
@@ -446,49 +486,75 @@ MallaTVT* MallaTVT::Revolucion(const unsigned caras)
       tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
    }
 
-   // Tapa inferior
-   ver.push_back(centro_tapas.front());
-   centro_tapas.erase(centro_tapas.begin());
-
-   int centro_tapa_inferior = ver.size() - 1;
-   for (unsigned cara = 0; cara < caras - 1; cara++)
+   if (tapas)
    {
-      unsigned vertice_actual = cara * vertices_perfil;
-      unsigned vertice_siguiente = vertice_actual + vertices_perfil;
 
-      Tupla3i triangulo(centro_tapa_inferior,vertice_siguiente,vertice_actual);
-      tri.push_back(triangulo);
+      // Tapa inferior
+      ver.push_back(centro_tapas.front());
+      centro_tapas.erase(centro_tapas.begin());
+
+      int centro_tapa_inferior = ver.size() - 1;
+      for (unsigned cara = 0; cara < caras - 1; cara++)
+      {
+         unsigned vertice_actual = cara * vertices_perfil;
+         unsigned vertice_siguiente = vertice_actual + vertices_perfil;
+
+         Tupla3i triangulo(centro_tapa_inferior,vertice_siguiente,vertice_actual);
+         tri.push_back(triangulo);
+      }
+      tri.push_back(Tupla3i(centro_tapa_inferior,0,(caras-1)*vertices_perfil));
+
+      // Tapa superior
+      ver.push_back(centro_tapas.front());
+      centro_tapas.erase(centro_tapas.begin());
+
+      int centro_tapa_superior = centro_tapa_inferior + 1;
+      for (unsigned cara = 0; cara < caras - 1; cara++)
+      {
+         unsigned vertice_actual = (cara + 1) * vertices_perfil - 1;
+         unsigned vertice_siguiente = vertice_actual + vertices_perfil;
+
+         Tupla3i triangulo(centro_tapa_superior,vertice_actual,vertice_siguiente);
+         tri.push_back(triangulo);
+      }
+
+      tri.push_back(Tupla3i(centro_tapa_superior, caras*vertices_perfil - 1,vertices_perfil - 1));
    }
-   tri.push_back(Tupla3i(centro_tapa_inferior,0,(caras-1)*vertices_perfil));
 
-   // Tapa superior
-   ver.push_back(centro_tapas.front());
-   centro_tapas.erase(centro_tapas.begin());
+   Inicializar();
 
-   int centro_tapa_superior = centro_tapa_inferior + 1;
-   for (unsigned cara = 0; cara < caras - 1; cara++)
+   // Comprobamos si hay que calcular coordenadas de textura
+   if (material != nullptr && material->NecesitoCoordenadasTextura())
    {
-      unsigned vertice_actual = (cara + 1) * vertices_perfil - 1;
-      unsigned vertice_siguiente = vertice_actual + vertices_perfil;
+      // Calculamos coordenadas de textura
+      vector<float> distancias;
+      distancias.push_back(0.0);
+      ver.push_back(ver[0]);
 
-      Tupla3i triangulo(centro_tapa_superior,vertice_actual,vertice_siguiente);
-      tri.push_back(triangulo);
+      for (unsigned i = 1; i < vertices_perfil; i++)
+      {
+         float distancia = (ver[i] - ver[i-1]).len();
+         distancias.push_back(distancias[i-1] + distancia);
+         // Añadir el primer perfil de nuevo para unir la textura
+         ver.push_back(ver[i]);
+      }
+
+      for (unsigned perfil = 0; perfil <= caras; perfil++)
+      {
+         cout << "Perfil " << perfil << ":" << endl;
+         for (unsigned vertice = 0; vertice < vertices_perfil; vertice++)
+         {
+            coordenadas_textura.push_back(pair<float,float>(perfil*1.0/(caras-1),distancias[vertice]/distancias[vertices_perfil-1]));
+            cout << "("<<  coordenadas_textura[perfil*vertices_perfil +vertice].first
+                  << "," << coordenadas_textura[perfil*vertices_perfil +vertice].second << ") ";
+         }
+         cout << "\n\n\n\n" << endl;
+      }
    }
-
-   tri.push_back(Tupla3i(centro_tapa_superior, caras*vertices_perfil - 1,vertices_perfil - 1));
-
-   // Construimos una malla nueva
-   MallaTVT *res = new MallaTVT(ver,tri,material);
-
-   // Borramos la actual
-   delete this; // Cuidado! Después de esto NO TOCAR EL PROPIO OBJETO
-
-   // Devolvemos puntero a la malla nueva
-   return res;
 
 }
 
-MallaTVT* MallaTVT::Barrido_Rotacion(const unsigned caras)
+void MallaTVT::Barrido_Rotacion(const unsigned caras)
 {
 
    float alpha = 2*M_PI/caras;
@@ -579,18 +645,11 @@ MallaTVT* MallaTVT::Barrido_Rotacion(const unsigned caras)
    tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
    tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
 
-   // Construimos una malla nueva
-   MallaTVT *res = new MallaTVT(ver,tri);
-
-   // Borramos la actual
-   delete this; // Cuidado! Después de esto NO TOCAR EL PROPIO OBJETO
-
-   // Devolvemos puntero a la malla nueva
-   return res;
+   Inicializar();
 
 }
 
-MallaTVT* MallaTVT::Barrido_Traslacion(const unsigned caras, const float dx, const float dy, const float dz)
+void MallaTVT::Barrido_Traslacion(const unsigned caras, const float dx, const float dy, const float dz)
 {
 
    unsigned vertices_perfil = ver.size();
@@ -688,14 +747,7 @@ MallaTVT* MallaTVT::Barrido_Traslacion(const unsigned caras, const float dx, con
 
    tri.push_back(Tupla3i(centro_tapa_superior, caras * vertices_perfil - 1, (caras - 1) * vertices_perfil));
 
-   // Construimos una malla nueva
-   MallaTVT *res = new MallaTVT(ver,tri);
-
-   // Borramos la actual
-   delete this; // Cuidado! Después de esto NO TOCAR EL PROPIO OBJETO
-
-   // Devolvemos puntero a la malla nueva
-   return res;
+   Inicializar();
 }
 
 visualizacion MallaTVT::getModoDibujo()

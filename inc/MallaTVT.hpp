@@ -45,9 +45,10 @@ private:
 
    visualizacion modo_dibujo;
    normales dibujo_normales;
+   tipo_malla tipo;
 
    Material * material;
-   vector<pair<Tupla3f,Tupla3f> > coordenadas_textura;
+   vector<pair<float,float> > coordenadas_textura;
 
    float dimension;
 
@@ -55,6 +56,7 @@ private:
 
    void CalcularVectoresNormales();
    void CalcularDimension();
+   void CalcularCoordenadasTextura(unsigned vertices_perfil);
    void CrearVBOs();
    void Inicializar();
    void VisualizarModoInmediato();
@@ -64,14 +66,14 @@ private:
 
 
 public:
-   MallaTVT(vector<GLfloat> vertices, vector<int> caras = vector<int>(), Material * material = nullptr);
-   MallaTVT(vector<Tupla3f> vertices, vector<Tupla3i> caras = vector<Tupla3i>(), Material * material = nullptr);
+   MallaTVT(tipo_malla tipo, vector<GLfloat> vertices, vector<int> caras = vector<int>(), Material * material = nullptr);
+   MallaTVT(tipo_malla tipo, vector<Tupla3f> vertices, vector<Tupla3i> caras = vector<Tupla3i>(), Material * material = nullptr);
    MallaTVT(MallaTVT * malla);
    void SetMaterial(Material * material);
    void Visualizar();
-   MallaTVT* Revolucion(const unsigned caras);
-   MallaTVT* Barrido_Rotacion(const unsigned caras);
-   MallaTVT* Barrido_Traslacion(const unsigned caras, const float dx, const float dy, const float dz);
+   void Revolucion(const unsigned caras, bool tapas = true);
+   void Barrido_Rotacion(const unsigned caras);
+   void Barrido_Traslacion(const unsigned caras, const float dx, const float dy, const float dz);
    visualizacion getModoDibujo();
    normales getModoNormales();
    void CambioModoDibujo ( visualizacion modo ) ;

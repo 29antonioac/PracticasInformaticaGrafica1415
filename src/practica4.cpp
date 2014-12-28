@@ -41,7 +41,7 @@ Practica4::Practica4()
 
    fuente_posicional = nullptr;
    fuente_direccional = nullptr;
-   peon_madera = peon_blanco = peon_negro = cuerpo_lata = tapa = nullptr;
+   peon_madera = peon_blanco = peon_negro = cuerpo_lata = tapa_sup = tapa_inf = nullptr;
    raiz = nullptr;
    material_peon_madera = material_peon_blanco = material_peon_negro =
          material_cuerpo_lata = material_tapa = nullptr;
@@ -65,6 +65,7 @@ Practica4::~Practica4()
 
 void Practica4::Inicializar( int argc, char *argv[] )
 {
+   unsigned caras_revolucion = 40;
 
    // Luces, cámara y acción!
 
@@ -81,11 +82,12 @@ void Practica4::Inicializar( int argc, char *argv[] )
    fuente_direccional = new FuenteLuzDireccional(alpha, beta, luz_componente_ambiental, luz_componente_difusa, luz_componente_especular);
    fuentes.Agregar(fuente_direccional);
 
-   // Cargar ply del cuerpo de la lata
-
-   // Cargar ply del peón
-   vector<GLfloat> vertices_ply_peon, vertices_ply_lata, vertices_ply_tapa;
+   // Cargar plys
+   vector<GLfloat> vertices_ply_peon, vertices_ply_cuerpo_lata, vertices_ply_tapa_sup, vertices_ply_tapa_inf;
    ply::read_vertices("PLY/peon.ply", vertices_ply_peon);
+   ply::read_vertices("PLY/lata-pcue.ply",vertices_ply_cuerpo_lata);
+   ply::read_vertices("PLY/lata-psup.ply",vertices_ply_tapa_sup);
+   ply::read_vertices("PLY/lata-pinf.ply",vertices_ply_tapa_inf);
 
    // Crear material del peon blanco (sin textura, material puramente difuso sin brillo especular)
    Tupla3f peon_blanco_componente_emision(0.8,0.8,0.8);  // Color blanco
@@ -122,13 +124,10 @@ void Practica4::Inicializar( int argc, char *argv[] )
    material_peon_madera = new Material(peon_madera_componente_emision, peon_madera_componente_ambiental,
          peon_madera_componente_difusa, peon_madera_componente_especular, peon_madera_exponente_especular,textura_peon_madera);
 
-
-
-
    // Crear peones
 
-   peon_blanco = new MallaTVT(vertices_ply_peon);
-   peon_blanco = peon_blanco->Revolucion(20);
+   peon_blanco = new MallaTVT(PERFIL,vertices_ply_peon);
+   peon_blanco->Revolucion(caras_revolucion);
    peon_blanco->SetMaterial(material_peon_blanco);
 
    peon_negro = new MallaTVT(peon_blanco);
@@ -139,6 +138,41 @@ void Practica4::Inicializar( int argc, char *argv[] )
    //peon_madera = peon_madera->Revolucion(20);
    peon_madera->SetMaterial(material_peon_madera);
 
+   // Crear lata
+   Tupla3f cuerpo_lata_componente_emision(1.0,1.0,1.0);  // Color blanco puro
+   Tupla3f cuerpo_lata_componente_ambiental(0.0,0.0,0.0);
+   Tupla3f cuerpo_lata_componente_difusa(0.1,0.1,0.1);
+   Tupla3f cuerpo_lata_componente_especular(1.0,1.0,1.0);
+   float cuerpo_lata_exponente_especular = 30.0;
+
+   Textura * textura_cuerpo_lata = new Textura("img/text-lata-1.jpg",0,cs,ct);
+
+   material_cuerpo_lata = new Material(cuerpo_lata_componente_emision, cuerpo_lata_componente_ambiental,
+         cuerpo_lata_componente_difusa, cuerpo_lata_componente_especular, cuerpo_lata_exponente_especular,textura_cuerpo_lata);
+
+   cuerpo_lata = new MallaTVT(PERFIL,vertices_ply_cuerpo_lata);
+   cuerpo_lata->SetMaterial(material_cuerpo_lata);
+   cuerpo_lata->Revolucion(caras_revolucion, false);
+
+   // Crear tapas
+   Tupla3f tapa_componente_emision(0.5,0.5,0.5);  // Color gris
+   Tupla3f tapa_componente_ambiental(0.0,0.0,0.0);
+   Tupla3f tapa_componente_difusa(0.1,0.1,0.1);
+   Tupla3f tapa_componente_especular(1.0,1.0,1.0);
+   float tapa_exponente_especular = 30.0;
+
+   material_tapa = new Material(tapa_componente_emision, tapa_componente_ambiental,
+            tapa_componente_difusa, tapa_componente_especular, tapa_exponente_especular);
+
+   tapa_sup = new MallaTVT(PERFIL,vertices_ply_tapa_sup);
+   tapa_sup->SetMaterial(material_tapa);
+   tapa_sup->Revolucion(caras_revolucion,false);
+   tapa_inf = new MallaTVT(PERFIL,vertices_ply_tapa_inf);
+   tapa_inf->SetMaterial(material_tapa);
+   tapa_inf->Revolucion(caras_revolucion,false);
+
+
+
 
    raiz = new NodoGrafoEscena;
    NodoGrafoEscena * nodo_traslacion_peon_madera = new NodoTransformacion(Matriz4x4::RotacionEjeY(-M_PI/2) * Matriz4x4::Traslacion(0.0,0.0,3.0));
@@ -147,8 +181,11 @@ void Practica4::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * nodo_peon_blanco = new NodoTerminal(peon_blanco);
    NodoGrafoEscena * nodo_peon_negro = new NodoTerminal(peon_negro);
    NodoGrafoEscena * nodo_peon_madera = new NodoTerminal(peon_madera);
+   NodoGrafoEscena * nodo_cuerpo_lata = new NodoTerminal(cuerpo_lata);
+   NodoGrafoEscena * nodo_tapa_sup = new NodoTerminal(tapa_sup);
+   NodoGrafoEscena * nodo_tapa_inf = new NodoTerminal(tapa_inf);
 
-
+/*
    raiz->aniadeHijo(nodo_traslacion_peon_blanco);
       nodo_traslacion_peon_blanco->aniadeHijo(nodo_peon_blanco);
 
@@ -158,6 +195,11 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
    raiz->aniadeHijo(nodo_traslacion_peon_madera);
       nodo_traslacion_peon_madera->aniadeHijo(nodo_peon_madera);
+      */
+
+   raiz->aniadeHijo(nodo_cuerpo_lata);
+   raiz->aniadeHijo(nodo_tapa_sup);
+   raiz->aniadeHijo(nodo_tapa_inf);
 
 
 }
