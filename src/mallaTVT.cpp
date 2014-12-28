@@ -45,15 +45,6 @@ MallaTVT::MallaTVT(vector<Tupla3f> vertices, vector<Tupla3i> caras, Material * m
 
    Inicializar();
 }
-/*
-MallaTVT::MallaTVT(vector<Tupla3f> vertices, Material * material)
-{
-   ver = vertices;
-
-   this->material = material;
-
-   Inicializar();
-}*/
 
 MallaTVT::MallaTVT(MallaTVT * malla)
 {
@@ -211,14 +202,16 @@ void MallaTVT::CrearVBOs()
       elementos_vertices = 3L * num_verts,
       elementos_triangulos = 3L * num_tri,   // Los triángulos van en un VBO GL_ELEMENT y se cuentan los vértices, no los índices en sí
       elementos_lineas_normales_caras = 2L * elementos_triangulos,
-      elementos_lineas_normales_vertices = 2L * elementos_vertices;
+      elementos_lineas_normales_vertices = 2L * elementos_vertices,
+      elementos_coordenadas_textura = 2L * num_verts;
 
 
    unsigned
       tam_ver = sizeof(float) * elementos_vertices ,
       tam_tri = sizeof(int) * elementos_triangulos,
       tam_lineas_normales_caras = sizeof(float) * elementos_lineas_normales_caras,
-      tam_lineas_normales_vertices = sizeof(float) * elementos_lineas_normales_vertices;
+      tam_lineas_normales_vertices = sizeof(float) * elementos_lineas_normales_vertices,
+      tam_coordenadas_textura = sizeof(float) * elementos_coordenadas_textura;
 
    vbo_vertices = new VBO_Vertices(elementos_vertices, tam_ver, ver.data());
    vbo_triangulos = new VBO_Triangulos(elementos_triangulos, tam_tri, tri.data());
@@ -227,6 +220,10 @@ void MallaTVT::CrearVBOs()
 
    vbo_lineas_normales_caras = new VBO_Lineas(elementos_lineas_normales_caras, tam_lineas_normales_caras, lineas_normales_caras.data() );
    vbo_lineas_normales_vertices = new VBO_Lineas(elementos_lineas_normales_vertices, tam_lineas_normales_vertices, lineas_normales_vertices.data() );
+
+   vbo_coordenadas_textura = new VBO_Coordenadas_Textura(elementos_coordenadas_textura, tam_coordenadas_textura, coordenadas_textura.data());
+
+
 }
 
 void MallaTVT::Visualizar()
@@ -257,7 +254,7 @@ void MallaTVT::Visualizar()
    }
    else
    {
-
+      glDisable(GL_TEXTURE_2D);
       // -----------------
 
       switch (modo_dibujo)
@@ -477,7 +474,7 @@ MallaTVT* MallaTVT::Revolucion(const unsigned caras)
    tri.push_back(Tupla3i(centro_tapa_superior, caras*vertices_perfil - 1,vertices_perfil - 1));
 
    // Construimos una malla nueva
-   MallaTVT *res = new MallaTVT(ver,tri);
+   MallaTVT *res = new MallaTVT(ver,tri,material);
 
    // Borramos la actual
    delete this; // Cuidado! Después de esto NO TOCAR EL PROPIO OBJETO

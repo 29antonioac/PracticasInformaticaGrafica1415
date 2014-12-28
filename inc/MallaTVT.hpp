@@ -41,6 +41,7 @@ private:
    VBO_Normales   * vbo_normales_vertices;
    VBO_Lineas     * vbo_lineas_normales_caras;
    VBO_Lineas     * vbo_lineas_normales_vertices;
+   VBO_Coordenadas_Textura * vbo_coordenadas_textura;
 
    visualizacion modo_dibujo;
    normales dibujo_normales;
@@ -65,7 +66,6 @@ private:
 public:
    MallaTVT(vector<GLfloat> vertices, vector<int> caras = vector<int>(), Material * material = nullptr);
    MallaTVT(vector<Tupla3f> vertices, vector<Tupla3i> caras = vector<Tupla3i>(), Material * material = nullptr);
-   //MallaTVT(vector<Tupla3f> vertices, Material * material = nullptr);
    MallaTVT(MallaTVT * malla);
    void SetMaterial(Material * material);
    void Visualizar();

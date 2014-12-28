@@ -79,7 +79,7 @@ void VBO_Vertices::Visualizar()
    glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void VBO_Triangulos::Visualizar(enum visualizacion modo, Tupla3f color_primario, Tupla3f color_secundario)
+void VBO_Triangulos::Visualizar(visualizacion modo, Tupla3f color_primario, Tupla3f color_secundario)
 {
    if (modo != AJEDREZ)
    {
@@ -112,6 +112,15 @@ void VBO_Lineas::Visualizar()
    glBindBuffer(tipo, 0);
 
    glDisableClientState(GL_VERTEX_ARRAY);
+}
+
+void VBO_Coordenadas_Textura::Activar()
+{
+   glBindBuffer(tipo, id_vbo);
+   glTexCoordPointer(2,GL_FLOAT,0,0);
+   glBindBuffer(tipo,0);
+
+   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 

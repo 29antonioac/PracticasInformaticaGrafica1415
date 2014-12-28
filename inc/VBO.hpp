@@ -72,6 +72,14 @@ public:
    void Visualizar();
 };
 
+class VBO_Coordenadas_Textura : virtual public VBO
+{
+public:
+   VBO_Coordenadas_Textura(GLuint numero_datos, GLuint tamanio, GLvoid * puntero) : VBO(GL_ARRAY_BUFFER, numero_datos, tamanio,  puntero) {}
+
+   void Activar();
+};
+
 
 
 
