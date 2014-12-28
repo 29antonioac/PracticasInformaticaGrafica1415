@@ -294,6 +294,12 @@ void MallaTVT::Visualizar()
 
       vbo_triangulos->Visualizar(modo_dibujo, color_primario, color_secundario);
 
+      if (coordenadas_textura)
+         glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+
+      glDisable(GL_TEXTURE_GEN_S);
+      glDisable(GL_TEXTURE_GEN_T);
+
    }
    else
    {
@@ -353,8 +359,6 @@ void MallaTVT::Visualizar()
          glDisableClientState( GL_COLOR_ARRAY );
       if (normal_vertices)
          glDisableClientState( GL_NORMAL_ARRAY );
-      if (coordenadas_textura)
-         glDisableClientState( GL_TEXTURE_COORD_ARRAY );
    }
 
    if (dibujo_normales == AMBAS || dibujo_normales == CARAS )
@@ -521,7 +525,6 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
       tri.push_back(Tupla3i(centro_tapa_superior, caras*vertices_perfil - 1,vertices_perfil - 1));
    }
 
-   Inicializar();
 
    // Comprobamos si hay que calcular coordenadas de textura
    if (material != nullptr && material->NecesitoCoordenadasTextura())
@@ -541,16 +544,16 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
 
       for (unsigned perfil = 0; perfil <= caras; perfil++)
       {
-         cout << "Perfil " << perfil << ":" << endl;
+         //cout << "Perfil " << perfil << ":" << endl;
          for (unsigned vertice = 0; vertice < vertices_perfil; vertice++)
          {
             coordenadas_textura.push_back(pair<float,float>(perfil*1.0/(caras-1),distancias[vertice]/distancias[vertices_perfil-1]));
-            cout << "("<<  coordenadas_textura[perfil*vertices_perfil +vertice].first
-                  << "," << coordenadas_textura[perfil*vertices_perfil +vertice].second << ") ";
          }
-         cout << "\n\n\n\n" << endl;
+         //cout << "\n\n\n\n" << endl;
       }
    }
+
+   Inicializar();
 
 }
 

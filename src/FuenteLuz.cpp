@@ -40,6 +40,9 @@ void FuenteLuzDireccional::Activar()
    	   glRotatef(this->alpha, 0.0,1.0,0.0);
    	   glRotatef(this->beta, -1.0,0.0,0.0);
    	   glLightfv(id_luz, GL_POSITION, ejeZ);
+   	   glLightfv(id_luz, GL_AMBIENT, this->componente_ambiental.data());
+         glLightfv(id_luz, GL_DIFFUSE, this->componente_difusa.data());
+         glLightfv(id_luz, GL_SPECULAR,this->componente_especular.data());
 
    glPopMatrix();
 }

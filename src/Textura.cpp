@@ -19,7 +19,6 @@ Textura::Textura(string archivo, unsigned modo_generacion_coordenadas_textura, f
    glGenTextures(1, &id_textura);
    glBindTexture(GL_TEXTURE_2D, id_textura);
    // Crear mipmaps de textura
-   //gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, img->tamX(), img->tamY(), GL_RGB, GL_UNSIGNED_BYTE, img->leerPixels());
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
@@ -31,18 +30,15 @@ Textura::Textura(string archivo, unsigned modo_generacion_coordenadas_textura, f
    }
    else if (modo_generacion_coordenadas_textura == 1) // Generación de coordenadas en coordenadas de objeto
    {
-      glEnable(GL_TEXTURE_GEN_S);
-      glEnable(GL_TEXTURE_GEN_T);
       glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
       glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
 
       glTexGenfv(GL_S, GL_OBJECT_PLANE, cs);
       glTexGenfv(GL_T, GL_OBJECT_PLANE, ct);
+
    }
    else     // Generación de coordenadas en coordenadas de ojo
    {
-      glEnable(GL_TEXTURE_GEN_S);
-      glEnable(GL_TEXTURE_GEN_T);
       glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
       glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
 
@@ -60,9 +56,17 @@ bool Textura::Activar()
    glBindTexture(GL_TEXTURE_2D, id_textura);
 
    if (modo_generacion_coordenadas_textura == 0)
+   {
+      glDisable(GL_TEXTURE_GEN_S);
+      glDisable(GL_TEXTURE_GEN_T);
       return true;
+   }
    else
+   {
+      glEnable(GL_TEXTURE_GEN_S);
+      glEnable(GL_TEXTURE_GEN_T);
       return false;
+   }
 }
 
 unsigned Textura::getModo()

@@ -65,7 +65,7 @@ Practica4::~Practica4()
 
 void Practica4::Inicializar( int argc, char *argv[] )
 {
-   unsigned caras_revolucion = 40;
+   unsigned caras_revolucion = 100;
 
    // Luces, cámara y acción!
 
@@ -75,12 +75,15 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
    float alpha = M_PI / 6;
    float beta = alpha;
-   Tupla3f luz_componente_ambiental(1.0,1.0,1.0);
-   Tupla3f luz_componente_difusa(0.2,0.4,0.5);
-   Tupla3f luz_componente_especular(0.5,0.5,0.5);
+   Tupla3f luz_componente_ambiental(0.0,0.0,1.0);
+   Tupla3f luz_componente_difusa(1.0,1.0,1.0);
+   Tupla3f luz_componente_especular(1.0,1.0,1.0);
+   Tupla3f luz_posicion(-55.0,0.0,0.0);
 
    fuente_direccional = new FuenteLuzDireccional(alpha, beta, luz_componente_ambiental, luz_componente_difusa, luz_componente_especular);
+   fuente_posicional = new FuenteLuzPosicional(luz_posicion, luz_componente_ambiental, luz_componente_difusa, luz_componente_especular);
    fuentes.Agregar(fuente_direccional);
+   fuentes.Agregar(fuente_posicional);
 
    // Cargar plys
    vector<GLfloat> vertices_ply_peon, vertices_ply_cuerpo_lata, vertices_ply_tapa_sup, vertices_ply_tapa_inf;
@@ -145,7 +148,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
    Tupla3f cuerpo_lata_componente_especular(1.0,1.0,1.0);
    float cuerpo_lata_exponente_especular = 30.0;
 
-   Textura * textura_cuerpo_lata = new Textura("img/text-lata-1.jpg",0,cs,ct);
+   Textura * textura_cuerpo_lata = new Textura("img/text-lata-2.jpg",0,cs,ct);
 
    material_cuerpo_lata = new Material(cuerpo_lata_componente_emision, cuerpo_lata_componente_ambiental,
          cuerpo_lata_componente_difusa, cuerpo_lata_componente_especular, cuerpo_lata_exponente_especular,textura_cuerpo_lata);
@@ -178,6 +181,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * nodo_traslacion_peon_madera = new NodoTransformacion(Matriz4x4::RotacionEjeY(-M_PI/2) * Matriz4x4::Traslacion(0.0,0.0,3.0));
    NodoGrafoEscena * nodo_traslacion_peon_blanco = new NodoTransformacion(Matriz4x4::Traslacion(0.0,0.0,2.0));
    NodoGrafoEscena * nodo_traslacion_peon_negro = new NodoTransformacion(Matriz4x4::RotacionEjeY(M_PI/2) * Matriz4x4::Traslacion(0.0,0.0,3.0));
+   NodoGrafoEscena * nodo_escalado_lata = new NodoTransformacion(Matriz4x4::Escalado(4.0,4.0,4.0));
    NodoGrafoEscena * nodo_peon_blanco = new NodoTerminal(peon_blanco);
    NodoGrafoEscena * nodo_peon_negro = new NodoTerminal(peon_negro);
    NodoGrafoEscena * nodo_peon_madera = new NodoTerminal(peon_madera);
@@ -185,7 +189,6 @@ void Practica4::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * nodo_tapa_sup = new NodoTerminal(tapa_sup);
    NodoGrafoEscena * nodo_tapa_inf = new NodoTerminal(tapa_inf);
 
-/*
    raiz->aniadeHijo(nodo_traslacion_peon_blanco);
       nodo_traslacion_peon_blanco->aniadeHijo(nodo_peon_blanco);
 
@@ -195,11 +198,11 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
    raiz->aniadeHijo(nodo_traslacion_peon_madera);
       nodo_traslacion_peon_madera->aniadeHijo(nodo_peon_madera);
-      */
 
-   raiz->aniadeHijo(nodo_cuerpo_lata);
-   raiz->aniadeHijo(nodo_tapa_sup);
-   raiz->aniadeHijo(nodo_tapa_inf);
+   raiz->aniadeHijo(nodo_escalado_lata);
+      nodo_escalado_lata->aniadeHijo(nodo_cuerpo_lata);
+      nodo_escalado_lata->aniadeHijo(nodo_tapa_sup);
+      nodo_escalado_lata->aniadeHijo(nodo_tapa_inf);
 
 
 }
@@ -228,6 +231,7 @@ void Practica4::CambioModoDibujo(visualizacion modo_dibujo)
 
 void Practica4::CambioModoNormales()
 {
+   this->cuerpo_lata->CambioModoNormales();
 
 }
 
@@ -283,26 +287,13 @@ bool Practica4::GestionarEvento(unsigned char tecla)
 
 void Practica4::Debug()
 {
-   string str_color_fijo;
-   /*if (semiesfera->ColorFijo())
-      str_color_fijo = "Si";
-   else
-      str_color_fijo = "No";
-      */
 
    vector<string> debug_strings;
-   /*
-   debug_strings.push_back(string("Velocidad angular piernas: " + to_string(velocidad_angular_piernas)));
-   debug_strings.push_back(string("Velocidad angular brazos: " + to_string(velocidad_angular_brazos)));
-   debug_strings.push_back(string("Velocidad angular cuerpo: " + to_string(velocidad_angular_cuerpo)));
-   debug_strings.push_back(string("Angulo de rotacion piernas: " + to_string(angulo_rotacion_piernas)));
-   debug_strings.push_back(string("Angulo de rotacion brazos: " + to_string(angulo_rotacion_brazos)));
-   */
+
    debug_strings.push_back(string("Beta: " + to_string(fuente_direccional->getBeta())));
    debug_strings.push_back(string("Alpha: " + to_string(fuente_direccional->getAlpha())));
 
    debug_strings.push_back(string("Modo de normales: " + enumToString(peon_madera->getModoNormales())));
-   debug_strings.push_back(string("Color fijo: " + str_color_fijo));
    debug_strings.push_back(string("Modo de dibujo: " + enumToString(modo_dibujo)));
    debug_strings.push_back(string("Practica 4"));
 
@@ -322,13 +313,9 @@ void Practica4::Debug()
 
 void Practica4::Ayuda(vector<string> & strings_control)
 {
-   strings_control.push_back("M/m para modificar velocidad de rotacion de las piernas");
-   strings_control.push_back("N/n para modificar velocidad de rotacion de los brazos");
-   strings_control.push_back("B/b para modificar velocidad de rotacion del cuerpo");
-   strings_control.push_back("V/v para modificar distancia al eje Y");
-   strings_control.push_back("C/c para modificar rotacion de las piernas");
-   strings_control.push_back("X/x para modificar rotacion de los brazos");
-   strings_control.push_back("Z/z para modificar rotacion del cuerpo");
+
+   strings_control.push_back("Z/X para modificar beta (angulo con eje -X)");
+   strings_control.push_back("C/V para modificar alpha (angulo con eje Y)");
 
 
 }
