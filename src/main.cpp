@@ -75,6 +75,7 @@ Practica4   * practica4 = new Practica4;
 
 bool debug = false;
 bool ayuda = false;
+bool msaa = true;
 
 
 
@@ -334,9 +335,22 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
       case 'f':
          practicaActual->CambioColorFijo();
          break;
+      case 'e':
+         msaa = !msaa;
+         break;
       default:
          redisp = practicaActual->GestionarEvento(tecla) ;
          break ;
+   }
+   if (msaa)
+   {
+      glEnable(GL_MULTISAMPLE_ARB);
+      //cout << "MSAA on" << endl;
+   }
+   else
+   {
+      glDisable(GL_MULTISAMPLE_ARB);
+      //cout << "MSAA off" << endl;
    }
    
    // si se ha cambiado algo, forzar evento de redibujado
@@ -515,7 +529,7 @@ void Inicializa_GLUT( int argc, char * argv[] )
    glutInitWindowSize( ventana_tam_x, ventana_tam_y );
    
    // establece atributos o tipo de ventana:
-   glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH );
+   glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE );
    
    // crea y visualiza una ventana:
    glutCreateWindow("Practicas IG (14-15)");
