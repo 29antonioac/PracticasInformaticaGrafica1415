@@ -13,9 +13,10 @@
 #include <cmath>
 #include "practica3.hpp"
 
-#include "../inc/MallaTVT.hpp"
+#include "MallaTVT.hpp"
 #include "file_ply_stl.hpp"
 #include "Matriz.hpp"
+
 
 using std::cout;
 using std::endl;
@@ -83,6 +84,8 @@ void Practica3::Inicializar( int argc, char *argv[] )
    semiesfera = new MallaTVT(PERFIL,vertices_semiesfera);
    semiesfera->Revolucion(20);
 
+   semiesfera_ojo = new MallaTVT(semiesfera);
+
    // ----------------- Creamos un cilindro por revolución -----------------
 
    vector<Tupla3f> vertices_cilindro;
@@ -127,6 +130,7 @@ void Practica3::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * Android = new NodoGrafoEscena;
    NodoGrafoEscena * nodo_cilindro = new NodoTerminal(cilindro);
    NodoGrafoEscena * nodo_semiesfera = new NodoTerminal(semiesfera);
+   NodoGrafoEscena * nodo_semiesfera_ojo = new NodoTerminal(semiesfera_ojo);
 
    NodoGrafoEscena * nodo_escalado_cilindro_pierna = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_pierna,proporcion_alto_pierna,proporcion_ancho_pierna));
    NodoGrafoEscena * nodo_escalado_cilindro_cuerpo = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_cuerpo,proporcion_alto_cuerpo,proporcion_ancho_cuerpo));
@@ -224,9 +228,9 @@ void Practica3::Inicializar( int argc, char *argv[] )
    cabeza->aniadeHijo(nodo_transformacion_antena_derecha);
       nodo_transformacion_antena_derecha->aniadeHijo(nodo_cilindro);
    cabeza->aniadeHijo(nodo_transformacion_ojo_izquierdo);
-      nodo_transformacion_ojo_izquierdo->aniadeHijo(nodo_semiesfera);
+      nodo_transformacion_ojo_izquierdo->aniadeHijo(nodo_semiesfera_ojo);
    cabeza->aniadeHijo(nodo_transformacion_ojo_derecho);
-      nodo_transformacion_ojo_derecho->aniadeHijo(nodo_semiesfera);
+      nodo_transformacion_ojo_derecho->aniadeHijo(nodo_semiesfera_ojo);
 
    // Todo el Android
 
@@ -262,6 +266,53 @@ void Practica3::Inicializar( int argc, char *argv[] )
       nodo_parametrizado_rotacion_cuerpo->aniadeHijo(nodo_parametrizado_traslacion);
          nodo_parametrizado_traslacion->aniadeHijo(Android);
 
+   // Luces y material (extensión de la práctica 4)
+
+   glLightModeli( GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE );
+   glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR ) ;
+   glLightModeli( GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE );
+
+   Tupla3f luz_direccional_componente_ambiental(1.0,1.0,1.0);
+   Tupla3f luz_direccional_componente_difusa(0.8,0.8,0.8);
+   Tupla3f luz_direccional_componente_especular(0.8,0.8,0.8);
+
+   fuente1 = new FuenteLuzPosicional(Tupla3f(20.0,0.0,20.0), luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
+   fuente2 = new FuenteLuzPosicional(Tupla3f(20.0,0.0,-20.0), luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
+   fuente3 = new FuenteLuzPosicional(Tupla3f(-20.0,0.0,20.0), luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
+   fuente4 = new FuenteLuzPosicional(Tupla3f(-20.0,0.0,-20.0), luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
+
+
+   fuentes.Agregar(fuente1);
+   fuentes.Agregar(fuente2);
+   fuentes.Agregar(fuente3);
+   fuentes.Agregar(fuente4);
+
+   Tupla3f android_componente_emision(0.0,1.0,0.0);  // Color verde
+   Tupla3f android_componente_ambiental(0.0,0.0,0.0);
+   Tupla3f android_componente_difusa(0.3,0.3,0.3);
+   Tupla3f android_componente_especular(0.8,0.8,0.8);
+   float android_exponente_especular = 2.0;
+
+   Tupla3f ojo_componente_emision(0.0,0.0,0.0);  // Color negro
+   Tupla3f ojo_componente_ambiental(0.0,0.0,0.0);
+   Tupla3f ojo_componente_difusa(0.0,0.0,0.0);
+   Tupla3f ojo_componente_especular(0.0,0.0,0.0);
+   float ojo_exponente_especular = 0.0;
+
+   material_android = new Material(android_componente_emision, android_componente_ambiental,
+         android_componente_difusa, android_componente_especular, android_exponente_especular);
+
+   material_ojo = new Material(ojo_componente_emision, ojo_componente_ambiental,
+            ojo_componente_difusa, ojo_componente_especular, ojo_exponente_especular);
+
+
+   semiesfera->SetMaterial(material_android);
+   cilindro->SetMaterial(material_android);
+   semiesfera_ojo->SetMaterial(material_ojo);
+
+   Tupla3f ej(1.1,2.2,3.3);
+
+   cout << "Ejemplo" << ej << " -> " << AniadeW(ej,1.0) << endl;
 
 
 
@@ -271,6 +322,7 @@ void Practica3::Inicializar( int argc, char *argv[] )
 
 void Practica3::DibujarObjetos()
 {
+   /*
    switch (modo_dibujo)
    {
       case ALAMBRE:
@@ -290,8 +342,19 @@ void Practica3::DibujarObjetos()
          break;
 
    }
+   */
 
+   glEnable( GL_LIGHTING );
+   glEnable( GL_NORMALIZE );
+   glDisable( GL_COLOR_MATERIAL );
+
+   // Dibujar aquí
+   fuentes.Activar();
    raiz->Procesa();
+
+   glDisable( GL_LIGHTING );
+   glDisable( GL_NORMALIZE );
+   glEnable( GL_COLOR_MATERIAL );
 
 #ifdef DEBUG
 
@@ -368,6 +431,7 @@ void Practica3::CambioGradoLibertad(int grado_libertad)
       distancia_eje_Y += inc;
 
       if (distancia_eje_Y < 0) distancia_eje_Y = 0;
+      else if (distancia_eje_Y > 10) distancia_eje_Y = 10;
 
       *traslacion = Matriz4x4::Traslacion(distancia_eje_Y,0.0,0.0);
    }

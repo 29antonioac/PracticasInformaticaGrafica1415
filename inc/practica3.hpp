@@ -13,6 +13,8 @@
 #include "practica.hpp"
 #include "tuplas.hpp"
 #include "grafoescena.hpp"
+#include "FuenteLuz.hpp"
+#include "Material.hpp"
 
 class Practica3 : virtual public Practica
 {
@@ -38,7 +40,7 @@ public:
 private:
    visualizacion modo_dibujo;
    NodoGrafoEscena * raiz;
-   MallaTVT * semiesfera, * cilindro;
+   MallaTVT * semiesfera, * cilindro, * semiesfera_ojo;
 
    Matriz4x4 * rotacion_brazo_izquierdo, * rotacion_brazo_derecho, * rotacion_pierna_izquierda, * rotacion_pierna_derecha,
       * rotacion_cuerpo, * traslacion;
@@ -54,6 +56,15 @@ private:
    float direccion_rotacion_brazos, direccion_rotacion_piernas;
    float distancia_eje_Y, angulo_rotacion_cuerpo, angulo_rotacion_brazos, angulo_rotacion_piernas;
    float velocidad_angular_cuerpo, velocidad_angular_brazos, velocidad_angular_piernas;
+
+   // Luces y material (extensión de la práctica 4)
+
+   FuenteLuzPosicional * fuente1, * fuente2, * fuente3, * fuente4;
+   ColeccionFuentesLuz fuentes;
+   Material * material_android, * material_ojo;
+
+
+
 
 };
 
