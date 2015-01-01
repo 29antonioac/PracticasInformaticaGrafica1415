@@ -50,17 +50,22 @@ Practica4::Practica4()
 
 Practica4::~Practica4()
 {
-	/*
+
    delete raiz;
-   delete semiesfera;
-   delete cilindro;
-   delete rotacion_cuerpo;
-   delete rotacion_brazo_izquierdo;
-   delete rotacion_brazo_derecho;
-   delete rotacion_pierna_izquierda;
-   delete rotacion_pierna_derecha;
-   delete traslacion;
-   */
+   delete fuente_posicional;
+   delete fuente_direccional;
+   delete peon_madera;
+   delete peon_blanco;
+   delete peon_negro;
+   delete cuerpo_lata;
+   delete tapa_sup;
+   delete tapa_inf;
+   delete material_peon_madera;
+   delete material_peon_blanco;
+   delete material_peon_negro;
+   delete material_cuerpo_lata;
+   delete material_tapa;
+
 }
 
 void Practica4::Inicializar( int argc, char *argv[] )
@@ -73,15 +78,18 @@ void Practica4::Inicializar( int argc, char *argv[] )
    glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR ) ;
    glLightModeli( GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE );
 
-   float alpha = M_PI / 6;
-   float beta = alpha;
-   Tupla3f luz_componente_ambiental(0.0,0.0,1.0);
-   Tupla3f luz_componente_difusa(1.0,1.0,1.0);
-   Tupla3f luz_componente_especular(1.0,1.0,1.0);
-   Tupla3f luz_posicion(-55.0,0.0,0.0);
+   float alpha = 3 * M_PI / 4;
+   float beta = M_PI / 6;
+   Tupla3f luz_posicional_componente_ambiental(0.0,0.0,1.0);
+   Tupla3f luz_posicional_componente_difusa(0.0,0.0,1.0);
+   Tupla3f luz_posicional_componente_especular(0.0,0.0,1.0);
+   Tupla3f luz_direccional_componente_ambiental(0.0,1.0,0.0);
+   Tupla3f luz_direccional_componente_difusa(0.0,1.0,0.0);
+   Tupla3f luz_direccional_componente_especular(0.0,1.0,0.0);
+   Tupla3f luz_posicion(0.0,10.0,0.0);
 
-   fuente_direccional = new FuenteLuzDireccional(alpha, beta, luz_componente_ambiental, luz_componente_difusa, luz_componente_especular);
-   fuente_posicional = new FuenteLuzPosicional(luz_posicion, luz_componente_ambiental, luz_componente_difusa, luz_componente_especular);
+   fuente_direccional = new FuenteLuzDireccional(alpha, beta, luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
+   fuente_posicional = new FuenteLuzPosicional(luz_posicion, luz_posicional_componente_ambiental, luz_posicional_componente_difusa, luz_posicional_componente_especular);
    fuentes.Agregar(fuente_direccional);
    fuentes.Agregar(fuente_posicional);
 
@@ -148,21 +156,21 @@ void Practica4::Inicializar( int argc, char *argv[] )
    Tupla3f cuerpo_lata_componente_especular(1.0,1.0,1.0);
    float cuerpo_lata_exponente_especular = 30.0;
 
-   Textura * textura_cuerpo_lata = new Textura("img/text-lata-2.jpg",0,cs,ct);
+   Textura * textura_cuerpo_lata = new Textura("img/text-lata-1.jpg",0,cs,ct);
 
    material_cuerpo_lata = new Material(cuerpo_lata_componente_emision, cuerpo_lata_componente_ambiental,
          cuerpo_lata_componente_difusa, cuerpo_lata_componente_especular, cuerpo_lata_exponente_especular,textura_cuerpo_lata);
 
    cuerpo_lata = new MallaTVT(PERFIL,vertices_ply_cuerpo_lata);
    cuerpo_lata->SetMaterial(material_cuerpo_lata);
-   cuerpo_lata->Revolucion(caras_revolucion, false);
+   cuerpo_lata->Revolucion(caras_revolucion, false);  // Para calcular las coordenadas de textura hay que tener ya el material
 
    // Crear tapas
-   Tupla3f tapa_componente_emision(0.5,0.5,0.5);  // Color gris
+   Tupla3f tapa_componente_emision(0.6,0.6,0.6);  // Color gris
    Tupla3f tapa_componente_ambiental(0.0,0.0,0.0);
-   Tupla3f tapa_componente_difusa(0.1,0.1,0.1);
+   Tupla3f tapa_componente_difusa(0.0,0.0,0.0);
    Tupla3f tapa_componente_especular(1.0,1.0,1.0);
-   float tapa_exponente_especular = 30.0;
+   float tapa_exponente_especular = 15.0;
 
    material_tapa = new Material(tapa_componente_emision, tapa_componente_ambiental,
             tapa_componente_difusa, tapa_componente_especular, tapa_exponente_especular);
