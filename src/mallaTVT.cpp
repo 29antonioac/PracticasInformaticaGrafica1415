@@ -547,7 +547,7 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
          //cout << "Perfil " << perfil << ":" << endl;
          for (unsigned vertice = 0; vertice < vertices_perfil; vertice++)
          {
-            coordenadas_textura.push_back(pair<float,float>(perfil*1.0/(caras-1),distancias[vertice]/distancias[vertices_perfil-1]));
+            coordenadas_textura.push_back(pair<float,float>(perfil*1.0/(caras-1),1-distancias[vertice]/distancias[vertices_perfil-1]));
          }
          //cout << "\n\n\n\n" << endl;
       }
