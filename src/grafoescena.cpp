@@ -6,29 +6,26 @@ NodoGrafoEscena::~NodoGrafoEscena()
   Destruye();
 }
 
-// liberar de memoria
-void NodoGrafoEscena::Libera()
-{
-  delete this;
-}
-
-// actualizar nodo
+// procesar nodo
 void NodoGrafoEscena::Procesa()
 {
- // actualizar los hijos
- for( unsigned i = 0; i < listaHijos.size(); i++ )
- {
-   listaHijos[i]->Procesa();
- }
+   // procesar los hijos
+   for( auto &hijo : listaHijos )
+       hijo->Procesa();
 }
 
-// destruir hijos
+// destruir nodo y sus hijos
 void NodoGrafoEscena::Destruye()
 {
- for( unsigned i = 0; i < listaHijos.size(); i++ )
-    listaHijos[i]->Libera();
+   if (!listaHijos.empty())
+   {
+       for( auto &hijo : listaHijos )
+          hijo->Destruye();
 
- listaHijos.clear();
+       listaHijos.clear();
+   }
+
+   delete this;
 }
 
 // añadir un hijo al nodo
@@ -47,6 +44,11 @@ NodoTerminal::NodoTerminal(MallaTVT * malla)
 {
    this->figura = NINGUNA;
    this->malla = malla;
+}
+
+NodoTerminal::~NodoTerminal()
+{
+   delete malla;
 }
 
 void NodoTerminal::Procesa()

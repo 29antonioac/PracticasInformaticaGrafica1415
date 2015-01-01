@@ -18,13 +18,10 @@ public:
   NodoGrafoEscena() {}
   virtual ~NodoGrafoEscena();
 
-  // libera objeto de memoria
-  void Libera();
-
   // actualiza el nodo
   virtual void Procesa();
 
-  // destruye los hijos
+  // destruye el nodo y sus hijos
   void Destruye();
 
   // añade un hijo al nodo
@@ -41,7 +38,7 @@ class NodoTerminal: public NodoGrafoEscena
 public:
   NodoTerminal(figuras figura);
   NodoTerminal(MallaTVT * malla);
-  ~NodoTerminal() {}
+  ~NodoTerminal();
 
   void Procesa();
 
