@@ -17,7 +17,7 @@ using std::cout;
 using std::vector;
 using std::string;
 
-Practica2::Practica2()
+Practica2::Practica2(GLuint idProg) : Practica(idProg)
 {
    malla = nullptr;
 }
@@ -79,6 +79,7 @@ void Practica2::Inicializar(int argc, char *argv[])
 
 void Practica2::DibujarObjetos()
 {
+   glUseProgram(idProg);
    malla->Visualizar();
 }
 
@@ -127,6 +128,13 @@ void Practica2::Debug()
    else if (M == 2)
       str_modo = "Barrido traslacion";
 
+   string cauce;
+
+   if (idProg == 0)
+      cauce = "Fijo";
+   else
+      cauce = "Programable";
+
    vector<string> debug_strings;
 
    debug_strings.push_back(string("Modo: " + str_modo));
@@ -135,6 +143,7 @@ void Practica2::Debug()
    debug_strings.push_back(string("Color fijo: " + str_color_fijo));
    debug_strings.push_back(string("Modo de dibujo: " + enumToString(malla->getModoDibujo())));
    debug_strings.push_back(string("Archivo cargado: " + file));
+   debug_strings.push_back(string("Cauce: " + cauce));
    debug_strings.push_back(string("Practica 2"));
    void * font = GLUT_BITMAP_9_BY_15;
    unsigned num_lineas = 0;

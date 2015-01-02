@@ -35,11 +35,11 @@ inline T signo (T valor)
       return 0;
 }
 
-Practica3::Practica3()
+Practica3::Practica3(GLuint idProg) : Practica(idProg)
 {
    modo_dibujo = ALAMBRE;
    raiz = nullptr;
-   semiesfera = nullptr;
+   semiesfera = semiesfera_ojo = nullptr;
    cilindro = nullptr;
 
    angulo_rotacion_cuerpo = M_PI;
@@ -50,6 +50,11 @@ Practica3::Practica3()
    distancia_eje_Y = velocidad_angular_cuerpo = velocidad_angular_brazos = velocidad_angular_piernas = 0;
 
    rotacion_cuerpo = rotacion_brazo_izquierdo = rotacion_brazo_derecho = rotacion_pierna_izquierda = rotacion_pierna_derecha = traslacion = nullptr;
+
+   fuente1 = fuente2 = fuente3 = fuente4 = nullptr;
+   material_android = material_ojo = nullptr;
+
+
 }
 
 Practica3::~Practica3()
@@ -343,6 +348,7 @@ void Practica3::DibujarObjetos()
 
    }
    */
+   glUseProgram(idProg);
 
    glEnable( GL_LIGHTING );
    glEnable( GL_NORMALIZE );
@@ -356,9 +362,6 @@ void Practica3::DibujarObjetos()
    glDisable( GL_NORMALIZE );
    glEnable( GL_COLOR_MATERIAL );
 
-#ifdef DEBUG
-
-#endif
 }
 
 void Practica3::CambioModoDibujo(visualizacion modo_dibujo)
@@ -539,6 +542,13 @@ void Practica3::Debug()
    else
       str_color_fijo = "No";
 
+   string cauce;
+
+   if (idProg == 0)
+      cauce = "Fijo";
+   else
+      cauce = "Programable";
+
    vector<string> debug_strings;
    debug_strings.push_back(string("Velocidad angular piernas: " + to_string(velocidad_angular_piernas)));
    debug_strings.push_back(string("Velocidad angular brazos: " + to_string(velocidad_angular_brazos)));
@@ -550,6 +560,7 @@ void Practica3::Debug()
    debug_strings.push_back(string("Modo de normales: " + enumToString(semiesfera->getModoNormales())));
    debug_strings.push_back(string("Color fijo: " + str_color_fijo));
    debug_strings.push_back(string("Modo de dibujo: " + enumToString(modo_dibujo)));
+   debug_strings.push_back(string("Cauce: " + cauce));
    debug_strings.push_back(string("Practica 3"));
    void * font = GLUT_BITMAP_9_BY_15;
    unsigned num_lineas = 0;

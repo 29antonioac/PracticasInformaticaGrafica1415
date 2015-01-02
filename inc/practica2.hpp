@@ -31,7 +31,7 @@ public:
 
    virtual ~Practica2();
 
-   Practica2();
+   Practica2(GLuint idProg);
    Practica2(Practica2 const&);              // No se implementa para evitar copias
    Practica2& operator=(Practica2 const&);   // No se implementa para evitar asignaciones
 

@@ -35,7 +35,7 @@ inline T signo (T valor)
       return 0;
 }
 
-Practica4::Practica4()
+Practica4::Practica4(GLuint idProg) : Practica(idProg)
 {
    modo_dibujo = ALAMBRE;
 
@@ -218,6 +218,8 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
 void Practica4::DibujarObjetos()
 {
+   glUseProgram(idProg);
+
    glEnable( GL_LIGHTING );
    glEnable( GL_NORMALIZE );
    glDisable( GL_COLOR_MATERIAL );
@@ -298,11 +300,19 @@ void Practica4::Debug()
 
    vector<string> debug_strings;
 
+   string cauce;
+
+   if (idProg == 0)
+      cauce = "Fijo";
+   else
+      cauce = "Programable";
+
    debug_strings.push_back(string("Beta: " + to_string(fuente_direccional->getBeta())));
    debug_strings.push_back(string("Alpha: " + to_string(fuente_direccional->getAlpha())));
 
    debug_strings.push_back(string("Modo de normales: " + enumToString(peon_madera->getModoNormales())));
    debug_strings.push_back(string("Modo de dibujo: " + enumToString(modo_dibujo)));
+   debug_strings.push_back(string("Cauce: " + cauce));
    debug_strings.push_back(string("Practica 4"));
 
    void * font = GLUT_BITMAP_9_BY_15;

@@ -66,16 +66,19 @@ int
    ventana_tam_y  = 800 ;  // alto inicial actual de la ventana, en pixels
 
 
+GLuint idProg_P1_P2; // ID del par fragment-vertex shader
+
 // Puntero a la práctica actual
 Practica    * practicaActual;
-Practica1   * practica1 = new Practica1;
-Practica2   * practica2 = new Practica2;
-Practica3   * practica3 = new Practica3;
-Practica4   * practica4 = new Practica4;
+Practica1   * practica1;
+Practica2   * practica2;
+Practica3   * practica3;
+Practica4   * practica4;
 
 bool debug = false;
 bool ayuda = false;
 bool msaa = true;
+//bool custom_shader = false;
 
 
 
@@ -214,9 +217,12 @@ void Debug_Ayuda()
 
    if (ayuda)
    {
+      //string cShader = custom_shader ? "Programable" : "Fijo";
       vector<string> strings_control;
       strings_control.push_back("Disponible control con flechas de teclado, +/- y raton ");
       practicaActual->Ayuda(strings_control);
+      //strings_control.push_back("W: Alternar entre cauce fijo/programable (" + cShader +")");
+      strings_control.push_back("E: Activar/desactivar MSAA");
       strings_control.push_back("F: Alternar entre color fijo (solo modo solido)");
       strings_control.push_back("H: Alternar modo dibujo normales");
       strings_control.push_back("A: Modo ajedrez");
@@ -262,6 +268,10 @@ void Debug_Ayuda()
 
 void FGE_Redibujado()
 {
+   /*if (custom_shader)
+      glUseProgram(idProg);
+   else
+      glUseProgram(0);*/
    FijarViewportProyeccion() ; // necesario pues la escala puede cambiar
    FijarCamara();
    LimpiarVentana();
@@ -338,6 +348,9 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
       case 'e':
          msaa = !msaa;
          break;
+      //case 'w':
+         //custom_shader = !custom_shader;
+      //   break;
       default:
          redisp = practicaActual->GestionarEvento(tecla) ;
          break ;
@@ -502,6 +515,108 @@ void Animar()
 
 }
 
+/* Añadidos de shaders */
+
+/* Añadidos shader */
+
+char * LeerArchivo( const char * nombreArchivo )
+{
+   using namespace std;
+   // intentar abrir stream, si no se puede informar y abortar
+   ifstream file( nombreArchivo, ios::in|ios::binary|ios::ate );
+   if ( ! file.is_open() )
+   {
+      std::cout << "imposible abrir archivo para lectura ("
+            << nombreArchivo << ")" << std::endl ;
+      exit(1);
+   }
+   //reservar memoria para guardar archivo completo
+   size_t numBytes = file.tellg(); // leer tamaño total en bytes
+   char * bytes = new char [numBytes+1]; // reservar memoria dinámica
+   // leer bytes:
+   file.seekg( 0, ios::beg ); // posicionar lectura al inicio
+   file.read( bytes, numBytes ); // leer el archivo completo
+   file.close(); // cerrar stream de lectura
+   bytes[numBytes] = 0 ; // añadir cero al final
+   // devolver puntero al primer elemento
+   return bytes ;
+}
+
+void VerErroresCompilar( GLuint idShader )
+{
+   using namespace std ;
+   const GLsizei maxt = 1024L*10L ;
+   GLsizei tam ;
+   GLchar buffer[maxt] ;
+   GLint ok ;
+   glGetShaderiv( idShader, GL_COMPILE_STATUS, &ok);
+   if (ok == GL_TRUE)
+      return;
+
+   glGetShaderInfoLog(idShader, maxt, &tam, buffer); // leer log de errores
+   cout  << "Error al compilar: " << endl
+         << buffer
+         << "programa abortado" << endl;
+
+   exit(1); // abortar
+}
+
+void VerErroresEnlazar( GLuint idPrograma )
+{
+   using namespace std ;
+   const GLsizei maxt = 1024L*10L ;
+   GLsizei tam ;
+   GLchar buffer[maxt] ;
+   GLint ok ;
+   glGetProgramiv( idPrograma, GL_COMPILE_STATUS, &ok);
+   if (ok == GL_TRUE)
+      return;
+
+   glGetProgramInfoLog(idPrograma, maxt, &tam, buffer); // leer log de errores
+   cout  << "Error al compilar: " << endl
+         << buffer
+         << "programa abortado" << endl;
+
+   exit(1); // abortar
+}
+
+GLuint CompilarShader( const char * nombreArchivo, GLenum tipoShader )
+{
+   // crear shader nuevo, obtener identificador (tipo GLuint)
+   const GLuint idShader = glCreateShader( tipoShader );
+   // leer archivo fuente de shader en memoria, asociar fuente al shader
+   const GLchar * fuente = LeerArchivo( nombreArchivo );
+   glShaderSource( idShader, 1, &fuente, NULL );
+   delete [] fuente ; fuente = NULL ; // libera memoria del fuente
+   // compilar y comprobar errores
+   glCompileShader( idShader );
+   //VerErroresCompilar( idShader ); // opcional, muy conveniente
+   // devolver identificador de shader como resultado
+   return idShader ;
+}
+
+
+
+
+
+
+GLuint CrearPrograma( const char * archFrag, const char * archVert )
+{
+   // crear y compilar shaders, crear el programa
+   const GLuint
+   idFragShader = CompilarShader( archFrag, GL_FRAGMENT_SHADER ),
+   idVertShader = CompilarShader( archVert, GL_VERTEX_SHADER ),
+   idProg = glCreateProgram();
+   // asociar shaders al programa
+   glAttachShader( idProg, idFragShader );
+   glAttachShader( idProg, idVertShader );
+   // enlazar programa y comprobar errores
+   glLinkProgram( idProg );
+   //VerErroresEnlazar( idProg ); // opcional, muy conveniente
+   // devolver identificador de programa
+   return idProg ;
+}
+
 // *********************************************************************
 // **
 // ** Funciones de inicialización
@@ -577,6 +692,8 @@ void Inicializa_OpenGL( )
       exit(1);
    }
 
+   idProg_P1_P2 = CrearPrograma("src/fragment-shader.glsl","src/vertex-shader.glsl");
+
    // habilitar test de comparación de profundidades para 3D (y 2D)
    // es necesario, no está habilitado por defecto:
    // https://www.opengl.org/wiki/Depth_Buffer
@@ -618,6 +735,22 @@ void Inicializa_OpenGL( )
    CError();
 }
 
+void Inicializar_Practicas(int argc, char *argv[])
+{
+   practica1 = new Practica1(idProg_P1_P2);
+   practica2 = new Practica2(idProg_P1_P2);
+   practica3 = new Practica3(0);
+   practica4 = new Practica4(0);
+
+
+   practica1->Inicializar(argc, argv);
+   practica2->Inicializar(argc, argv);
+   practica3->Inicializar(argc, argv);
+   practica4->Inicializar(argc, argv);
+
+   practicaActual = practica3;
+}
+
 // ---------------------------------------------------------------------
 // Código de inicialización (llama a los dos anteriores, entre otros)
 
@@ -630,12 +763,7 @@ void Inicializar( int argc, char *argv[] )
    Inicializa_OpenGL() ;
    
    // inicializar prácticas
-   practica1->Inicializar(argc, argv);
-   practica2->Inicializar(argc, argv);
-   practica3->Inicializar(argc, argv);
-   practica4->Inicializar(argc, argv);
-
-   practicaActual = practica3;
+   Inicializar_Practicas(argc, argv);
 }
 
 // *********************************************************************

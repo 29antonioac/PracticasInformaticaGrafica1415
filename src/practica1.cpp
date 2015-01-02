@@ -18,7 +18,7 @@ using std::endl;
 using std::string;
 using std::vector;
 
-Practica1::Practica1()
+Practica1::Practica1(GLuint idProg) : Practica(idProg)
 {
    malla = nullptr;
 }
@@ -60,6 +60,7 @@ void Practica1::Inicializar( int argc, char *argv[] )
 
 void Practica1::DibujarObjetos()
 {
+   glUseProgram(idProg);
    malla->Visualizar();
 }
 
@@ -100,11 +101,19 @@ void Practica1::Debug()
    else
       str_color_fijo = "No";
 
+   string cauce;
+
+   if (idProg == 0)
+      cauce = "Fijo";
+   else
+      cauce = "Programable";
+
    vector<string> debug_strings;
    debug_strings.push_back(string("Modo de normales: " + enumToString(malla->getModoNormales())));
    debug_strings.push_back(string("Color fijo: " + str_color_fijo));
    debug_strings.push_back(string("Modo de dibujo: " + enumToString(malla->getModoDibujo())));
    debug_strings.push_back(string("Archivo cargado: " + file));
+   debug_strings.push_back(string("Cauce: " + cauce));
    debug_strings.push_back(string("Practica 1"));
    void * font = GLUT_BITMAP_9_BY_15;
    unsigned num_lineas = 0;
