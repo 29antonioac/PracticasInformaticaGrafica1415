@@ -1,5 +1,7 @@
 #include "VBO.hpp"
 
+#include <glm/gtc/type_ptr.hpp>
+
 VBO::VBO( GLuint tipo, GLuint numero_datos, GLuint tamanio, GLvoid * puntero )
 {
    if (!( tipo == GL_ARRAY_BUFFER || tipo == GL_ELEMENT_ARRAY_BUFFER ))
@@ -84,7 +86,7 @@ void VBO_Vertices::Visualizar()
    glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void VBO_Triangulos::Visualizar(visualizacion modo, Tupla3f color_primario, Tupla3f color_secundario)
+void VBO_Triangulos::Visualizar(visualizacion modo, glm::vec3 color_primario, glm::vec3 color_secundario)
 {
    if (modo != AJEDREZ)
    {
@@ -98,11 +100,11 @@ void VBO_Triangulos::Visualizar(visualizacion modo, Tupla3f color_primario, Tupl
       unsigned num_impares = numero_datos - num_pares;
 
       glDisableClientState(GL_COLOR_ARRAY);
-      glColor3fv(color_primario.data());
+      glColor3fv(glm::value_ptr(color_primario));
       glBindBuffer( tipo, id_vbo );
       glDrawElements( GL_TRIANGLES, num_impares, GL_UNSIGNED_INT, 0 ) ;
 
-      glColor3fv(color_secundario.data());
+      glColor3fv(glm::value_ptr(color_secundario));
       glDrawElements( GL_TRIANGLES, num_pares, GL_UNSIGNED_INT, (const void *) (num_impares*sizeof(GLuint)) ) ;
       glBindBuffer(tipo,0);
    }

@@ -1,24 +1,26 @@
 #include "Material.hpp"
 
+#include <glm/gtc/type_ptr.hpp>
 
-Material::Material(Tupla3f componente_emision, Tupla3f componente_ambiental,
-      Tupla3f componente_difusa, Tupla3f componente_especular, float exponente_especular, Textura * textura)
+
+Material::Material(glm::vec3 componente_emision, glm::vec3 componente_ambiental,
+      glm::vec3 componente_difusa, glm::vec3 componente_especular, float exponente_especular, Textura * textura)
 {
    this->textura = textura;
-   this->componente_emision = AniadeW(componente_emision,1.0);
-   this->componente_ambiental = AniadeW(componente_ambiental,1.0);
-   this->componente_difusa = AniadeW(componente_difusa,1.0);
-   this->componente_especular = AniadeW(componente_especular,1.0);
+   this->componente_emision = glm::vec4(componente_emision,1.0);
+   this->componente_ambiental = glm::vec4(componente_ambiental,1.0);
+   this->componente_difusa = glm::vec4(componente_difusa,1.0);
+   this->componente_especular = glm::vec4(componente_especular,1.0);
    this->exponente_especular = exponente_especular;
 }
 
 bool Material::Activar()
 {
    bool respuesta = false;
-   glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, componente_emision.data());
-   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, componente_ambiental.data());
-   glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, componente_difusa.data());
-   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, componente_especular.data());
+   glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, glm::value_ptr(componente_emision));
+   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, glm::value_ptr(componente_ambiental));
+   glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, glm::value_ptr(componente_difusa));
+   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, glm::value_ptr(componente_especular));
    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, exponente_especular);
 
    if (textura == nullptr)

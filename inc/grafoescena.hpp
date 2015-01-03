@@ -8,7 +8,7 @@
 #include <iostream>
 
 #include "MallaTVT.hpp"
-#include "Matriz.hpp"
+#include <glm/mat4x4.hpp>
 
 using std::vector;
 
@@ -50,25 +50,25 @@ private:
 class NodoTransformacionParametrizado: public NodoGrafoEscena
 {
 public:
-   NodoTransformacionParametrizado(Matriz4x4 * matriz);
+   NodoTransformacionParametrizado(glm::mat4 * matriz);
   ~NodoTransformacionParametrizado() {}
 
   void Procesa();
 
 private:
-  Matriz4x4 * matrizTransformacion;
+  glm::mat4 * matrizTransformacion;
 };
 
 class NodoTransformacion: public NodoGrafoEscena
 {
 public:
-   NodoTransformacion(Matriz4x4 matriz);
+   NodoTransformacion(glm::mat4 matriz);
   ~NodoTransformacion() {}
 
   void Procesa();
 
 private:
-  Matriz4x4 matrizTransformacion;
+  glm::mat4 matrizTransformacion;
 };
 
 

@@ -11,10 +11,11 @@
 #define __IG_PRACTICA3_HPP__
 
 #include "practica.hpp"
-#include "tuplas.hpp"
+//#include "tuplas.hpp"
 #include "grafoescena.hpp"
 #include "FuenteLuz.hpp"
 #include "Material.hpp"
+#include <glm/mat4x4.hpp>
 
 class Practica3 : virtual public Practica
 {
@@ -42,7 +43,7 @@ private:
    NodoGrafoEscena * raiz;
    MallaTVT * semiesfera, * cilindro, * semiesfera_ojo;
 
-   Matriz4x4 * rotacion_brazo_izquierdo, * rotacion_brazo_derecho, * rotacion_pierna_izquierda, * rotacion_pierna_derecha,
+   glm::mat4 * rotacion_brazo_izquierdo, * rotacion_brazo_derecho, * rotacion_pierna_izquierda, * rotacion_pierna_derecha,
       * rotacion_cuerpo, * traslacion;
 
    static constexpr float incremento_angulo_rotacion_cuerpo = 2*M_PI/100,
@@ -62,6 +63,8 @@ private:
    FuenteLuzPosicional * fuente1, * fuente2, * fuente3, * fuente4;
    ColeccionFuentesLuz fuentes;
    Material * material_android, * material_ojo;
+
+   vector<glm::vec3> vertices_semiesfera;
 
 
 

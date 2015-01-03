@@ -1,23 +1,29 @@
 #include "MallaTVT.hpp"
+#include <glm/vec3.hpp> // glm::vec3
+#include <glm/vec4.hpp> // glm::vec4, glm::ivec4
+#include <glm/mat4x4.hpp> // glm::mat4
+#include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
+#include <glm/gtc/type_ptr.hpp> // glm::value_ptr
+
 
 MallaTVT::MallaTVT(tipo_malla tipo, vector<GLfloat> vertices, vector<int> caras, Material * material)
 {
    // Pasamos los vértices a vector de Tupla3f
    for (unsigned i = 0; i < vertices.size(); i+=3)
    {
-      ver.push_back(Tupla3f(vertices[i],vertices[i+1],vertices[i+2]));
+      ver.push_back(glm::vec3(vertices[i],vertices[i+1],vertices[i+2]));
    }
 
    // Pasamos las caras a vectores de Tupla3f
    for (unsigned i = 0; i < caras.size(); i+=6)
    {
-      Tupla3i cara(caras[i],caras[i+1],caras[i+2]);
+      glm::ivec3 cara(caras[i],caras[i+1],caras[i+2]);
       tri.push_back(cara);
    }
 
    for (unsigned i = 3; i < caras.size(); i+=6)
    {
-      Tupla3i cara(caras[i],caras[i+1],caras[i+2]);
+      glm::ivec3 cara(caras[i],caras[i+1],caras[i+2]);
       tri.push_back(cara);
    }
 
@@ -27,7 +33,7 @@ MallaTVT::MallaTVT(tipo_malla tipo, vector<GLfloat> vertices, vector<int> caras,
    Inicializar();
 }
 
-MallaTVT::MallaTVT(tipo_malla tipo, vector<Tupla3f> vertices, vector<Tupla3i> caras, Material * material)
+MallaTVT::MallaTVT(tipo_malla tipo, vector<glm::vec3> vertices, vector<glm::ivec3> caras, Material * material)
 {
    ver = vertices;
 
@@ -112,7 +118,7 @@ void MallaTVT::Inicializar()
    // Asignamos colores a los vértices según su normal
    for (unsigned i = 0; i < ver.size(); i++)
    {
-      Tupla3f color(normales_vertices[i].abs());
+      glm::vec3 color(glm::abs(normales_vertices[i]));
       colores_vertices.push_back(color);
       //colores_vertices.push_back(Tupla3f(0.0,color[Y],0.0));
    }
@@ -120,8 +126,8 @@ void MallaTVT::Inicializar()
    this->modo_dibujo = SOLIDO;
    this->dibujo_normales = NADA;
 
-   color_primario = Tupla3f(0.0,1.0,0.0);
-   color_secundario = Tupla3f(0.0,0.0,0.0);
+   color_primario = glm::vec3(0.0,1.0,0.0);
+   color_secundario = glm::vec3(0.0,0.0,0.0);
 
    color_fijo = false;
 
@@ -159,17 +165,19 @@ void MallaTVT::CalcularDimension()
 void MallaTVT::CalcularVectoresNormales()
 {
    // Primero las normales de las caras y baricentros
-   Tupla3f baricentro;
+   glm::vec3 baricentro;
    for (unsigned cara = 0; cara < tri.size(); cara++)
    {
-      Tupla3f A = ver[tri[cara][X]];
-      Tupla3f B = ver[tri[cara][Y]];
-      Tupla3f C = ver[tri[cara][Z]];
+      glm::vec3 A = ver[tri[cara][X]];
+      glm::vec3 B = ver[tri[cara][Y]];
+      glm::vec3 C = ver[tri[cara][Z]];
 
-      Tupla3f AB = B - A;
-      Tupla3f BC = C - B;
+      glm::vec3 AB = B - A;
+      glm::vec3 BC = C - B;
 
-      Tupla3f normal((AB*BC).normalized());
+      //vec3 normal((AB*BC).normalized());
+
+      glm::vec3 normal(glm::normalize(glm::cross(AB,BC)));
 
       normales_caras.push_back(normal);
 
@@ -178,11 +186,11 @@ void MallaTVT::CalcularVectoresNormales()
       baricentro[Z] = (A[Z] + B[Z] + C[Z])/3;
       baricentros.push_back(baricentro);
 
-      pair<Tupla3f,Tupla3f> linea (baricentro, baricentro + normal * 0.1 * dimension);
+      pair<glm::vec3,glm::vec3> linea (baricentro, baricentro + normal *0.1f * dimension );
       lineas_normales_caras.push_back(linea);
    }
 
-   Tupla3f ceros;
+   glm::vec3 ceros;
 
    for (unsigned vertice = 0; vertice < ver.size(); vertice++)
    {
@@ -203,10 +211,10 @@ void MallaTVT::CalcularVectoresNormales()
 
    for (unsigned vertice = 0; vertice < ver.size(); vertice++)
    {
-      normales_vertices[vertice] = (normales_vertices[vertice]).normalized();
+      normales_vertices[vertice] = glm::normalize(normales_vertices[vertice]);
       //cout << "Normal vértice " << vertice << ": " << normales_vertices[vertice] << endl;
 
-      pair<Tupla3f,Tupla3f> linea (ver[vertice], ver[vertice] + normales_vertices[vertice] * 0.1 * dimension);
+      pair<glm::vec3,glm::vec3> linea (ver[vertice], ver[vertice] + normales_vertices[vertice] * 0.1f * dimension);
       lineas_normales_vertices.push_back(linea);
    }
 }
@@ -268,7 +276,7 @@ void MallaTVT::CrearVBOs()
 
 void MallaTVT::Visualizar()
 {
-   glColor3fv(color_primario.data());
+   glColor3fv(glm::value_ptr(color_primario));
 
    bool color_vertices = false;
    bool normal_vertices = false;
@@ -381,13 +389,13 @@ void MallaTVT::VisualizarModoInmediato()
    {
       if(!normales_caras.empty())
       {
-         glColor3fv( normales_caras[i].abs().data() );
-         glNormal3fv( normales_caras[i].data() );
+         glColor3fv( glm::value_ptr(glm::abs(normales_caras[i]) ) );
+         glNormal3fv( glm::value_ptr(glm::abs(normales_caras[i]) ) );
       }
 
       for (int j = 0; j < 3; ++j) {
          unsigned int iv = tri[i][j]; // iv = índice de vértice
-         glVertex3fv(ver[iv].data());
+         glVertex3fv(glm::value_ptr(ver[iv]));
       }
    }
    glEnd();
@@ -414,12 +422,12 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
 
    float alpha = 2*M_PI/caras;
 
-   vector<Tupla3f> centro_tapas;
+   vector<glm::vec3> centro_tapas;
 
 
    if (ver.front()[X] != 0.0f)
    {
-      centro_tapas.push_back(Tupla3f(0.0,ver.front()[Y],0.0));
+      centro_tapas.push_back(glm::vec3(0.0,ver.front()[Y],0.0));
    }
    else
    {
@@ -429,7 +437,7 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
 
    if (ver.back()[X] != 0.0f)
    {
-      centro_tapas.push_back(Tupla3f(0.0,ver.back()[Y],0.0));
+      centro_tapas.push_back(glm::vec3(0.0,ver.back()[Y],0.0));
    }
    else
    {
@@ -441,19 +449,20 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
 
 
    // Crear matriz de perfiles
-   vector<vector<Tupla3f> > perfiles;
+   vector<vector<glm::vec3> > perfiles;
 
    perfiles.push_back(ver);
-   vector<Tupla3f> perfil_actual;
+   vector<glm::vec3> perfil_actual;
    vector<int> vertices_fijos;
-   Tupla3f vertice_actual;
+   glm::vec3 vertice_actual;
 
    for (unsigned perfil = 1; perfil < caras; perfil++)
    {
       perfil_actual.clear();
       for (unsigned i = 0; i < vertices_perfil; i++)
       {
-         vertice_actual = Matriz4x4::RotacionEjeY(alpha)*perfiles[perfil-1][i];
+         //vertice_actual = mat4::RotacionEjeY(alpha)*perfiles[perfil-1][i];
+         vertice_actual = glm::vec3(glm::rotate(glm::mat4(1.0),alpha,glm::vec3(0.0,1.0,0.0)) * glm::vec4(perfiles[perfil-1][i],1.0));
          perfil_actual.push_back(vertice_actual);
          ver.push_back(vertice_actual);
       }
@@ -472,8 +481,8 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
          unsigned indice_vertice_siguiente_perfil = indice_vertice_actual + vertices_perfil;
          unsigned indice_vertice_anterior_siguiente_perfil = indice_vertice_anterior + vertices_perfil;
 
-         tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
-         tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
+         tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
+         tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
       }
    }
 
@@ -486,8 +495,8 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
       unsigned indice_vertice_siguiente_perfil = vertice;
       unsigned indice_vertice_anterior_siguiente_perfil = vertice - 1;
 
-      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
-      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
+      tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
+      tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
    }
 
    if (tapas)
@@ -503,10 +512,10 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
          unsigned vertice_actual = cara * vertices_perfil;
          unsigned vertice_siguiente = vertice_actual + vertices_perfil;
 
-         Tupla3i triangulo(centro_tapa_inferior,vertice_siguiente,vertice_actual);
+         glm::ivec3 triangulo(centro_tapa_inferior,vertice_siguiente,vertice_actual);
          tri.push_back(triangulo);
       }
-      tri.push_back(Tupla3i(centro_tapa_inferior,0,(caras-1)*vertices_perfil));
+      tri.push_back(glm::ivec3(centro_tapa_inferior,0,(caras-1)*vertices_perfil));
 
       // Tapa superior
       ver.push_back(centro_tapas.front());
@@ -518,11 +527,11 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
          unsigned vertice_actual = (cara + 1) * vertices_perfil - 1;
          unsigned vertice_siguiente = vertice_actual + vertices_perfil;
 
-         Tupla3i triangulo(centro_tapa_superior,vertice_actual,vertice_siguiente);
+         glm::ivec3 triangulo(centro_tapa_superior,vertice_actual,vertice_siguiente);
          tri.push_back(triangulo);
       }
 
-      tri.push_back(Tupla3i(centro_tapa_superior, caras*vertices_perfil - 1,vertices_perfil - 1));
+      tri.push_back(glm::ivec3(centro_tapa_superior, caras*vertices_perfil - 1,vertices_perfil - 1));
    }
 
 
@@ -536,7 +545,7 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
 
       for (unsigned i = 1; i < vertices_perfil; i++)
       {
-         float distancia = (ver[i] - ver[i-1]).len();
+         float distancia = glm::distance(ver[i], ver[i-1]);
          distancias.push_back(distancias[i-1] + distancia);
          // Añadir el primer perfil de nuevo para unir la textura
          ver.push_back(ver[i]);
@@ -562,25 +571,25 @@ void MallaTVT::Barrido_Rotacion(const unsigned caras)
 
    float alpha = 2*M_PI/caras;
 
-   vector<Tupla3f> centro_tapas;
+   vector<glm::vec3> centro_tapas;
 
    unsigned vertices_perfil = ver.size();
 
 
    // Crear matriz de perfiles
-   vector<vector<Tupla3f> > perfiles;
+   vector<vector<glm::vec3> > perfiles;
 
    perfiles.push_back(ver);
-   vector<Tupla3f> perfil_actual;
+   vector<glm::vec3> perfil_actual;
    vector<int> vertices_fijos;
-   Tupla3f vertice_actual;
+   glm::vec3 vertice_actual;
 
    for (unsigned perfil = 1; perfil < caras; perfil++)
    {
       perfil_actual.clear();
       for (unsigned i = 0; i < vertices_perfil; i++)
       {
-         vertice_actual = Matriz4x4::RotacionEjeY(alpha)*perfiles[perfil-1][i];
+         vertice_actual = glm::vec3(glm::rotate(glm::mat4(1.0),alpha,glm::vec3(0.0,1.0,0.0)) * glm::vec4(perfiles[perfil-1][i],1.0));
          perfil_actual.push_back(vertice_actual);
          ver.push_back(vertice_actual);
       }
@@ -606,8 +615,8 @@ void MallaTVT::Barrido_Rotacion(const unsigned caras)
          indice_vertice_siguiente_perfil = indice_vertice_actual + vertices_perfil;
          indice_vertice_anterior_siguiente_perfil = indice_vertice_anterior + vertices_perfil;
 
-         tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
-         tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
+         tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
+         tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
       }
 
       indice_vertice_actual = perfil * vertices_perfil;
@@ -615,8 +624,8 @@ void MallaTVT::Barrido_Rotacion(const unsigned caras)
       indice_vertice_siguiente_perfil = indice_vertice_actual + vertices_perfil;
       indice_vertice_anterior_siguiente_perfil = indice_vertice_anterior + vertices_perfil;
 
-      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
-      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
+      tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
+      tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
 
    }
 
@@ -630,8 +639,8 @@ void MallaTVT::Barrido_Rotacion(const unsigned caras)
       indice_vertice_siguiente_perfil = vertice;
       indice_vertice_anterior_siguiente_perfil = vertice - 1;
 
-      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
-      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
+      tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
+      tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
    }
 
 
@@ -645,8 +654,8 @@ void MallaTVT::Barrido_Rotacion(const unsigned caras)
    indice_vertice_siguiente_perfil = 0;
    indice_vertice_anterior_siguiente_perfil = vertices_perfil - 1;
 
-   tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
-   tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
+   tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
+   tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
 
    Inicializar();
 
@@ -658,18 +667,18 @@ void MallaTVT::Barrido_Traslacion(const unsigned caras, const float dx, const fl
    unsigned vertices_perfil = ver.size();
 
    // Crear matriz de perfiles
-   vector<vector<Tupla3f> > perfiles;
+   vector<vector<glm::vec3> > perfiles;
 
    perfiles.push_back(ver);
-   vector<Tupla3f> perfil_actual;
-   Tupla3f vertice_actual;
+   vector<glm::vec3> perfil_actual;
+   glm::vec3 vertice_actual;
 
    for (unsigned perfil = 1; perfil < caras; perfil++)
    {
       perfil_actual.clear();
       for (unsigned i = 0; i < vertices_perfil; i++)
       {
-         vertice_actual = Matriz4x4::Traslacion(dx,dy,dz)*perfiles[perfil-1][i];
+         vertice_actual = glm::vec3(glm::translate(glm::mat4(1.0),glm::vec3(dx,dy,dz)) * glm::vec4(perfiles[perfil-1][i],1.0));
          perfil_actual.push_back(vertice_actual);
          ver.push_back(vertice_actual);
       }
@@ -694,8 +703,8 @@ void MallaTVT::Barrido_Traslacion(const unsigned caras, const float dx, const fl
          indice_vertice_siguiente_perfil = indice_vertice_actual + vertices_perfil;
          indice_vertice_anterior_siguiente_perfil = indice_vertice_anterior + vertices_perfil;
 
-         tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
-         tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
+         tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
+         tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
       }
 
       indice_vertice_actual = perfil * vertices_perfil;
@@ -703,22 +712,22 @@ void MallaTVT::Barrido_Traslacion(const unsigned caras, const float dx, const fl
       indice_vertice_siguiente_perfil = indice_vertice_actual + vertices_perfil;
       indice_vertice_anterior_siguiente_perfil = indice_vertice_anterior + vertices_perfil;
 
-      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
-      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
+      tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
+      tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
 
    }
 
    // Calcular primera tapa
-   Tupla3f centro_tapa_primera(0.0,0.0,0.0);
+   glm::vec3 centro_tapa_primera(0.0,0.0,0.0);
 
    for (unsigned i = 0; i < vertices_perfil; i++)
       centro_tapa_primera += ver[i];
-   centro_tapa_primera = centro_tapa_primera/vertices_perfil;
+   centro_tapa_primera /=  vertices_perfil;
 
    // Calcular la última tapa
-   Tupla3f centro_tapa_ultima(centro_tapa_primera);
+   glm::vec3 centro_tapa_ultima(centro_tapa_primera);
    for (unsigned i = 1; i < caras; i++)
-      centro_tapa_ultima = Matriz4x4::Traslacion(dx,dy,dz)*centro_tapa_ultima;
+      centro_tapa_ultima = glm::vec3(glm::translate(glm::mat4(1.0),glm::vec3(dx,dy,dz)) * glm::vec4(centro_tapa_ultima,1.0));
 
 
    // Tapa inferior
@@ -730,10 +739,10 @@ void MallaTVT::Barrido_Traslacion(const unsigned caras, const float dx, const fl
       unsigned vertice_actual = cara ;
       unsigned vertice_siguiente = cara + 1;
 
-      Tupla3i triangulo(centro_tapa_inferior,vertice_siguiente,vertice_actual);
+      glm::ivec3 triangulo(centro_tapa_inferior,vertice_siguiente,vertice_actual);
       tri.push_back(triangulo);
    }
-   tri.push_back(Tupla3i(centro_tapa_inferior,0,vertices_perfil - 1));
+   tri.push_back(glm::ivec3(centro_tapa_inferior,0,vertices_perfil - 1));
 
    // Tapa superior
    ver.push_back(centro_tapa_ultima);
@@ -744,11 +753,11 @@ void MallaTVT::Barrido_Traslacion(const unsigned caras, const float dx, const fl
       unsigned vertice_actual = cara ;
       unsigned vertice_siguiente = cara + 1;
 
-      Tupla3i triangulo(centro_tapa_superior,vertice_actual,vertice_siguiente);
+      glm::ivec3 triangulo(centro_tapa_superior,vertice_actual,vertice_siguiente);
       tri.push_back(triangulo);
    }
 
-   tri.push_back(Tupla3i(centro_tapa_superior, caras * vertices_perfil - 1, (caras - 1) * vertices_perfil));
+   tri.push_back(glm::ivec3(centro_tapa_superior, caras * vertices_perfil - 1, (caras - 1) * vertices_perfil));
 
    Inicializar();
 }

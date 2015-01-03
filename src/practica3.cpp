@@ -15,14 +15,31 @@
 
 #include "MallaTVT.hpp"
 #include "file_ply_stl.hpp"
-#include "Matriz.hpp"
 
+#define GLM_FORCE_RADIANS
+#include <glm/vec3.hpp> // glm::vec3
+#include <glm/vec4.hpp> // glm::vec4, glm::ivec4
+#include <glm/mat4x4.hpp> // glm::mat4
+#include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
+#include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 
 using std::cout;
 using std::endl;
 using std::string;
 using std::vector;
 using std::to_string;
+
+/*using glm::vec3;
+using glm::mat4;
+using glm::translate;
+using glm::rotate;
+using glm::scale;
+using glm::perspective;*/
+
+const float PI = (float)M_PI;
+
+
+
 
 template <class T>
 inline T signo (T valor)
@@ -76,15 +93,31 @@ void Practica3::Inicializar( int argc, char *argv[] )
 
    // ----------------- Creamos una semiesfera por revolución -----------------
 
-   vector<Tupla3f> vertices_semiesfera;
+   //vector<glm::vec3> vertices_semiesfera;
 
-   vertices_semiesfera.push_back(Tupla3f(1.0,0.0,0.0));
+   vertices_semiesfera.push_back(glm::vec3(1.0,0.0,0.0));
 
    unsigned vertices_perfil_semiesfera = 20;
-   float incremento_perfil_semiesfera = (M_PI/2)/vertices_perfil_semiesfera;
+   //float incremento_perfil_semiesfera = (M_PI/2)/vertices_perfil_semiesfera;
+   float incremento_perfil_semiesfera = (PI/2)/vertices_perfil_semiesfera;
+   cout << "inc: " << incremento_perfil_semiesfera << endl;
+
+   glm::mat4 matriz_rotacion_perfil_semiesfera = glm::rotate(glm::mat4(1.0),incremento_perfil_semiesfera,glm::vec3(0.0f,0.0f,1.0f));
+
+   for (unsigned i = 0; i < 4; i++)
+   {
+      for (unsigned j = 0; j < 4; j++)
+      {
+         cout << "\t" << matriz_rotacion_perfil_semiesfera[i][j] << " ";
+      }
+      cout << endl;
+   }
 
    for (unsigned i = 1; i <= vertices_perfil_semiesfera; i++)
-      vertices_semiesfera.push_back(Matriz4x4::RotacionEjeZ(incremento_perfil_semiesfera)*vertices_semiesfera[i-1]);
+   {
+      vertices_semiesfera.push_back(glm::vec3( matriz_rotacion_perfil_semiesfera * glm::vec4(vertices_semiesfera[i-1],0.0)));
+      cout << "(" << vertices_semiesfera[i][0] << "," << vertices_semiesfera[i][1] << "," << vertices_semiesfera[i][2] << ")" << endl;
+   }
 
    semiesfera = new MallaTVT(PERFIL,vertices_semiesfera);
    semiesfera->Revolucion(20);
@@ -93,15 +126,16 @@ void Practica3::Inicializar( int argc, char *argv[] )
 
    // ----------------- Creamos un cilindro por revolución -----------------
 
-   vector<Tupla3f> vertices_cilindro;
+   vector<glm::vec3> vertices_cilindro;
 
-   vertices_cilindro.push_back(Tupla3f(1.0,0.0,0.0));
+   vertices_cilindro.push_back(glm::vec3(1.0,0.0,0.0));
 
    unsigned vertices_perfil_cilindro = 20;
    float incremento_perfil_cilindro = 1.0/vertices_perfil_cilindro;
 
    for (unsigned i = 1; i <= vertices_perfil_cilindro; i++)
-         vertices_cilindro.push_back(Matriz4x4::Traslacion(0.0,incremento_perfil_cilindro,0.0)*vertices_cilindro[i-1]);
+      vertices_cilindro.push_back(glm::vec3(glm::translate(glm::mat4(1.0),glm::vec3(0.0,incremento_perfil_cilindro,0.0)) * glm::vec4(vertices_cilindro[i-1],1.0)));
+         //vertices_cilindro.push_back(mat4::Traslacion(0.0,incremento_perfil_cilindro,0.0)*vertices_cilindro[i-1]);
 
    cilindro = new MallaTVT(PERFIL,vertices_cilindro);
    cilindro->Revolucion(20);
@@ -137,65 +171,67 @@ void Practica3::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * nodo_semiesfera = new NodoTerminal(semiesfera);
    NodoGrafoEscena * nodo_semiesfera_ojo = new NodoTerminal(semiesfera_ojo);
 
-   NodoGrafoEscena * nodo_escalado_cilindro_pierna = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_pierna,proporcion_alto_pierna,proporcion_ancho_pierna));
-   NodoGrafoEscena * nodo_escalado_cilindro_cuerpo = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_cuerpo,proporcion_alto_cuerpo,proporcion_ancho_cuerpo));
-   NodoGrafoEscena * nodo_escalado_cilindro_brazo = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_brazo,proporcion_alto_brazo,proporcion_ancho_brazo));
+   NodoGrafoEscena * nodo_escalado_cilindro_pierna = new NodoTransformacion(glm::scale(glm::mat4(1.0),glm::vec3(proporcion_ancho_pierna,proporcion_alto_pierna,proporcion_ancho_pierna)));
+   NodoGrafoEscena * nodo_escalado_cilindro_cuerpo = new NodoTransformacion(glm::scale(glm::mat4(1.0),glm::vec3(proporcion_ancho_cuerpo,proporcion_alto_cuerpo,proporcion_ancho_cuerpo)));
+   NodoGrafoEscena * nodo_escalado_cilindro_brazo = new NodoTransformacion(glm::scale(glm::mat4(1.0),glm::vec3(proporcion_ancho_brazo,proporcion_alto_brazo,proporcion_ancho_brazo)));
 
-   NodoGrafoEscena * nodo_escalado_semiesfera_cabeza = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_cuerpo,proporcion_alto_cabeza,proporcion_ancho_cuerpo));
-   NodoGrafoEscena * nodo_escalado_semiesfera_superior_brazo = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_brazo,proporcion_ancho_brazo,proporcion_ancho_brazo));
-   NodoGrafoEscena * nodo_escalado_semiesfera_inferior_brazo = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_brazo,proporcion_ancho_brazo,proporcion_ancho_brazo));
-   NodoGrafoEscena * nodo_escalado_semiesfera_pierna = new NodoTransformacion(Matriz4x4::Escalado(proporcion_ancho_pierna,proporcion_ancho_pierna,proporcion_ancho_pierna));;
+   NodoGrafoEscena * nodo_escalado_semiesfera_cabeza = new NodoTransformacion(glm::scale(glm::mat4(1.0),glm::vec3(proporcion_ancho_cuerpo,proporcion_alto_cabeza,proporcion_ancho_cuerpo)));
+   NodoGrafoEscena * nodo_escalado_semiesfera_superior_brazo = new NodoTransformacion(glm::scale(glm::mat4(1.0),glm::vec3(proporcion_ancho_brazo,proporcion_ancho_brazo,proporcion_ancho_brazo)));
+   NodoGrafoEscena * nodo_escalado_semiesfera_inferior_brazo = new NodoTransformacion(glm::scale(glm::mat4(1.0),glm::vec3(proporcion_ancho_brazo,proporcion_ancho_brazo,proporcion_ancho_brazo)));
+   NodoGrafoEscena * nodo_escalado_semiesfera_pierna = new NodoTransformacion(glm::scale(glm::mat4(1.0),glm::vec3(proporcion_ancho_pierna,proporcion_ancho_pierna,proporcion_ancho_pierna)));;
 
-   NodoGrafoEscena * nodo_traslacion_pierna_izquierda = new NodoTransformacion(Matriz4x4::Traslacion(-(proporcion_ancho_cuerpo-1.3),0.0,0.0));
-   NodoGrafoEscena * nodo_traslacion_pierna_derecha = new NodoTransformacion(Matriz4x4::Traslacion(proporcion_ancho_cuerpo-1.3,0.0,0.0));
-   NodoGrafoEscena * nodo_traslacion_semiesfera_pierna = new NodoTransformacion(Matriz4x4::Traslacion(0.0,proporcion_alto_pierna,0.0)); // Esta no varía ya que el escalado se hará sobre todo el brazo
-   NodoGrafoEscena * nodo_traslacion_semiesfera_brazo = new NodoTransformacion(Matriz4x4::Traslacion(0.0,proporcion_alto_brazo,0.0)); // Esta no varía ya que el escalado se hará sobre todo el brazo
-   NodoGrafoEscena * nodo_traslacion_brazo_izquierdo = new NodoTransformacion(Matriz4x4::Traslacion(-(proporcion_ancho_cuerpo+proporcion_ancho_brazo),proporcion_altura_brazo,0.0));
-   NodoGrafoEscena * nodo_traslacion_brazo_derecho = new NodoTransformacion(Matriz4x4::Traslacion(proporcion_ancho_cuerpo+proporcion_ancho_brazo,proporcion_altura_brazo,0.0));
+   //glm::translate(glm::mat4(1.0),glm::vec3(
 
-   NodoGrafoEscena * nodo_traslacion_cabeza = new NodoTransformacion(Matriz4x4::Traslacion(0.0,proporcion_alto_cuerpo + separacion_cuerpo_cabeza, 0.0));
+   NodoGrafoEscena * nodo_traslacion_pierna_izquierda = new NodoTransformacion(glm::translate(glm::mat4(1.0),glm::vec3(-(proporcion_ancho_cuerpo-1.3),0.0,0.0)));
+   NodoGrafoEscena * nodo_traslacion_pierna_derecha = new NodoTransformacion(glm::translate(glm::mat4(1.0),glm::vec3(proporcion_ancho_cuerpo-1.3,0.0,0.0)));
+   NodoGrafoEscena * nodo_traslacion_semiesfera_pierna = new NodoTransformacion(glm::translate(glm::mat4(1.0),glm::vec3(0.0,proporcion_alto_pierna,0.0))); // Esta no varía ya que el escalado se hará sobre todo el brazo
+   NodoGrafoEscena * nodo_traslacion_semiesfera_brazo = new NodoTransformacion(glm::translate(glm::mat4(1.0),glm::vec3(0.0,proporcion_alto_brazo,0.0))); // Esta no varía ya que el escalado se hará sobre todo el brazo
+   NodoGrafoEscena * nodo_traslacion_brazo_izquierdo = new NodoTransformacion(glm::translate(glm::mat4(1.0),glm::vec3(-(proporcion_ancho_cuerpo+proporcion_ancho_brazo),proporcion_altura_brazo,0.0)));
+   NodoGrafoEscena * nodo_traslacion_brazo_derecho = new NodoTransformacion(glm::translate(glm::mat4(1.0),glm::vec3(proporcion_ancho_cuerpo+proporcion_ancho_brazo,proporcion_altura_brazo,0.0)));
 
-   NodoGrafoEscena * nodo_rotacion_pi = new NodoTransformacion(Matriz4x4::RotacionEjeX(M_PI));
+   NodoGrafoEscena * nodo_traslacion_cabeza = new NodoTransformacion(glm::translate(glm::mat4(1.0),glm::vec3(0.0,proporcion_alto_cuerpo + separacion_cuerpo_cabeza, 0.0)));
+
+   NodoGrafoEscena * nodo_rotacion_pi = new NodoTransformacion(glm::rotate(glm::mat4(1.0),PI,glm::vec3(1.0,0.0,0.0)));
 
    // Matrices de transformacion para las antenas
 
-   Matriz4x4 matriz_rotacion_antena_izquierda = Matriz4x4::Identidad();
-   matriz_rotacion_antena_izquierda = matriz_rotacion_antena_izquierda * Matriz4x4::RotacionEjeZ(-M_PI/6);
-   matriz_rotacion_antena_izquierda = matriz_rotacion_antena_izquierda * Matriz4x4::Traslacion(0.0,proporcion_alto_cabeza,0.0);
-   matriz_rotacion_antena_izquierda = matriz_rotacion_antena_izquierda * Matriz4x4::Escalado(proporcion_ancho_antena,proporcion_alto_antena,proporcion_ancho_antena);
+   glm::mat4 matriz_rotacion_antena_izquierda = glm::mat4(1.0);
+   matriz_rotacion_antena_izquierda = matriz_rotacion_antena_izquierda * glm::rotate(glm::mat4(1.0),-PI/6,glm::vec3(0.0,0.0,1.0));
+   matriz_rotacion_antena_izquierda = matriz_rotacion_antena_izquierda * glm::translate(glm::mat4(1.0),glm::vec3(0.0,proporcion_alto_cabeza,0.0));
+   matriz_rotacion_antena_izquierda = matriz_rotacion_antena_izquierda * glm::scale(glm::mat4(1.0),glm::vec3(proporcion_ancho_antena,proporcion_alto_antena,proporcion_ancho_antena));
 
-   Matriz4x4 matriz_rotacion_antena_derecha = Matriz4x4::Identidad();
-   matriz_rotacion_antena_derecha = matriz_rotacion_antena_derecha * Matriz4x4::RotacionEjeZ(M_PI/6);
-   matriz_rotacion_antena_derecha = matriz_rotacion_antena_derecha * Matriz4x4::Traslacion(0.0,proporcion_alto_cabeza,0.0);
-   matriz_rotacion_antena_derecha = matriz_rotacion_antena_derecha * Matriz4x4::Escalado(proporcion_ancho_antena,proporcion_alto_antena,proporcion_ancho_antena);
+   glm::mat4 matriz_rotacion_antena_derecha = glm::mat4(1.0);
+   matriz_rotacion_antena_derecha = matriz_rotacion_antena_derecha * glm::rotate(glm::mat4(1.0),PI/6,glm::vec3(0.0,0.0,1.0));
+   matriz_rotacion_antena_derecha = matriz_rotacion_antena_derecha * glm::translate(glm::mat4(1.0),glm::vec3(0.0,proporcion_alto_cabeza,0.0));
+   matriz_rotacion_antena_derecha = matriz_rotacion_antena_derecha * glm::scale(glm::mat4(1.0),glm::vec3(proporcion_ancho_antena,proporcion_alto_antena,proporcion_ancho_antena));
 
    NodoGrafoEscena * nodo_transformacion_antena_izquierda = new NodoTransformacion(matriz_rotacion_antena_izquierda);
    NodoGrafoEscena * nodo_transformacion_antena_derecha = new NodoTransformacion(matriz_rotacion_antena_derecha);
 
    // Matrices de transformacion para los ojos
-   Matriz4x4 matriz_transformacion_ojo_izquierdo = Matriz4x4::Identidad();
-   matriz_transformacion_ojo_izquierdo = matriz_transformacion_ojo_izquierdo * Matriz4x4::RotacionEjeZ(-M_PI/4);
-   matriz_transformacion_ojo_izquierdo = matriz_transformacion_ojo_izquierdo * Matriz4x4::RotacionEjeX(-M_PI/5);
-   matriz_transformacion_ojo_izquierdo = matriz_transformacion_ojo_izquierdo * Matriz4x4::Traslacion(0.0,proporcion_alto_cabeza,0.0);
-   matriz_transformacion_ojo_izquierdo = matriz_transformacion_ojo_izquierdo * Matriz4x4::Escalado(proporcion_ancho_alto_ojo,proporcion_ancho_alto_ojo,proporcion_ancho_alto_ojo);
+   glm::mat4 matriz_transformacion_ojo_izquierdo = glm::mat4(1.0);
+   matriz_transformacion_ojo_izquierdo = matriz_transformacion_ojo_izquierdo * glm::rotate(glm::mat4(1.0),-PI/4,glm::vec3(0.0,0.0,1.0));
+   matriz_transformacion_ojo_izquierdo = matriz_transformacion_ojo_izquierdo * glm::rotate(glm::mat4(1.0),-PI/5,glm::vec3(1.0,0.0,0.0));
+   matriz_transformacion_ojo_izquierdo = matriz_transformacion_ojo_izquierdo * glm::translate(glm::mat4(1.0),glm::vec3(0.0,proporcion_alto_cabeza,0.0));
+   matriz_transformacion_ojo_izquierdo = matriz_transformacion_ojo_izquierdo * glm::scale(glm::mat4(1.0),glm::vec3(proporcion_ancho_alto_ojo,proporcion_ancho_alto_ojo,proporcion_ancho_alto_ojo));
 
-   Matriz4x4 matriz_transformacion_ojo_derecho = Matriz4x4::Identidad();
-   matriz_transformacion_ojo_derecho = matriz_transformacion_ojo_derecho * Matriz4x4::RotacionEjeZ(M_PI/4);
-   matriz_transformacion_ojo_derecho = matriz_transformacion_ojo_derecho * Matriz4x4::RotacionEjeX(-M_PI/5);
-   matriz_transformacion_ojo_derecho = matriz_transformacion_ojo_derecho * Matriz4x4::Traslacion(0.0,proporcion_alto_cabeza,0.0);
-   matriz_transformacion_ojo_derecho = matriz_transformacion_ojo_derecho * Matriz4x4::Escalado(proporcion_ancho_alto_ojo,proporcion_ancho_alto_ojo,proporcion_ancho_alto_ojo);
+   glm::mat4 matriz_transformacion_ojo_derecho = glm::mat4(1.0);
+   matriz_transformacion_ojo_derecho = matriz_transformacion_ojo_derecho * glm::rotate(glm::mat4(1.0),PI/4,glm::vec3(0.0,0.0,1.0));
+   matriz_transformacion_ojo_derecho = matriz_transformacion_ojo_derecho * glm::rotate(glm::mat4(1.0),-PI/5,glm::vec3(1.0,0.0,0.0));
+   matriz_transformacion_ojo_derecho = matriz_transformacion_ojo_derecho * glm::translate(glm::mat4(1.0),glm::vec3(0.0,proporcion_alto_cabeza,0.0));
+   matriz_transformacion_ojo_derecho = matriz_transformacion_ojo_derecho * glm::scale(glm::mat4(1.0),glm::vec3(proporcion_ancho_alto_ojo,proporcion_ancho_alto_ojo,proporcion_ancho_alto_ojo));
 
    NodoGrafoEscena * nodo_transformacion_ojo_izquierdo = new NodoTransformacion(matriz_transformacion_ojo_izquierdo);
    NodoGrafoEscena * nodo_transformacion_ojo_derecho = new NodoTransformacion(matriz_transformacion_ojo_derecho);
 
    // Nodos parametrizados (son iguales pero, en vez de guardar la matriz directamente, guardan un puntero)
 
-   rotacion_pierna_izquierda = new Matriz4x4(Matriz4x4::RotacionEjeZ(angulo_rotacion_piernas));
-   rotacion_pierna_derecha = new Matriz4x4(Matriz4x4::RotacionEjeZ(angulo_rotacion_piernas));
-   rotacion_brazo_izquierdo = new Matriz4x4(Matriz4x4::RotacionEjeZ(angulo_rotacion_brazos));
-   rotacion_brazo_derecho = new Matriz4x4(Matriz4x4::RotacionEjeZ(angulo_rotacion_brazos));
-   rotacion_cuerpo = new Matriz4x4(Matriz4x4::RotacionEjeY(angulo_rotacion_cuerpo));
-   traslacion = new Matriz4x4(Matriz4x4::Traslacion(distancia_eje_Y,0.0,0.0));
+   rotacion_pierna_izquierda = new glm::mat4(glm::rotate(glm::mat4(1.0),angulo_rotacion_piernas,glm::vec3(0.0,0.0,1.0)));
+   rotacion_pierna_derecha = new glm::mat4(glm::rotate(glm::mat4(1.0),angulo_rotacion_piernas,glm::vec3(0.0,0.0,1.0)));
+   rotacion_brazo_izquierdo = new glm::mat4(glm::rotate(glm::mat4(1.0),angulo_rotacion_brazos,glm::vec3(0.0,0.0,1.0)));
+   rotacion_brazo_derecho = new glm::mat4(glm::rotate(glm::mat4(1.0),angulo_rotacion_brazos,glm::vec3(0.0,0.0,1.0)));
+   rotacion_cuerpo = new glm::mat4(glm::rotate(glm::mat4(1.0),angulo_rotacion_cuerpo,glm::vec3(0.0,1.0,0.0)));
+   traslacion = new glm::mat4(glm::translate(glm::mat4(1.0),glm::vec3(distancia_eje_Y,0.0,0.0)));
 
    NodoGrafoEscena * nodo_parametrizado_rotacion_pierna_izquierda = new NodoTransformacionParametrizado(rotacion_pierna_izquierda);
    NodoGrafoEscena * nodo_parametrizado_rotacion_pierna_derecha = new NodoTransformacionParametrizado(rotacion_pierna_derecha);
@@ -277,14 +313,14 @@ void Practica3::Inicializar( int argc, char *argv[] )
    glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR ) ;
    glLightModeli( GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE );
 
-   Tupla3f luz_direccional_componente_ambiental(1.0,1.0,1.0);
-   Tupla3f luz_direccional_componente_difusa(0.8,0.8,0.8);
-   Tupla3f luz_direccional_componente_especular(0.8,0.8,0.8);
+   glm::vec3 luz_direccional_componente_ambiental(1.0,1.0,1.0);
+   glm::vec3 luz_direccional_componente_difusa(0.8,0.8,0.8);
+   glm::vec3 luz_direccional_componente_especular(0.8,0.8,0.8);
 
-   fuente1 = new FuenteLuzPosicional(Tupla3f(20.0,0.0,20.0), luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
-   fuente2 = new FuenteLuzPosicional(Tupla3f(20.0,0.0,-20.0), luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
-   fuente3 = new FuenteLuzPosicional(Tupla3f(-20.0,0.0,20.0), luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
-   fuente4 = new FuenteLuzPosicional(Tupla3f(-20.0,0.0,-20.0), luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
+   fuente1 = new FuenteLuzPosicional(glm::vec3(20.0,0.0,20.0), luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
+   fuente2 = new FuenteLuzPosicional(glm::vec3(20.0,0.0,-20.0), luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
+   fuente3 = new FuenteLuzPosicional(glm::vec3(-20.0,0.0,20.0), luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
+   fuente4 = new FuenteLuzPosicional(glm::vec3(-20.0,0.0,-20.0), luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
 
 
    fuentes.Agregar(fuente1);
@@ -292,16 +328,16 @@ void Practica3::Inicializar( int argc, char *argv[] )
    fuentes.Agregar(fuente3);
    fuentes.Agregar(fuente4);
 
-   Tupla3f android_componente_emision(0.0,1.0,0.0);  // Color verde
-   Tupla3f android_componente_ambiental(0.0,0.0,0.0);
-   Tupla3f android_componente_difusa(0.3,0.3,0.3);
-   Tupla3f android_componente_especular(0.8,0.8,0.8);
+   glm::vec3 android_componente_emision(0.0,1.0,0.0);  // Color verde
+   glm::vec3 android_componente_ambiental(0.0,0.0,0.0);
+   glm::vec3 android_componente_difusa(0.3,0.3,0.3);
+   glm::vec3 android_componente_especular(0.8,0.8,0.8);
    float android_exponente_especular = 2.0;
 
-   Tupla3f ojo_componente_emision(0.0,0.0,0.0);  // Color negro
-   Tupla3f ojo_componente_ambiental(0.0,0.0,0.0);
-   Tupla3f ojo_componente_difusa(0.0,0.0,0.0);
-   Tupla3f ojo_componente_especular(0.0,0.0,0.0);
+   glm::vec3 ojo_componente_emision(0.0,0.0,0.0);  // Color negro
+   glm::vec3 ojo_componente_ambiental(0.0,0.0,0.0);
+   glm::vec3 ojo_componente_difusa(0.0,0.0,0.0);
+   glm::vec3 ojo_componente_especular(0.0,0.0,0.0);
    float ojo_exponente_especular = 0.0;
 
    material_android = new Material(android_componente_emision, android_componente_ambiental,
@@ -315,9 +351,9 @@ void Practica3::Inicializar( int argc, char *argv[] )
    cilindro->SetMaterial(material_android);
    semiesfera_ojo->SetMaterial(material_ojo);
 
-   Tupla3f ej(1.1,2.2,3.3);
+   //vec3 ej(1.1,2.2,3.3);
 
-   cout << "Ejemplo" << ej << " -> " << AniadeW(ej,1.0) << endl;
+   //cout << "Ejemplo" << ej << " -> " << AniadeW(ej,1.0) << endl;
 
 
 
@@ -401,7 +437,7 @@ void Practica3::CambioGradoLibertad(int grado_libertad)
       if (angulo_rotacion_cuerpo > 2*M_PI) angulo_rotacion_cuerpo -= 2*M_PI;
       if (angulo_rotacion_cuerpo < 0) angulo_rotacion_cuerpo += 2*M_PI;
 
-      *rotacion_cuerpo = Matriz4x4::RotacionEjeY(angulo_rotacion_cuerpo);
+      *rotacion_cuerpo = glm::rotate(glm::mat4(1.0),angulo_rotacion_cuerpo,glm::vec3(0.0,1.0,0.0));
 
    }
    else if (grado_libertad == 2 || grado_libertad == -2)
@@ -413,8 +449,8 @@ void Practica3::CambioGradoLibertad(int grado_libertad)
             && angulo_rotacion_brazos_futuro >= 2*M_PI/3)
          angulo_rotacion_brazos = angulo_rotacion_brazos_futuro;
 
-      *rotacion_brazo_izquierdo = Matriz4x4::RotacionEjeX(angulo_rotacion_brazos);
-      *rotacion_brazo_derecho = Matriz4x4::RotacionEjeX(-angulo_rotacion_brazos);
+      *rotacion_brazo_izquierdo = glm::rotate(glm::mat4(1.0),angulo_rotacion_brazos,glm::vec3(1.0,0.0,0.0));
+      *rotacion_brazo_derecho = glm::rotate(glm::mat4(1.0),-angulo_rotacion_brazos,glm::vec3(1.0,0.0,0.0));
    }
    else if (grado_libertad == 3 || grado_libertad == -3)
    {
@@ -425,8 +461,8 @@ void Practica3::CambioGradoLibertad(int grado_libertad)
             && angulo_rotacion_piernas_futuro >= 2*M_PI/3)
          angulo_rotacion_piernas = angulo_rotacion_piernas_futuro;
 
-      *rotacion_pierna_izquierda = Matriz4x4::RotacionEjeX(angulo_rotacion_piernas);
-      *rotacion_pierna_derecha = Matriz4x4::RotacionEjeX(-angulo_rotacion_piernas);
+      *rotacion_pierna_izquierda = glm::rotate(glm::mat4(1.0),angulo_rotacion_piernas,glm::vec3(1.0,0.0,0.0));
+      *rotacion_pierna_derecha = glm::rotate(glm::mat4(1.0),-angulo_rotacion_piernas,glm::vec3(1.0,0.0,0.0));
    }
    else if (grado_libertad == 4 || grado_libertad == -4)
    {
@@ -436,7 +472,7 @@ void Practica3::CambioGradoLibertad(int grado_libertad)
       if (distancia_eje_Y < 0) distancia_eje_Y = 0;
       else if (distancia_eje_Y > 10) distancia_eje_Y = 10;
 
-      *traslacion = Matriz4x4::Traslacion(distancia_eje_Y,0.0,0.0);
+      *traslacion = glm::translate(glm::mat4(1.0),glm::vec3(distancia_eje_Y,0.0,0.0));
    }
 
 }
@@ -527,11 +563,12 @@ void Practica3::Animar()
    angulo_rotacion_brazos  += velocidad_angular_brazos * direccion_rotacion_brazos;
    angulo_rotacion_piernas += velocidad_angular_piernas * direccion_rotacion_piernas;
 
-   *rotacion_cuerpo = Matriz4x4::RotacionEjeY(angulo_rotacion_cuerpo);
-   *rotacion_brazo_izquierdo = Matriz4x4::RotacionEjeX(angulo_rotacion_brazos);
-   *rotacion_brazo_derecho = Matriz4x4::RotacionEjeX(-angulo_rotacion_brazos);
-   *rotacion_pierna_izquierda = Matriz4x4::RotacionEjeX(angulo_rotacion_piernas);
-   *rotacion_pierna_derecha = Matriz4x4::RotacionEjeX(-angulo_rotacion_piernas);
+
+   *rotacion_cuerpo = glm::rotate(glm::mat4(1.0),angulo_rotacion_cuerpo,glm::vec3(0.0,1.0,0.0));
+   *rotacion_brazo_izquierdo = glm::rotate(glm::mat4(1.0),angulo_rotacion_brazos,glm::vec3(1.0,0.0,0.0));
+   *rotacion_brazo_derecho = glm::rotate(glm::mat4(1.0),-angulo_rotacion_brazos,glm::vec3(1.0,0.0,0.0));
+   *rotacion_pierna_izquierda = glm::rotate(glm::mat4(1.0),angulo_rotacion_piernas,glm::vec3(1.0,0.0,0.0));
+   *rotacion_pierna_derecha = glm::rotate(glm::mat4(1.0),-angulo_rotacion_piernas,glm::vec3(1.0,0.0,0.0));
 }
 
 void Practica3::Debug()

@@ -11,7 +11,6 @@
 #include <string>
 #include "practica2.hpp"
 #include "file_ply_stl.hpp"
-#include "Matriz.hpp"
 
 using std::cout;
 using std::vector;

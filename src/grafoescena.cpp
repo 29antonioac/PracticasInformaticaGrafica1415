@@ -68,7 +68,7 @@ void NodoTerminal::Procesa()
    NodoGrafoEscena::Procesa();
 }
 
-NodoTransformacionParametrizado::NodoTransformacionParametrizado(Matriz4x4 * matriz)
+NodoTransformacionParametrizado::NodoTransformacionParametrizado(glm::mat4 * matriz)
 {
    this->matrizTransformacion = matriz;
 }
@@ -76,14 +76,14 @@ NodoTransformacionParametrizado::NodoTransformacionParametrizado(Matriz4x4 * mat
 void NodoTransformacionParametrizado::Procesa()
 {
  glPushMatrix();
- glMultMatrixf( matrizTransformacion->data() );
+ glMultMatrixf( glm::value_ptr(*matrizTransformacion) );
 
  NodoGrafoEscena::Procesa();
 
  glPopMatrix();
 }
 
-NodoTransformacion::NodoTransformacion(Matriz4x4 matriz)
+NodoTransformacion::NodoTransformacion(glm::mat4 matriz)
 {
    this->matrizTransformacion = matriz;
 }
@@ -91,7 +91,7 @@ NodoTransformacion::NodoTransformacion(Matriz4x4 matriz)
 void NodoTransformacion::Procesa()
 {
  glPushMatrix();
- glMultMatrixf( matrizTransformacion.data() );
+ glMultMatrixf( glm::value_ptr(matrizTransformacion) );
 
  NodoGrafoEscena::Procesa();
 

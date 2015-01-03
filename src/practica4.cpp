@@ -15,8 +15,14 @@
 
 #include "MallaTVT.hpp"
 #include "file_ply_stl.hpp"
-#include "Matriz.hpp"
 #include "FuenteLuz.hpp"
+
+#define GLM_FORCE_RADIANS
+#include <glm/vec3.hpp> // glm::vec3
+#include <glm/vec4.hpp> // glm::vec4, glm::ivec4
+#include <glm/mat4x4.hpp> // glm::mat4
+#include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
+#include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 
 using std::cout;
 using std::endl;
@@ -80,13 +86,13 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
    float alpha = 3 * M_PI / 4;
    float beta = M_PI / 6;
-   Tupla3f luz_posicional_componente_ambiental(0.0,0.0,1.0);
-   Tupla3f luz_posicional_componente_difusa(0.0,0.0,1.0);
-   Tupla3f luz_posicional_componente_especular(0.0,0.0,1.0);
-   Tupla3f luz_direccional_componente_ambiental(0.0,1.0,0.0);
-   Tupla3f luz_direccional_componente_difusa(0.0,1.0,0.0);
-   Tupla3f luz_direccional_componente_especular(0.0,1.0,0.0);
-   Tupla3f luz_posicion(0.0,10.0,0.0);
+   glm::vec3 luz_posicional_componente_ambiental(0.0,0.0,1.0);
+   glm::vec3 luz_posicional_componente_difusa(0.0,0.0,1.0);
+   glm::vec3 luz_posicional_componente_especular(0.0,0.0,1.0);
+   glm::vec3 luz_direccional_componente_ambiental(0.0,1.0,0.0);
+   glm::vec3 luz_direccional_componente_difusa(0.0,1.0,0.0);
+   glm::vec3 luz_direccional_componente_especular(0.0,1.0,0.0);
+   glm::vec3 luz_posicion(0.0,10.0,0.0);
 
    fuente_direccional = new FuenteLuzDireccional(alpha, beta, luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
    fuente_posicional = new FuenteLuzPosicional(luz_posicion, luz_posicional_componente_ambiental, luz_posicional_componente_difusa, luz_posicional_componente_especular);
@@ -101,30 +107,30 @@ void Practica4::Inicializar( int argc, char *argv[] )
    ply::read_vertices("PLY/lata-pinf.ply",vertices_ply_tapa_inf);
 
    // Crear material del peon blanco (sin textura, material puramente difuso sin brillo especular)
-   Tupla3f peon_blanco_componente_emision(0.8,0.8,0.8);  // Color blanco
-   Tupla3f peon_blanco_componente_ambiental(0.0,0.0,0.0);
-   Tupla3f peon_blanco_componente_difusa(0.4,0.4,0.4);
-   Tupla3f peon_blanco_componente_especular(0.0,0.0,0.0);
+   glm::vec3 peon_blanco_componente_emision(0.8,0.8,0.8);  // Color blanco
+   glm::vec3 peon_blanco_componente_ambiental(0.0,0.0,0.0);
+   glm::vec3 peon_blanco_componente_difusa(0.4,0.4,0.4);
+   glm::vec3 peon_blanco_componente_especular(0.0,0.0,0.0);
    float peon_blanco_exponente_especular = 0.0;
 
    material_peon_blanco = new Material(peon_blanco_componente_emision, peon_blanco_componente_ambiental,
          peon_blanco_componente_difusa, peon_blanco_componente_especular, peon_blanco_exponente_especular);
 
    // Crear material del peón negro (sin textura, material especular sin apenas reflectividad difusa)
-   Tupla3f peon_negro_componente_emision(0.0,0.0,0.0);  // Color negro
-   Tupla3f peon_negro_componente_ambiental(0.0,0.0,0.0);
-   Tupla3f peon_negro_componente_difusa(0.1,0.1,0.1);
-   Tupla3f peon_negro_componente_especular(1.0,1.0,1.0);
+   glm::vec3 peon_negro_componente_emision(0.0,0.0,0.0);  // Color negro
+   glm::vec3 peon_negro_componente_ambiental(0.0,0.0,0.0);
+   glm::vec3 peon_negro_componente_difusa(0.1,0.1,0.1);
+   glm::vec3 peon_negro_componente_especular(1.0,1.0,1.0);
    float peon_negro_exponente_especular = 30.0;
 
    material_peon_negro = new Material(peon_negro_componente_emision, peon_negro_componente_ambiental,
          peon_negro_componente_difusa, peon_negro_componente_especular, peon_negro_exponente_especular);
 
    // Crear material del peón de madera (con textura generada automáticamente, material difuso-especular)
-   Tupla3f peon_madera_componente_emision(1.0,1.0,1.0);  // Color blanco puro
-   Tupla3f peon_madera_componente_ambiental(0.0,0.0,0.0);
-   Tupla3f peon_madera_componente_difusa(0.1,0.1,0.1);
-   Tupla3f peon_madera_componente_especular(1.0,1.0,1.0);
+   glm::vec3 peon_madera_componente_emision(1.0,1.0,1.0);  // Color blanco puro
+   glm::vec3 peon_madera_componente_ambiental(0.0,0.0,0.0);
+   glm::vec3 peon_madera_componente_difusa(0.1,0.1,0.1);
+   glm::vec3 peon_madera_componente_especular(1.0,1.0,1.0);
    float peon_madera_exponente_especular = 30.0;
 
    float cs[4] = {1.0,0.0,0.0,0.0}; // Vector ex
@@ -150,10 +156,10 @@ void Practica4::Inicializar( int argc, char *argv[] )
    peon_madera->SetMaterial(material_peon_madera);
 
    // Crear lata
-   Tupla3f cuerpo_lata_componente_emision(1.0,1.0,1.0);  // Color blanco puro
-   Tupla3f cuerpo_lata_componente_ambiental(0.0,0.0,0.0);
-   Tupla3f cuerpo_lata_componente_difusa(0.1,0.1,0.1);
-   Tupla3f cuerpo_lata_componente_especular(1.0,1.0,1.0);
+   glm::vec3 cuerpo_lata_componente_emision(1.0,1.0,1.0);  // Color blanco puro
+   glm::vec3 cuerpo_lata_componente_ambiental(0.0,0.0,0.0);
+   glm::vec3 cuerpo_lata_componente_difusa(0.1,0.1,0.1);
+   glm::vec3 cuerpo_lata_componente_especular(1.0,1.0,1.0);
    float cuerpo_lata_exponente_especular = 30.0;
 
    Textura * textura_cuerpo_lata = new Textura("img/text-lata-1.jpg",0,cs,ct);
@@ -166,10 +172,10 @@ void Practica4::Inicializar( int argc, char *argv[] )
    cuerpo_lata->Revolucion(caras_revolucion, false);  // Para calcular las coordenadas de textura hay que tener ya el material
 
    // Crear tapas
-   Tupla3f tapa_componente_emision(0.6,0.6,0.6);  // Color gris
-   Tupla3f tapa_componente_ambiental(0.0,0.0,0.0);
-   Tupla3f tapa_componente_difusa(0.0,0.0,0.0);
-   Tupla3f tapa_componente_especular(1.0,1.0,1.0);
+   glm::vec3 tapa_componente_emision(0.6,0.6,0.6);  // Color gris
+   glm::vec3 tapa_componente_ambiental(0.0,0.0,0.0);
+   glm::vec3 tapa_componente_difusa(0.0,0.0,0.0);
+   glm::vec3 tapa_componente_especular(1.0,1.0,1.0);
    float tapa_exponente_especular = 15.0;
 
    material_tapa = new Material(tapa_componente_emision, tapa_componente_ambiental,
@@ -186,10 +192,14 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
 
    raiz = new NodoGrafoEscena;
-   NodoGrafoEscena * nodo_traslacion_peon_madera = new NodoTransformacion(Matriz4x4::RotacionEjeY(-M_PI/2) * Matriz4x4::Traslacion(0.0,0.0,3.0));
-   NodoGrafoEscena * nodo_traslacion_peon_blanco = new NodoTransformacion(Matriz4x4::Traslacion(0.0,0.0,2.0));
-   NodoGrafoEscena * nodo_traslacion_peon_negro = new NodoTransformacion(Matriz4x4::RotacionEjeY(M_PI/2) * Matriz4x4::Traslacion(0.0,0.0,3.0));
-   NodoGrafoEscena * nodo_escalado_lata = new NodoTransformacion(Matriz4x4::Escalado(4.0,4.0,4.0));
+   glm::mat4 matriz_traslacion_peones(glm::translate(glm::mat4(1.0),glm::vec3(0.0,0.0,3.0)));
+   glm::mat4 matriz_rotacion_peon_madera(glm::rotate(glm::mat4(1.0),(float)-M_PI/2,glm::vec3(0.0,1.0,0.0)));
+   glm::mat4 matriz_rotacion_peon_negro(glm::rotate(glm::mat4(1.0),(float)M_PI/2,glm::vec3(0.0,1.0,0.0)));
+
+   NodoGrafoEscena * nodo_traslacion_peon_madera = new NodoTransformacion(matriz_rotacion_peon_madera * matriz_traslacion_peones);
+   NodoGrafoEscena * nodo_traslacion_peon_blanco = new NodoTransformacion(matriz_traslacion_peones);
+   NodoGrafoEscena * nodo_traslacion_peon_negro = new NodoTransformacion(matriz_rotacion_peon_negro * matriz_traslacion_peones);
+   NodoGrafoEscena * nodo_escalado_lata = new NodoTransformacion(glm::scale(glm::mat4(1.0),glm::vec3(4.0,4.0,4.0)));
    NodoGrafoEscena * nodo_peon_blanco = new NodoTerminal(peon_blanco);
    NodoGrafoEscena * nodo_peon_negro = new NodoTerminal(peon_negro);
    NodoGrafoEscena * nodo_peon_madera = new NodoTerminal(peon_madera);

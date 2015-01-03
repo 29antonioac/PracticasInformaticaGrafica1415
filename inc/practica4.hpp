@@ -11,10 +11,11 @@
 #define __IG_PRACTICA4_HPP__
 
 #include "practica.hpp"
-#include "tuplas.hpp"
 #include "grafoescena.hpp"
 #include "FuenteLuz.hpp"
 #include "Material.hpp"
+
+
 
 class Practica4 : virtual public Practica
 {

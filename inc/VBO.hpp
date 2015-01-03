@@ -4,9 +4,9 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include <iostream>
+#include <glm/vec3.hpp>
 
 #include "enumerados.hpp"
-#include "tuplas.hpp"
 
 using std::cout;
 using std::endl;
@@ -60,7 +60,7 @@ public:
    VBO_Triangulos(GLuint numero_datos, GLuint tamanio, GLvoid * puntero) : VBO(GL_ELEMENT_ARRAY_BUFFER, numero_datos, tamanio,  puntero) {}
 
    void Activar();
-   void Visualizar(enum visualizacion modo, Tupla3f color_primario, Tupla3f color_secundario);
+   void Visualizar(enum visualizacion modo, glm::vec3 color_primario, glm::vec3 color_secundario);
 };
 
 class VBO_Lineas : virtual public VBO

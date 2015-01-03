@@ -9,6 +9,8 @@ enum normales {NADA,CARAS,VERTICES,AMBAS};
 enum figuras {NINGUNA,ESFERA,CUBO,CONO,CILINDRO,TORO,DODECAEDRO,OCTAEDRO,TETRAEDRO,ICOSAEDRO,TETERA};
 enum tipo_malla {PERFIL,MALLA,REVOLUCION,BARRIDO_ROTACION,BARRIDO_TRASLACION};
 
+const unsigned X = 0, Y = 1, Z = 2, W = 3;
+
 inline const string enumToString(visualizacion v)
 {
    switch(v)

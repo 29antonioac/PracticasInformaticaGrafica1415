@@ -9,11 +9,16 @@
 #include <cstdlib>
 
 #include "enumerados.hpp"
-#include "tuplas.hpp"
 #include "error-ogl.hpp"
 #include "VBO.hpp"
-#include "Matriz.hpp"
 #include "Material.hpp"
+
+#include <glm/vec3.hpp> // glm::vec3
+#include <glm/vec4.hpp> // glm::vec4, glm::ivec4
+#include <glm/mat4x4.hpp> // glm::mat4
+#include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
+#include <glm/gtc/type_ptr.hpp> // glm::value_ptr
+
 
 using std::cout;
 using std::endl;
@@ -26,14 +31,14 @@ class MallaTVT
 {
 private:
 
-   vector<Tupla3f> ver;
-   vector<Tupla3i> tri;
+   vector<glm::vec3> ver;
+   vector<glm::ivec3> tri;
 
-   vector<Tupla3f> colores_vertices, normales_vertices, normales_caras, baricentros;
-   vector<pair<Tupla3f,Tupla3f> > lineas_normales_caras, lineas_normales_vertices;
+   vector<glm::vec3> colores_vertices, normales_vertices, normales_caras, baricentros;
+   vector<pair<glm::vec3,glm::vec3> > lineas_normales_caras, lineas_normales_vertices;
 
-   Tupla3f color_primario;
-   Tupla3f color_secundario;
+   glm::vec3 color_primario;
+   glm::vec3 color_secundario;
 
    VBO_Vertices   * vbo_vertices;
    VBO_Triangulos * vbo_triangulos;
@@ -67,7 +72,7 @@ private:
 
 public:
    MallaTVT(tipo_malla tipo, vector<GLfloat> vertices, vector<int> caras = vector<int>(), Material * material = nullptr);
-   MallaTVT(tipo_malla tipo, vector<Tupla3f> vertices, vector<Tupla3i> caras = vector<Tupla3i>(), Material * material = nullptr);
+   MallaTVT(tipo_malla tipo, vector<glm::vec3> vertices, vector<glm::ivec3> caras = vector<glm::ivec3>(), Material * material = nullptr);
    MallaTVT(MallaTVT * malla);
    void SetMaterial(Material * material);
    void Visualizar();

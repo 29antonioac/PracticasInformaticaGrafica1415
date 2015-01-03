@@ -2,24 +2,27 @@
 
 #include <GL/gl.h>
 
+
+#include <glm/gtc/type_ptr.hpp> // glm::value_ptr
+
 unsigned FuenteLuz::numero_fuentes = 0;
 
-FuenteLuz::FuenteLuz(Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular)
+FuenteLuz::FuenteLuz(glm::vec3 componente_ambiental, glm::vec3 componente_difusa, glm::vec3 componente_especular)
 {
-   this->componente_ambiental = AniadeW(componente_ambiental,1.0);
-   this->componente_difusa = AniadeW(componente_difusa,1.0);
-   this->componente_especular = AniadeW(componente_especular,1.0);
+   this->componente_ambiental = glm::vec4(componente_ambiental,1.0);
+   this->componente_difusa = glm::vec4(componente_difusa,1.0);
+   this->componente_especular = glm::vec4(componente_especular,1.0);
    this->id_luz = GL_LIGHT0 + numero_fuentes;
    numero_fuentes++;
 }
 
-FuenteLuzPosicional::FuenteLuzPosicional(Tupla3f posicion, Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular)
+FuenteLuzPosicional::FuenteLuzPosicional(glm::vec3 posicion, glm::vec3 componente_ambiental, glm::vec3 componente_difusa, glm::vec3 componente_especular)
    : FuenteLuz::FuenteLuz(componente_ambiental, componente_difusa, componente_especular)
 {
-   this->posicion = AniadeW(posicion,1.0);
+   this->posicion = glm::vec4(posicion,1.0);
 }
 
-FuenteLuzDireccional::FuenteLuzDireccional(float alpha, float beta, Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular)
+FuenteLuzDireccional::FuenteLuzDireccional(float alpha, float beta, glm::vec3 componente_ambiental, glm::vec3 componente_difusa, glm::vec3 componente_especular)
    : FuenteLuz::FuenteLuz(componente_ambiental, componente_difusa, componente_especular)
 {
    this->alpha = alpha;
@@ -40,9 +43,9 @@ void FuenteLuzDireccional::Activar()
    	   glRotatef(this->alpha, 0.0,1.0,0.0);
    	   glRotatef(this->beta, -1.0,0.0,0.0);
    	   glLightfv(id_luz, GL_POSITION, ejeZ);
-   	   glLightfv(id_luz, GL_AMBIENT, this->componente_ambiental.data());
-         glLightfv(id_luz, GL_DIFFUSE, this->componente_difusa.data());
-         glLightfv(id_luz, GL_SPECULAR,this->componente_especular.data());
+   	   glLightfv(id_luz, GL_AMBIENT, glm::value_ptr(componente_ambiental));
+         glLightfv(id_luz, GL_DIFFUSE, glm::value_ptr(componente_difusa));
+         glLightfv(id_luz, GL_SPECULAR,glm::value_ptr(componente_especular));
 
    glPopMatrix();
 }
@@ -81,10 +84,10 @@ void FuenteLuzPosicional::Activar()
 
       //glLoadIdentity();
 
-      glLightfv(id_luz, GL_POSITION,this->posicion.data());
-      glLightfv(id_luz, GL_AMBIENT, this->componente_ambiental.data());
-      glLightfv(id_luz, GL_DIFFUSE, this->componente_difusa.data());
-      glLightfv(id_luz, GL_SPECULAR,this->componente_especular.data());
+      glLightfv(id_luz, GL_POSITION,glm::value_ptr(posicion));
+      glLightfv(id_luz, GL_AMBIENT, glm::value_ptr(componente_ambiental));
+      glLightfv(id_luz, GL_DIFFUSE, glm::value_ptr(componente_difusa));
+      glLightfv(id_luz, GL_SPECULAR,glm::value_ptr(componente_especular));
 
    glPopMatrix();
 }
