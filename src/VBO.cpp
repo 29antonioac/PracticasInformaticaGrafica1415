@@ -39,10 +39,15 @@ GLvoid * VBO::getDatos()
 void VBO_Vertices::Activar()
 {
    glBindBuffer( tipo, id_vbo ); // act. VBO
-   glVertexPointer( 3, GL_FLOAT, 0, 0 ); // formato y offset (0)
+   //glVertexPointer( 3, GL_FLOAT, 0, 0 ); // formato y offset (0)
+
+   glEnableVertexAttribArray(0);
+   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+
    glBindBuffer( tipo, 0 ); // desact VBO.
 
-   glEnableClientState( GL_VERTEX_ARRAY ); // act. uso VA
+   //glEnableClientState( GL_VERTEX_ARRAY ); // act. uso VA
 }
 
 void VBO_Triangulos::Activar()
@@ -52,29 +57,30 @@ void VBO_Lineas::Activar()
 {
 
    glBindBuffer( tipo, id_vbo );
-   glVertexPointer( 3, GL_FLOAT, 0, 0 );
+   //glVertexPointer( 3, GL_FLOAT, 0, 0 );
+   //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
    glBindBuffer( tipo, 0 );
 
-   glEnableClientState( GL_VERTEX_ARRAY );
+   //glEnableClientState( GL_VERTEX_ARRAY );
 
 }
 
 void VBO_Colores::Activar()
 {
    glBindBuffer( tipo, id_vbo );
-   glColorPointer (3, GL_FLOAT, 0, 0);
+   //glColorPointer (3, GL_FLOAT, 0, 0);
    glBindBuffer( tipo, 0 );
 
-   glEnableClientState( GL_COLOR_ARRAY );
+   //glEnableClientState( GL_COLOR_ARRAY );
 }
 
 void VBO_Normales::Activar()
 {
    glBindBuffer( tipo, id_vbo );
-   glNormalPointer ( GL_FLOAT, 0, 0);
+   //glNormalPointer ( GL_FLOAT, 0, 0);
    glBindBuffer( tipo, 0 );
 
-   glEnableClientState( GL_NORMAL_ARRAY );
+   //glEnableClientState( GL_NORMAL_ARRAY );
 }
 
 void VBO_Vertices::Visualizar()
@@ -83,7 +89,7 @@ void VBO_Vertices::Visualizar()
    glDrawArrays(GL_POINTS, 0, numero_datos);
    glBindBuffer(tipo, 0);
 
-   glDisableClientState(GL_VERTEX_ARRAY);
+   //glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void VBO_Triangulos::Visualizar(visualizacion modo, glm::vec3 color_primario, glm::vec3 color_secundario)

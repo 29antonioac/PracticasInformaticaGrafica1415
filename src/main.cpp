@@ -29,6 +29,8 @@
 #include "practica3.hpp"
 #include "practica4.hpp"
 
+#include "PilaMatrices.hpp"
+
 using std::cout;
 using std::endl;
 using std::string;
@@ -66,7 +68,7 @@ int
    ventana_tam_y  = 800 ;  // alto inicial actual de la ventana, en pixels
 
 
-GLuint idProg_P1_P2; // ID del par fragment-vertex shader
+GLuint idProg_P1_P2, idProg_P3_P4; // ID del par fragment-vertex shader
 
 // Puntero a la práctica actual
 Practica    * practicaActual;
@@ -692,7 +694,8 @@ void Inicializa_OpenGL( )
       exit(1);
    }
 
-   idProg_P1_P2 = CrearPrograma("src/fragment-shader.glsl","src/vertex-shader.glsl");
+   idProg_P1_P2 = CrearPrograma("src/shaders/P1_P2_fragment.glsl","src/shaders/P1_P2_vertex.glsl");
+   idProg_P3_P4 = CrearPrograma("src/shaders/P3_P4_fragment.glsl","src/shaders/P3_P4_vertex.glsl");
 
    // habilitar test de comparación de profundidades para 3D (y 2D)
    // es necesario, no está habilitado por defecto:
@@ -739,8 +742,8 @@ void Inicializar_Practicas(int argc, char *argv[])
 {
    practica1 = new Practica1(idProg_P1_P2);
    practica2 = new Practica2(idProg_P1_P2);
-   practica3 = new Practica3(0);
-   practica4 = new Practica4(0);
+   practica3 = new Practica3(idProg_P3_P4);
+   practica4 = new Practica4(idProg_P3_P4);
 
 
    practica1->Inicializar(argc, argv);
