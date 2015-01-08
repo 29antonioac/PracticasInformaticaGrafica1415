@@ -261,15 +261,24 @@ void MallaTVT::CrearVBOs()
       tam_lineas_normales_vertices = sizeof(float) * elementos_lineas_normales_vertices,
       tam_coordenadas_textura = sizeof(float) * elementos_coordenadas_textura;
 
+   glGenVertexArrays(1, &id_VAO_malla);
+   glBindVertexArray(id_VAO_malla);
+
    vbo_vertices = new VBO_Vertices(elementos_vertices, tam_ver, ver.data());
    vbo_triangulos = new VBO_Triangulos(elementos_triangulos, tam_tri, tri.data());
    vbo_colores_vertices = new VBO_Colores(elementos_vertices, tam_ver, colores_vertices.data());
    vbo_normales_vertices = new VBO_Normales(elementos_vertices, tam_ver, normales_vertices.data());
+   vbo_coordenadas_textura = new VBO_Coordenadas_Textura(elementos_coordenadas_textura, tam_coordenadas_textura, coordenadas_textura.data());
+
+   glGenVertexArrays(2, &id_VAO_lineas[0]);
+   glBindVertexArray(id_VAO_lineas[0]);
 
    vbo_lineas_normales_caras = new VBO_Lineas(elementos_lineas_normales_caras, tam_lineas_normales_caras, lineas_normales_caras.data() );
+
+   glBindVertexArray(id_VAO_lineas[1]);
    vbo_lineas_normales_vertices = new VBO_Lineas(elementos_lineas_normales_vertices, tam_lineas_normales_vertices, lineas_normales_vertices.data() );
 
-   vbo_coordenadas_textura = new VBO_Coordenadas_Textura(elementos_coordenadas_textura, tam_coordenadas_textura, coordenadas_textura.data());
+
 
 
 }
@@ -278,8 +287,6 @@ void MallaTVT::Visualizar()
 {
    glColor3fv(glm::value_ptr(color_primario));
 
-   bool color_vertices = false;
-   bool normal_vertices = false;
    bool coordenadas_textura = false;
 
    // Pendiente de reorganizar
@@ -290,7 +297,6 @@ void MallaTVT::Visualizar()
 
       if (!normales_vertices.empty())
       {
-         normal_vertices = true;
          vbo_normales_vertices->Activar();
       }
 
@@ -301,12 +307,6 @@ void MallaTVT::Visualizar()
       if (coordenadas_textura) vbo_coordenadas_textura->Activar();
 
       vbo_triangulos->Visualizar(modo_dibujo, color_primario, color_secundario);
-
-      if (coordenadas_textura)
-         glDisableClientState( GL_TEXTURE_COORD_ARRAY );
-
-      glDisable(GL_TEXTURE_GEN_S);
-      glDisable(GL_TEXTURE_GEN_T);
 
    }
    else
@@ -342,13 +342,11 @@ void MallaTVT::Visualizar()
          // Ver si usamos array de colores o vértices
          if (!color_fijo && !colores_vertices.empty())
          {
-            color_vertices = true;
             vbo_colores_vertices->Activar();
          }
 
          if (!normales_vertices.empty())
          {
-            normal_vertices = true;
             vbo_normales_vertices->Activar();
          }
 
@@ -363,10 +361,11 @@ void MallaTVT::Visualizar()
             vbo_triangulos->Visualizar(modo_dibujo, color_primario, color_secundario);
          }
       }
-      if (color_vertices)
-         glDisableClientState( GL_COLOR_ARRAY );
-      if (normal_vertices)
-         glDisableClientState( GL_NORMAL_ARRAY );
+      glDisableVertexAttribArray(0);
+      glDisableVertexAttribArray(1);
+      glDisableVertexAttribArray(2);
+      glDisableVertexAttribArray(3);
+
    }
 
    if (dibujo_normales == AMBAS || dibujo_normales == CARAS )
@@ -403,16 +402,14 @@ void MallaTVT::VisualizarModoInmediato()
 
 void MallaTVT::VisualizarNormalesCaras()
 {
-   glColor3f(0.0,0.0,1.0);
-
+   glBindVertexArray(id_VAO_lineas[0]);
    vbo_lineas_normales_caras->Activar();
    vbo_lineas_normales_caras->Visualizar();
 }
 
 void MallaTVT::VisualizarNormalesVertices()
 {
-   glColor3f(1.0,0.0,0.0);
-
+   glBindVertexArray(id_VAO_lineas[1]);
    vbo_lineas_normales_vertices->Activar();
    vbo_lineas_normales_vertices->Visualizar();
 }

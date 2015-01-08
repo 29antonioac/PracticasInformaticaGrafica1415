@@ -39,8 +39,6 @@ GLvoid * VBO::getDatos()
 void VBO_Vertices::Activar()
 {
    glBindBuffer( tipo, id_vbo ); // act. VBO
-   //glVertexPointer( 3, GL_FLOAT, 0, 0 ); // formato y offset (0)
-
    glEnableVertexAttribArray(0);
    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
@@ -57,18 +55,18 @@ void VBO_Lineas::Activar()
 {
 
    glBindBuffer( tipo, id_vbo );
-   //glVertexPointer( 3, GL_FLOAT, 0, 0 );
-   //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+   glEnableVertexAttribArray(0);
+   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
    glBindBuffer( tipo, 0 );
 
-   //glEnableClientState( GL_VERTEX_ARRAY );
 
 }
 
 void VBO_Colores::Activar()
 {
    glBindBuffer( tipo, id_vbo );
-   //glColorPointer (3, GL_FLOAT, 0, 0);
+   glEnableVertexAttribArray(1);
+   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
    glBindBuffer( tipo, 0 );
 
    //glEnableClientState( GL_COLOR_ARRAY );
@@ -77,7 +75,8 @@ void VBO_Colores::Activar()
 void VBO_Normales::Activar()
 {
    glBindBuffer( tipo, id_vbo );
-   //glNormalPointer ( GL_FLOAT, 0, 0);
+   glEnableVertexAttribArray(2);
+   glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
    glBindBuffer( tipo, 0 );
 
    //glEnableClientState( GL_NORMAL_ARRAY );
@@ -86,6 +85,7 @@ void VBO_Normales::Activar()
 void VBO_Vertices::Visualizar()
 {
    glBindBuffer(tipo, id_vbo);
+   glEnableVertexAttribArray(0);
    glDrawArrays(GL_POINTS, 0, numero_datos);
    glBindBuffer(tipo, 0);
 
@@ -124,16 +124,15 @@ void VBO_Lineas::Visualizar()
    glDrawArrays(GL_LINES, 0, numero_datos);
    glBindBuffer(tipo, 0);
 
-   glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void VBO_Coordenadas_Textura::Activar()
 {
    glBindBuffer(tipo, id_vbo);
-   glTexCoordPointer(2,GL_FLOAT,0,0);
+   glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, 0);
    glBindBuffer(tipo,0);
 
-   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+   //glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 

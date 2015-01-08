@@ -30,6 +30,13 @@
 #include "practica4.hpp"
 
 #include "PilaMatrices.hpp"
+#include "IDs_Shaders.hpp"
+
+#include <glm/vec3.hpp> // glm::vec3
+#include <glm/vec4.hpp> // glm::vec4, glm::ivec4
+#include <glm/mat4x4.hpp> // glm::mat4
+#include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
+#include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 
 using std::cout;
 using std::endl;
@@ -68,7 +75,7 @@ int
    ventana_tam_y  = 800 ;  // alto inicial actual de la ventana, en pixels
 
 
-GLuint idProg_P1_P2, idProg_P3_P4; // ID del par fragment-vertex shader
+
 
 // Puntero a la práctica actual
 Practica    * practicaActual;
@@ -81,6 +88,36 @@ bool debug = false;
 bool ayuda = false;
 bool msaa = true;
 //bool custom_shader = false;
+
+GLuint id_VAO, id_VBO_Vertices_Ejes, id_VBO_Colores_Ejes;
+
+
+const float long_ejes = 10.0 ;
+
+using glm::vec3;
+using glm::mat4;
+using glm::lookAt;
+using glm::perspective;
+
+
+float ejes[] = {-long_ejes,0.0,0.0,
+               +long_ejes,0.0,0.0,
+               0.0,-long_ejes,0.0,
+               0.0,+long_ejes,0.0,
+               0.0,0.0,-long_ejes,
+               0.0,0.0,+long_ejes
+               };
+
+float color_ejes[] = {
+      1.0,0.0,0.0,
+      1.0,0.0,0.0,
+      0.0,1.0,0.0,
+      0.0,1.0,0.0,
+      0.0,0.0,1.0,
+      0.0,0.0,1.0
+
+   };
+
 
 
 
@@ -96,6 +133,7 @@ bool msaa = true;
 
 void FijarProyeccion()
 {
+   /*
    const GLfloat ratioYX = GLfloat( ventana_tam_y )/GLfloat( ventana_tam_x );
    
    CError();
@@ -122,6 +160,19 @@ void FijarProyeccion()
    glScalef( frustum_factor_escala, frustum_factor_escala,  frustum_factor_escala );
    
    CError();
+   */
+   const GLfloat ratioYX = GLfloat( ventana_tam_y )/GLfloat( ventana_tam_x );
+
+   Proyeccion = mat4(1.0);
+   Proyeccion *= glm::frustum(-frustum_ancho,
+            +frustum_ancho,
+            -frustum_ancho*ratioYX,
+            +frustum_ancho*ratioYX,
+            +frustum_dis_del,
+            +frustum_dis_tra);
+      Proyeccion *= glm::translate(mat4(1.0), vec3(0.0,0.0,-0.5*(frustum_dis_del+frustum_dis_tra)));
+      Proyeccion *= glm::scale(mat4(1.0), vec3(frustum_factor_escala, frustum_factor_escala,  frustum_factor_escala ));
+
 }
 
 
@@ -139,7 +190,7 @@ void FijarViewportProyeccion()
 
 void FijarCamara()
 {
-   
+   /*
    CError();
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
@@ -150,6 +201,15 @@ void FijarCamara()
    //?
    //glScalef( factor_escala, factor_escala, factor_escala ); 
    CError();
+   */
+
+   Vista = mat4(1.0);
+   Vista *= glm::rotate(mat4(1.0), camara_angulo_x, vec3(1.0,0.0,0.0));
+   Vista *= glm::rotate(mat4(1.0), camara_angulo_y, vec3(0.0,1.0,0.0));
+   Vista *= glm::scale(mat4(1.0),vec3(frustum_factor_escala, frustum_factor_escala, frustum_factor_escala));
+
+   Modelado = mat4(1.0);
+   MVP = Proyeccion * Vista * Modelado;
 }
 
 // ---------------------------------------------------------------------
@@ -157,26 +217,50 @@ void FijarCamara()
 
 void DibujarEjes()
 {
-   const float long_ejes = 10.0 ;
+   cout << "Empiezo a dibujar ejes" << endl;
+
+   glUseProgram(idProg_Ejes);
+
+   // Get a handle for our "MVP" uniform
+   GLuint MatrixID = glGetUniformLocation(idProg_Ejes, "MVP");
+
+
+   glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+   glBindVertexArray(id_VAO);
+
+   glEnableVertexAttribArray(0);
+   glBindBuffer(GL_ARRAY_BUFFER, id_VBO_Vertices_Ejes);
+   glVertexAttribPointer(
+      0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+      3,                  // size
+      GL_FLOAT,           // type
+      GL_FALSE,           // normalized?
+      0,                  // stride
+      (void*)0            // array buffer offset
+   );
+
+   glEnableVertexAttribArray(1);
+   glBindBuffer(GL_ARRAY_BUFFER, id_VBO_Colores_Ejes);
+   glVertexAttribPointer(
+      1,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+      3,                  // size
+      GL_FLOAT,           // type
+      GL_FALSE,           // normalized?
+      0,                  // stride
+      (void*)0            // array buffer offset
+   );
+
+   cout << "Antes del drawarrays" << endl;
+
+   glDrawArrays(GL_LINES,0,6);
+
+   //glutSolidCylinder(0.3,0.3,8,8);
+
+   glDisableVertexAttribArray(0);
+   glDisableVertexAttribArray(1);
+
    
-   // establecer modo de dibujo a lineas (podría estar en puntos)
-   glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-   
-   // dibujar tres segmentos
-   glBegin(GL_LINES);
-      // eje X, color rojo
-      glColor3f( 1.0, 0.0, 0.0 );
-      glVertex3f( -long_ejes, 0.0, 0.0 );
-      glVertex3f( +long_ejes, 0.0, 0.0 );
-      // eje Y, color verde
-      glColor3f( 0.0, 1.0, 0.0 );
-      glVertex3f( 0.0, -long_ejes, 0.0 );
-      glVertex3f( 0.0, +long_ejes, 0.0 );
-      // eje Z, color azul
-      glColor3f( 0.0, 0.0, 1.0 );
-      glVertex3f( 0.0, 0.0, -long_ejes );
-      glVertex3f( 0.0, 0.0, +long_ejes );
-   glEnd();
    
 }
 
@@ -186,76 +270,6 @@ void DibujarEjes()
 void LimpiarVentana()
 {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-}
-
-void Debug_Ayuda()
-{
-
-   glMatrixMode(GL_PROJECTION);
-   glPushMatrix();
-   glLoadIdentity();
-   gluOrtho2D(0.0, ventana_tam_x, 0.0, ventana_tam_y);
-   glMatrixMode(GL_MODELVIEW);
-   glPushMatrix();
-   glLoadIdentity();
-   glColor3f(1.0f, 0.0f, 0.0f);
-
-   void * font = GLUT_BITMAP_9_BY_15;
-   vector<string> strings_ayuda;
-   strings_ayuda.push_back("F6 activa/desactiva modo debug");
-   strings_ayuda.push_back("F7 activa/desactiva mensaje con controles del programa");
-   strings_ayuda.push_back("Ambos ralentizan en mayor o menor medida el renderizado");
-
-   unsigned num_lineas = 0;
-   for (auto &s: strings_ayuda)
-   {
-      glRasterPos2i(10, ventana_tam_y - 15*(num_lineas + 1));
-      for (auto &c: s)
-      {
-        glutBitmapCharacter(font, c);
-      }
-      num_lineas++;
-   }
-
-   if (ayuda)
-   {
-      //string cShader = custom_shader ? "Programable" : "Fijo";
-      vector<string> strings_control;
-      strings_control.push_back("Disponible control con flechas de teclado, +/- y raton ");
-      practicaActual->Ayuda(strings_control);
-      //strings_control.push_back("W: Alternar entre cauce fijo/programable (" + cShader +")");
-      strings_control.push_back("E: Activar/desactivar MSAA");
-      strings_control.push_back("F: Alternar entre color fijo (solo modo solido)");
-      strings_control.push_back("H: Alternar modo dibujo normales");
-      strings_control.push_back("A: Modo ajedrez");
-      strings_control.push_back("P: Modo puntos");
-      strings_control.push_back("D: Modo solido con atributos de caras");
-      strings_control.push_back("S: Modo solido");
-      strings_control.push_back("L: Modo alambre");
-      strings_control.push_back("R: Resetear camara");
-      strings_control.push_back("Q: Salir");
-
-      float separacion = glutBitmapWidth(font, 'F') * strings_control[0].length();
-      unsigned num_lineas = 0;
-      for (auto &s: strings_control)
-      {
-         glRasterPos2i(ventana_tam_x - separacion - 5, 10+15*num_lineas);
-         for (auto &c: s)
-         {
-           glutBitmapCharacter(font, c);
-         }
-         num_lineas++;
-      }
-   }
-
-   if (debug)
-      practicaActual->Debug();
-
-   glMatrixMode(GL_MODELVIEW);
-   glPopMatrix();
-   glMatrixMode(GL_PROJECTION);
-   glPopMatrix();
-
 }
 
 
@@ -270,16 +284,14 @@ void Debug_Ayuda()
 
 void FGE_Redibujado()
 {
-   /*if (custom_shader)
-      glUseProgram(idProg);
-   else
-      glUseProgram(0);*/
    FijarViewportProyeccion() ; // necesario pues la escala puede cambiar
    FijarCamara();
+   // Actualizamos nuestra pila interna
+   pila_opengl.top() = MVP;
    LimpiarVentana();
    DibujarEjes() ;
    practicaActual->DibujarObjetos();
-   Debug_Ayuda();
+   //Debug_Ayuda();
    glFinish();
    glutSwapBuffers();
 }
@@ -357,6 +369,7 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
          redisp = practicaActual->GestionarEvento(tecla) ;
          break ;
    }
+   /*
    if (msaa)
    {
       glEnable(GL_MULTISAMPLE_ARB);
@@ -366,7 +379,7 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
    {
       glDisable(GL_MULTISAMPLE_ARB);
       //cout << "MSAA off" << endl;
-   }
+   }*/
    
    // si se ha cambiado algo, forzar evento de redibujado
    if (redisp)
@@ -384,7 +397,7 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
 void FGE_PulsarTeclaEspecial( int tecla, int x_raton, int y_raton )
 {
    bool redisp = true ;
-   const float da = 5.0 ; // incremento en grados de ángulos de camara
+   const float da = 0.3 ; // incremento en grados de ángulos de camara
    
    switch ( tecla )
    {
@@ -444,7 +457,7 @@ int origen[2] = {-1,-1};
 
 void FGE_PulsarRaton(int boton, int estado, int x, int y)
 {
-   const float da = 5.0 ; // incremento en grados de ángulos de camara
+   const float da = 0.3 ; // incremento en grados de ángulos de camara
    bool redisp = true;
 
    // Si pulsamos el botón izquierdo del ratón
@@ -492,8 +505,8 @@ void FGE_MoverRaton(int x, int y)
    {
 
       // Actualizar la dirección de la cámara
-      camara_angulo_x += (y - origen[1])*0.25f;
-      camara_angulo_y += (x - origen[0])*0.25f;
+      camara_angulo_x += (y - origen[1])*0.01f;
+      camara_angulo_y += (x - origen[0])*0.01f;
 
       origen[0] = x;
       origen[1] = y;
@@ -694,35 +707,24 @@ void Inicializa_OpenGL( )
       exit(1);
    }
 
-   idProg_P1_P2 = CrearPrograma("src/shaders/P1_P2_fragment.glsl","src/shaders/P1_P2_vertex.glsl");
-   idProg_P3_P4 = CrearPrograma("src/shaders/P3_P4_fragment.glsl","src/shaders/P3_P4_vertex.glsl");
+   idProg_Ejes    = CrearPrograma("src/shaders/Ejes_fragment.glsl","src/shaders/Ejes_vertex.glsl");
+   idProg_P1_P2   = CrearPrograma("src/shaders/P1_P2_fragment.glsl","src/shaders/P1_P2_vertex.glsl");
+   idProg_P3_P4   = CrearPrograma("src/shaders/P3_P4_fragment.glsl","src/shaders/P3_P4_vertex.glsl");
 
    // habilitar test de comparación de profundidades para 3D (y 2D)
    // es necesario, no está habilitado por defecto:
    // https://www.opengl.org/wiki/Depth_Buffer
    glEnable( GL_DEPTH_TEST );
+   glDepthFunc(GL_LESS);
    
    // establecer color de fondo: (1,1,1) (blanco)
    glClearColor( 1.0, 1.0, 1.0, 1.0 ) ;
    
-   // establecer color inicial para todas las primitivas
-   glColor3f(1.0f,0.0f,0.0f);
-   
-   // establecer ancho de línea
-   glLineWidth( 1.5 );
-   
-   // establecer tamaño de los puntos
-   glPointSize( 3.0 );
-   
-   // establecer modo de visualización de prim.
-   // (las tres posibilidades son: GL_POINT, GL_LINE, GL_FILL)
-   glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
    
    // inicializar parámetros del frustum
    frustum_dis_del         = 0.1 ;
    frustum_dis_tra         = 10.0;
    frustum_ancho           = 0.5*frustum_dis_del ;
-   //frustum_ancho           = 1.0 ;
    frustum_factor_escala   = 1.0 ;
    
    // inicializar parámetros de la cámara
@@ -732,6 +734,7 @@ void Inicializa_OpenGL( )
    // ??
    FijarViewportProyeccion() ;
    FijarCamara() ;
+   pila_opengl.push(MVP);
    
    
    // ya está
@@ -751,7 +754,24 @@ void Inicializar_Practicas(int argc, char *argv[])
    practica3->Inicializar(argc, argv);
    practica4->Inicializar(argc, argv);
 
-   practicaActual = practica3;
+   practicaActual = practica1;
+}
+
+void Inicializa_VAO()
+{
+   glGenVertexArrays(1, &id_VAO);
+   glBindVertexArray(id_VAO);
+
+   glGenBuffers(1, &id_VBO_Vertices_Ejes);
+   glBindBuffer(GL_ARRAY_BUFFER,id_VBO_Vertices_Ejes);
+   glBufferData(GL_ARRAY_BUFFER, sizeof(ejes), ejes, GL_STATIC_DRAW);
+
+   glGenBuffers(1, &id_VBO_Colores_Ejes);
+   glBindBuffer(GL_ARRAY_BUFFER,id_VBO_Colores_Ejes);
+   glBufferData(GL_ARRAY_BUFFER, sizeof(color_ejes), color_ejes, GL_STATIC_DRAW);
+
+   glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 }
 
 // ---------------------------------------------------------------------
@@ -759,12 +779,21 @@ void Inicializar_Practicas(int argc, char *argv[])
 
 void Inicializar( int argc, char *argv[] )
 {
+   cout << "Inicializo GLUT" << endl;
    // glut (crea la ventana)
    Inicializa_GLUT(argc, argv) ;
    
+
+   cout << "Inicializo OpenGL" << endl;
    // opengl: define proyección y atributos iniciales
    Inicializa_OpenGL() ;
    
+   cout << "Inicializo VAO" << endl;
+   // Inicializar VAO (contendrá ejes y cada cosa que requieran las prácticas)
+   Inicializa_VAO();
+
+   cout << "Inicializado todo" << endl;
+
    // inicializar prácticas
    Inicializar_Practicas(argc, argv);
 }

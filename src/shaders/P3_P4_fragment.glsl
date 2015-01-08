@@ -1,7 +1,14 @@
 #version 330 core
+
+// Valores interpolados desde el vertex shader
+in vec3 color_fragment;
+
+// Datos de salida
 out vec3 color;
- 
-void main()
-{
-    color = vec3(1,0,0);
+
+void main(){
+
+    // color = color interpolado desde el vertex shader
+    color = color_fragment;
+
 }

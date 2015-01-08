@@ -1,4 +1,8 @@
 #include "grafoescena.hpp"
+#include "PilaMatrices.hpp"
+#include "IDs_Shaders.hpp"
+
+#include <glm/gtc/type_ptr.hpp>
 
 // destructor
 NodoGrafoEscena::~NodoGrafoEscena()
@@ -75,12 +79,21 @@ NodoTransformacionParametrizado::NodoTransformacionParametrizado(glm::mat4 * mat
 
 void NodoTransformacionParametrizado::Procesa()
 {
- glPushMatrix();
- glMultMatrixf( glm::value_ptr(*matrizTransformacion) );
+ //glPushMatrix();
+ //glMultMatrixf( glm::value_ptr(*matrizTransformacion) );
 
- NodoGrafoEscena::Procesa();
+   pila_opengl.push(pila_opengl.top());
+   pila_opengl.top() *= *matrizTransformacion;
 
- glPopMatrix();
+   GLint modelViewLocation = glGetUniformLocation(idProg_P3_P4,
+                                                  "MVP");
+   glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, value_ptr(pila_opengl.top()));
+
+   NodoGrafoEscena::Procesa();
+
+   pila_opengl.pop();
+
+ //glPopMatrix();
 }
 
 NodoTransformacion::NodoTransformacion(glm::mat4 matriz)
@@ -90,11 +103,20 @@ NodoTransformacion::NodoTransformacion(glm::mat4 matriz)
 
 void NodoTransformacion::Procesa()
 {
- glPushMatrix();
- glMultMatrixf( glm::value_ptr(matrizTransformacion) );
+ //glPushMatrix();
+ //glMultMatrixf( glm::value_ptr(matrizTransformacion) );
 
- NodoGrafoEscena::Procesa();
+   pila_opengl.push(pila_opengl.top());
+   pila_opengl.top() *= matrizTransformacion;
 
- glPopMatrix();
+   GLint modelViewLocation = glGetUniformLocation(idProg_P3_P4,
+                                                  "MVP");
+   glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, value_ptr(pila_opengl.top()));
+
+   NodoGrafoEscena::Procesa();
+
+   pila_opengl.pop();
+
+ //glPopMatrix();
 }
 

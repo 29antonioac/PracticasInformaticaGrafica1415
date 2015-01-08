@@ -59,6 +59,8 @@ private:
 
    bool color_fijo;
 
+   GLuint id_VAO_malla, id_VAO_lineas[2];
+
    void CalcularVectoresNormales();
    void CalcularDimension();
    void CalcularCoordenadasTextura(unsigned vertices_perfil);
