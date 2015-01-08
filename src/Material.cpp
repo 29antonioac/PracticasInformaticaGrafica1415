@@ -14,6 +14,11 @@ Material::Material(glm::vec3 componente_emision, glm::vec3 componente_ambiental,
    this->exponente_especular = exponente_especular;
 }
 
+Material::~Material()
+{
+   if (textura != nullptr) delete textura;
+}
+
 bool Material::Activar()
 {
    bool respuesta = false;

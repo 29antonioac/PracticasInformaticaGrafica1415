@@ -11,6 +11,7 @@
 #include <glm/mat4x4.hpp>
 
 using std::vector;
+using glm::mat4;
 
 class NodoGrafoEscena
 {
@@ -36,7 +37,6 @@ protected:
 class NodoTerminal: public NodoGrafoEscena
 {
 public:
-  NodoTerminal(figuras figura);
   NodoTerminal(MallaTVT * malla);
   ~NodoTerminal();
 
@@ -50,25 +50,25 @@ private:
 class NodoTransformacionParametrizado: public NodoGrafoEscena
 {
 public:
-   NodoTransformacionParametrizado(glm::mat4 * matriz);
+   NodoTransformacionParametrizado(mat4 * matriz);
   ~NodoTransformacionParametrizado() {}
 
   void Procesa();
 
 private:
-  glm::mat4 * matrizTransformacion;
+  mat4 * matrizTransformacion;
 };
 
 class NodoTransformacion: public NodoGrafoEscena
 {
 public:
-   NodoTransformacion(glm::mat4 matriz);
+   NodoTransformacion(mat4 matriz);
   ~NodoTransformacion() {}
 
   void Procesa();
 
 private:
-  glm::mat4 matrizTransformacion;
+  mat4 matrizTransformacion;
 };
 
 

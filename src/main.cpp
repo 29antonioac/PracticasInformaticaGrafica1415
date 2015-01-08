@@ -217,7 +217,6 @@ void FijarCamara()
 
 void DibujarEjes()
 {
-   cout << "Empiezo a dibujar ejes" << endl;
 
    glUseProgram(idProg_Ejes);
 
@@ -251,11 +250,7 @@ void DibujarEjes()
       (void*)0            // array buffer offset
    );
 
-   cout << "Antes del drawarrays" << endl;
-
    glDrawArrays(GL_LINES,0,6);
-
-   //glutSolidCylinder(0.3,0.3,8,8);
 
    glDisableVertexAttribArray(0);
    glDisableVertexAttribArray(1);
@@ -326,7 +321,7 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
    switch (tecla)
    {
       case 'q':
-         exit( 0 );
+         glutLeaveMainLoop();
          break ;
       case '+':
          frustum_factor_escala *= 1.05;
@@ -369,7 +364,7 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
          redisp = practicaActual->GestionarEvento(tecla) ;
          break ;
    }
-   /*
+
    if (msaa)
    {
       glEnable(GL_MULTISAMPLE_ARB);
@@ -379,7 +374,7 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
    {
       glDisable(GL_MULTISAMPLE_ARB);
       //cout << "MSAA off" << endl;
-   }*/
+   }
    
    // si se ha cambiado algo, forzar evento de redibujado
    if (redisp)
@@ -683,6 +678,9 @@ void Inicializa_GLUT( int argc, char * argv[] )
    // Añadido para animar
    glutIdleFunc(Animar);
    //glutTimerFunc(500,Animar,0);
+
+   glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,
+                 GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 }
 
 // ---------------------------------------------------------------------
@@ -702,8 +700,8 @@ void Inicializa_OpenGL( )
    }
 
    // comprobar si OpenGL ver 2.0 + está soportado (usando GLEW)
-   if ( ! GLEW_VERSION_2_0 )
-   {  cout << "OpenGL 2.0 no soportado." << endl  ;
+   if ( ! GLEW_VERSION_3_3 )
+   {  cout << "OpenGL 3.3 no soportado." << endl  ;
       exit(1);
    }
 
@@ -814,6 +812,18 @@ int main( int argc, char *argv[] )
    // control hasta el final de la aplicación
    glutMainLoop();
    
+   // Si salimos con Q, es que salimos bien, así que borramos datos
+   cout << "Saliendo, borrando cosas" << endl;
+
+   cout << "Borrar practica1" << endl;
+   delete practica1;
+   cout << "Borrar practica2" << endl;
+   delete practica2;
+   cout << "Borrar practica3" << endl;
+   delete practica3;
+   cout << "Borrar practica4" << endl;
+   delete practica4;
+
    // ya está
    return 0;
 }

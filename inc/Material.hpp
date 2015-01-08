@@ -15,6 +15,7 @@ private:
 public:
    Material(glm::vec3 componente_emision, glm::vec3 componente_ambiental, glm::vec3 componente_difusa,
          glm::vec3 componente_especular, float exponente_especular, Textura * textura = nullptr);
+   ~Material();
    bool Activar();
    bool NecesitoCoordenadasTextura();
 };

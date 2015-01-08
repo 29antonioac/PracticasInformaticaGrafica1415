@@ -49,6 +49,11 @@ Textura::Textura(string archivo, unsigned modo_generacion_coordenadas_textura, f
    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+Textura::~Textura()
+{
+   glDeleteTextures(1, &id_textura);
+}
+
 bool Textura::Activar()
 {
    glEnable(GL_TEXTURE_2D);

@@ -35,7 +35,7 @@ private:
    vector<glm::ivec3> tri;
 
    vector<glm::vec3> colores_vertices, normales_vertices, normales_caras, baricentros;
-   vector<pair<glm::vec3,glm::vec3> > lineas_normales_caras, lineas_normales_vertices;
+   vector<pair<glm::vec3,glm::vec3> > lineas_normales_caras, lineas_normales_vertices, colores_lineas_normales_caras, colores_lineas_normales_vertices;
 
    glm::vec3 color_primario;
    glm::vec3 color_secundario;
@@ -43,6 +43,8 @@ private:
    VBO_Vertices   * vbo_vertices;
    VBO_Triangulos * vbo_triangulos;
    VBO_Colores    * vbo_colores_vertices;
+   VBO_Colores    * vbo_colores_normales_caras;
+   VBO_Colores    * vbo_colores_normales_vertices;
    VBO_Normales   * vbo_normales_vertices;
    VBO_Lineas     * vbo_lineas_normales_caras;
    VBO_Lineas     * vbo_lineas_normales_vertices;
@@ -76,6 +78,7 @@ public:
    MallaTVT(tipo_malla tipo, vector<GLfloat> vertices, vector<int> caras = vector<int>(), Material * material = nullptr);
    MallaTVT(tipo_malla tipo, vector<glm::vec3> vertices, vector<glm::ivec3> caras = vector<glm::ivec3>(), Material * material = nullptr);
    MallaTVT(MallaTVT * malla);
+   ~MallaTVT();
    void SetMaterial(Material * material);
    void Visualizar();
    void Revolucion(const unsigned caras, bool tapas = true);

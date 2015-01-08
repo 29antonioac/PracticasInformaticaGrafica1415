@@ -26,10 +26,11 @@ void NodoGrafoEscena::Destruye()
        for( auto &hijo : listaHijos )
           hijo->Destruye();
 
-       listaHijos.clear();
-   }
 
-   delete this;
+   }
+   listaHijos.clear();
+
+   //delete this;
 }
 
 // añadir un hijo al nodo
@@ -38,15 +39,8 @@ void NodoGrafoEscena::aniadeHijo( NodoGrafoEscena* nodo )
   listaHijos.push_back(nodo);
 }
 
-NodoTerminal::NodoTerminal(figuras figura)
-{
-   this->figura = figura;
-   this->malla = nullptr;
-}
-
 NodoTerminal::NodoTerminal(MallaTVT * malla)
 {
-   this->figura = NINGUNA;
    this->malla = malla;
 }
 
@@ -57,22 +51,12 @@ NodoTerminal::~NodoTerminal()
 
 void NodoTerminal::Procesa()
 {
-   if (malla == nullptr)
-   {
-      if (figura == ICOSAEDRO)
-         glutSolidIcosahedron();
-      else if (figura == CILINDRO)
-         glutSolidCylinder(0.5,2.0,20,10);
-      else
-         glutSolidDodecahedron();
-   }
-   else
-      malla->Visualizar();
+   malla->Visualizar();
 
    NodoGrafoEscena::Procesa();
 }
 
-NodoTransformacionParametrizado::NodoTransformacionParametrizado(glm::mat4 * matriz)
+NodoTransformacionParametrizado::NodoTransformacionParametrizado(mat4 * matriz)
 {
    this->matrizTransformacion = matriz;
 }
@@ -96,7 +80,7 @@ void NodoTransformacionParametrizado::Procesa()
  //glPopMatrix();
 }
 
-NodoTransformacion::NodoTransformacion(glm::mat4 matriz)
+NodoTransformacion::NodoTransformacion(mat4 matriz)
 {
    this->matrizTransformacion = matriz;
 }

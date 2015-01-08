@@ -57,20 +57,16 @@ Practica4::Practica4(GLuint idProg) : Practica(idProg)
 Practica4::~Practica4()
 {
 
-   delete raiz;
+   //delete raiz;
+
    delete fuente_posicional;
    delete fuente_direccional;
-   delete peon_madera;
-   delete peon_blanco;
-   delete peon_negro;
+
+   delete peon_madera; // Solo borramos el de madera ya que comparte vertices con los otros dos
+
    delete cuerpo_lata;
    delete tapa_sup;
    delete tapa_inf;
-   delete material_peon_madera;
-   delete material_peon_blanco;
-   delete material_peon_negro;
-   delete material_cuerpo_lata;
-   delete material_tapa;
 
 }
 
@@ -288,7 +284,6 @@ bool Practica4::GestionarEvento(unsigned char tecla)
          fuente_direccional->ModificaBeta(1);
          break;
       case 'X':
-         cout << "Pulso Z" << endl;
          fuente_direccional->ModificaBeta(-1);
          break;
       case 'C':

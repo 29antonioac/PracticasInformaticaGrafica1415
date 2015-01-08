@@ -70,10 +70,17 @@ MallaTVT::MallaTVT(MallaTVT * malla)
    this->lineas_normales_caras      = malla->lineas_normales_caras;
    this->lineas_normales_vertices   = malla->lineas_normales_vertices;
 
+   // Copiar VAO
+   this->id_VAO_malla      = malla->id_VAO_malla;
+   this->id_VAO_lineas[0]  = malla->id_VAO_lineas[0];
+   this->id_VAO_lineas[1]  = malla->id_VAO_lineas[1];
+
    // Copiar VBO (copia NO profunda, se copian punteros)
    this->vbo_vertices                  = malla->vbo_vertices;
    this->vbo_triangulos                = malla->vbo_triangulos;
    this->vbo_colores_vertices          = malla->vbo_colores_vertices;
+   this->vbo_colores_normales_caras    = malla->vbo_colores_normales_caras;
+   this->vbo_colores_normales_vertices = malla->vbo_colores_normales_vertices;
    this->vbo_normales_vertices         = malla->vbo_normales_vertices;
    this->vbo_lineas_normales_caras     = malla->vbo_lineas_normales_caras;
    this->vbo_lineas_normales_vertices  = malla->vbo_lineas_normales_vertices;
@@ -94,6 +101,24 @@ MallaTVT::MallaTVT(MallaTVT * malla)
    this->dimension      = malla->dimension;
    this->color_fijo     = malla->color_fijo;
 
+}
+
+MallaTVT::~MallaTVT()
+{
+   delete vbo_vertices;
+   delete vbo_triangulos;
+   delete vbo_colores_vertices;
+   delete vbo_colores_normales_caras;
+   delete vbo_colores_normales_vertices;
+   delete vbo_normales_vertices;
+   delete vbo_lineas_normales_caras;
+   delete vbo_lineas_normales_vertices;
+   delete vbo_coordenadas_textura;
+
+   //glDeleteVertexArrays(1,&id_VAO_malla);
+   //glDeleteVertexArrays(2,id_VAO_lineas);
+
+   //if (material != nullptr) delete material;
 }
 
 void MallaTVT::SetMaterial(Material * material)
@@ -120,7 +145,6 @@ void MallaTVT::Inicializar()
    {
       glm::vec3 color(glm::abs(normales_vertices[i]));
       colores_vertices.push_back(color);
-      //colores_vertices.push_back(Tupla3f(0.0,color[Y],0.0));
    }
 
    this->modo_dibujo = SOLIDO;
@@ -130,10 +154,6 @@ void MallaTVT::Inicializar()
    color_secundario = glm::vec3(0.0,0.0,0.0);
 
    color_fijo = false;
-
-   // Vemos si hay que calcular tabla de coordenadas de textura
-   //if (tipo == REVOLUCION && material->HayTextura())
-   //   CalcularCoordenadasTextura();
 
    CrearVBOs();
 }
@@ -188,6 +208,8 @@ void MallaTVT::CalcularVectoresNormales()
 
       pair<glm::vec3,glm::vec3> linea (baricentro, baricentro + normal *0.1f * dimension );
       lineas_normales_caras.push_back(linea);
+      pair<glm::vec3,glm::vec3> color_linea(glm::vec3(1.0,0.0,0.0),glm::vec3(1.0,0.0,0.0));
+      colores_lineas_normales_caras.push_back(color_linea);
    }
 
    glm::vec3 ceros;
@@ -216,27 +238,9 @@ void MallaTVT::CalcularVectoresNormales()
 
       pair<glm::vec3,glm::vec3> linea (ver[vertice], ver[vertice] + normales_vertices[vertice] * 0.1f * dimension);
       lineas_normales_vertices.push_back(linea);
+      pair<glm::vec3,glm::vec3> color_linea(glm::vec3(0.0,0.0,1.0),glm::vec3(0.0,0.0,1.0));
+      colores_lineas_normales_vertices.push_back(color_linea);
    }
-}
-
-void MallaTVT::CalcularCoordenadasTextura(unsigned vertices_perfil)
-{
-   /*
-   // A partir de este punto se supone que el objeto es de revolución
-   vector<float> distancias;
-   distancias.push_back(0.0);
-
-   for (unsigned i = 1; i < vertices_perfil; i++)
-   {
-      Tupla3f distancia = (ver[i] - ver[i-1]).len();
-      distancias.push_back(distancias[i-1] + distancia);
-   }
-
-   for (unsigned i = 0; i < ver.size(); i++)
-   {
-
-   }
-*/
 }
 
 void MallaTVT::CrearVBOs()
@@ -251,6 +255,8 @@ void MallaTVT::CrearVBOs()
       elementos_triangulos = 3L * num_tri,   // Los triángulos van en un VBO GL_ELEMENT y se cuentan los vértices, no los índices en sí
       elementos_lineas_normales_caras = 2L * elementos_triangulos,
       elementos_lineas_normales_vertices = 2L * elementos_vertices,
+      elementos_colores_lineas_normales_caras = 2L * elementos_triangulos,
+      elementos_colores_lineas_normales_vertices = 2L * elementos_vertices,
       elementos_coordenadas_textura = 2L * num_verts;
 
 
@@ -259,6 +265,8 @@ void MallaTVT::CrearVBOs()
       tam_tri = sizeof(int) * elementos_triangulos,
       tam_lineas_normales_caras = sizeof(float) * elementos_lineas_normales_caras,
       tam_lineas_normales_vertices = sizeof(float) * elementos_lineas_normales_vertices,
+      tam_colores_lineas_normales_caras = sizeof(float) * elementos_colores_lineas_normales_caras,
+      tam_colores_lineas_normales_vertices = sizeof(float) * elementos_colores_lineas_normales_vertices,
       tam_coordenadas_textura = sizeof(float) * elementos_coordenadas_textura;
 
    glGenVertexArrays(1, &id_VAO_malla);
@@ -273,11 +281,14 @@ void MallaTVT::CrearVBOs()
    glGenVertexArrays(2, &id_VAO_lineas[0]);
    glBindVertexArray(id_VAO_lineas[0]);
 
+
+
    vbo_lineas_normales_caras = new VBO_Lineas(elementos_lineas_normales_caras, tam_lineas_normales_caras, lineas_normales_caras.data() );
+   vbo_colores_normales_caras = new VBO_Colores(elementos_colores_lineas_normales_caras,tam_colores_lineas_normales_caras, colores_lineas_normales_caras.data() );
 
    glBindVertexArray(id_VAO_lineas[1]);
    vbo_lineas_normales_vertices = new VBO_Lineas(elementos_lineas_normales_vertices, tam_lineas_normales_vertices, lineas_normales_vertices.data() );
-
+   vbo_colores_normales_vertices = new VBO_Colores(elementos_colores_lineas_normales_vertices,tam_colores_lineas_normales_vertices, colores_lineas_normales_vertices.data() );
 
 
 
@@ -404,6 +415,7 @@ void MallaTVT::VisualizarNormalesCaras()
 {
    glBindVertexArray(id_VAO_lineas[0]);
    vbo_lineas_normales_caras->Activar();
+   vbo_colores_normales_caras->Activar();
    vbo_lineas_normales_caras->Visualizar();
 }
 
@@ -411,6 +423,7 @@ void MallaTVT::VisualizarNormalesVertices()
 {
    glBindVertexArray(id_VAO_lineas[1]);
    vbo_lineas_normales_vertices->Activar();
+   vbo_colores_normales_vertices->Activar();
    vbo_lineas_normales_vertices->Visualizar();
 }
 
