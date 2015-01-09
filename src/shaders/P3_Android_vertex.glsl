@@ -5,7 +5,7 @@ layout(location = 0) in vec3 posicion_vertice;
 layout(location = 1) in vec3 color_vertice;
 
 // Salida de datos, sera interpolada para cada fragment
-out vec3 color_fragment;
+//out vec3 color_fragment;
 
 // Valores constantes para la primitiva
 uniform mat4 MVP;
@@ -17,5 +17,5 @@ void main(){
 
     // El color de cada vertice sera interpolado para conseguir
     // el color del fragment
-    color_fragment = color_vertice;
+    //color_fragment = color_vertice;
 }

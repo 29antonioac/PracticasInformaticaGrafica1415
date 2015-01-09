@@ -16,6 +16,7 @@
 #include "MallaTVT.hpp"
 #include "file_ply_stl.hpp"
 #include "FuenteLuz.hpp"
+#include "IDs_Shaders.hpp"
 
 #define GLM_FORCE_RADIANS
 #include <glm/vec3.hpp> // glm::vec3
@@ -41,7 +42,7 @@ inline T signo (T valor)
       return 0;
 }
 
-Practica4::Practica4(GLuint idProg) : Practica(idProg)
+Practica4::Practica4()
 {
    modo_dibujo = ALAMBRE;
 
@@ -224,7 +225,6 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
 void Practica4::DibujarObjetos()
 {
-   glUseProgram(idProg);
 
    glEnable( GL_LIGHTING );
    glEnable( GL_NORMALIZE );
@@ -307,7 +307,7 @@ void Practica4::Debug()
 
    string cauce;
 
-   if (idProg == 0)
+   if (idProg_actual == 0)
       cauce = "Fijo";
    else
       cauce = "Programable";

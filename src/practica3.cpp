@@ -15,6 +15,7 @@
 
 #include "MallaTVT.hpp"
 #include "file_ply_stl.hpp"
+#include "IDs_Shaders.hpp"
 
 #define GLM_FORCE_RADIANS
 #include <glm/vec3.hpp> // vec3
@@ -53,7 +54,7 @@ inline T signo (T valor)
       return 0;
 }
 
-Practica3::Practica3(GLuint idProg) : Practica(idProg)
+Practica3::Practica3()
 {
    modo_dibujo = ALAMBRE;
    raiz = nullptr;
@@ -170,6 +171,8 @@ void Practica3::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * pierna = new NodoGrafoEscena;
    NodoGrafoEscena * brazo = new NodoGrafoEscena;
    NodoGrafoEscena * cabeza = new NodoGrafoEscena;
+   NodoGrafoEscena * ojos = new NodoGrafoEscena;
+   NodoGrafoEscena * todo_menos_ojos = new NodoGrafoEscena;
    NodoGrafoEscena * Android = new NodoGrafoEscena;
    NodoGrafoEscena * nodo_cilindro = new NodoTerminal(cilindro);
    NodoGrafoEscena * nodo_semiesfera = new NodoTerminal(semiesfera);
@@ -184,7 +187,6 @@ void Practica3::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * nodo_escalado_semiesfera_inferior_brazo = new NodoTransformacion(scale(mat4(1.0),vec3(proporcion_ancho_brazo,proporcion_ancho_brazo,proporcion_ancho_brazo)));
    NodoGrafoEscena * nodo_escalado_semiesfera_pierna = new NodoTransformacion(scale(mat4(1.0),vec3(proporcion_ancho_pierna,proporcion_ancho_pierna,proporcion_ancho_pierna)));;
 
-   //translate(mat4(1.0),vec3(
 
    NodoGrafoEscena * nodo_traslacion_pierna_izquierda = new NodoTransformacion(translate(mat4(1.0),vec3(-(proporcion_ancho_cuerpo-1.3),0.0,0.0)));
    NodoGrafoEscena * nodo_traslacion_pierna_derecha = new NodoTransformacion(translate(mat4(1.0),vec3(proporcion_ancho_cuerpo-1.3,0.0,0.0)));
@@ -214,12 +216,16 @@ void Practica3::Inicializar( int argc, char *argv[] )
 
    // Matrices de transformacion para los ojos
    mat4 matriz_transformacion_ojo_izquierdo = mat4(1.0);
+   matriz_transformacion_ojo_izquierdo = matriz_transformacion_ojo_izquierdo * translate(mat4(1.0),vec3(0.0,proporcion_alto_cuerpo + separacion_cuerpo_cabeza, 0.0));
+
    matriz_transformacion_ojo_izquierdo = matriz_transformacion_ojo_izquierdo * rotate(mat4(1.0),-PI/4,vec3(0.0,0.0,1.0));
    matriz_transformacion_ojo_izquierdo = matriz_transformacion_ojo_izquierdo * rotate(mat4(1.0),-PI/5,vec3(1.0,0.0,0.0));
    matriz_transformacion_ojo_izquierdo = matriz_transformacion_ojo_izquierdo * translate(mat4(1.0),vec3(0.0,proporcion_alto_cabeza,0.0));
    matriz_transformacion_ojo_izquierdo = matriz_transformacion_ojo_izquierdo * scale(mat4(1.0),vec3(proporcion_ancho_alto_ojo,proporcion_ancho_alto_ojo,proporcion_ancho_alto_ojo));
 
    mat4 matriz_transformacion_ojo_derecho = mat4(1.0);
+   matriz_transformacion_ojo_derecho = matriz_transformacion_ojo_derecho * translate(mat4(1.0),vec3(0.0,proporcion_alto_cuerpo + separacion_cuerpo_cabeza, 0.0));
+
    matriz_transformacion_ojo_derecho = matriz_transformacion_ojo_derecho * rotate(mat4(1.0),PI/4,vec3(0.0,0.0,1.0));
    matriz_transformacion_ojo_derecho = matriz_transformacion_ojo_derecho * rotate(mat4(1.0),-PI/5,vec3(1.0,0.0,0.0));
    matriz_transformacion_ojo_derecho = matriz_transformacion_ojo_derecho * translate(mat4(1.0),vec3(0.0,proporcion_alto_cabeza,0.0));
@@ -227,6 +233,8 @@ void Practica3::Inicializar( int argc, char *argv[] )
 
    NodoGrafoEscena * nodo_transformacion_ojo_izquierdo = new NodoTransformacion(matriz_transformacion_ojo_izquierdo);
    NodoGrafoEscena * nodo_transformacion_ojo_derecho = new NodoTransformacion(matriz_transformacion_ojo_derecho);
+
+   //NodoGrafoEscena * nodo_traslacion_cabeza = new NodoTransformacion(translate(mat4(1.0),vec3(0.0,proporcion_alto_cuerpo + separacion_cuerpo_cabeza, 0.0)));
 
    // Nodos parametrizados (son iguales pero, en vez de guardar la matriz directamente, guardan un puntero)
 
@@ -243,6 +251,10 @@ void Practica3::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * nodo_parametrizado_rotacion_brazo_derecho = new NodoTransformacionParametrizado(rotacion_brazo_derecho);
    NodoGrafoEscena * nodo_parametrizado_rotacion_cuerpo = new NodoTransformacionParametrizado(rotacion_cuerpo);
    NodoGrafoEscena * nodo_parametrizado_traslacion = new NodoTransformacionParametrizado(traslacion);
+
+   // Nodos Shaders
+   NodoGrafoEscena * nodo_shader_android = new NodoShader(idProg_P3_Android);
+   NodoGrafoEscena * nodo_shader_ojos = new NodoShader(idProg_P3_Ojos);
 
 
    // Pierna del Android
@@ -272,40 +284,50 @@ void Practica3::Inicializar( int argc, char *argv[] )
       nodo_transformacion_antena_izquierda->aniadeHijo(nodo_cilindro);
    cabeza->aniadeHijo(nodo_transformacion_antena_derecha);
       nodo_transformacion_antena_derecha->aniadeHijo(nodo_cilindro);
-   cabeza->aniadeHijo(nodo_transformacion_ojo_izquierdo);
+
+   // Ojos del Android
+   ojos->aniadeHijo(nodo_transformacion_ojo_izquierdo);
       nodo_transformacion_ojo_izquierdo->aniadeHijo(nodo_semiesfera_ojo);
-   cabeza->aniadeHijo(nodo_transformacion_ojo_derecho);
+   ojos->aniadeHijo(nodo_transformacion_ojo_derecho);
       nodo_transformacion_ojo_derecho->aniadeHijo(nodo_semiesfera_ojo);
 
    // Todo el Android
 
    // Cuerpo
-   Android->aniadeHijo(nodo_escalado_cilindro_cuerpo);
+   todo_menos_ojos->aniadeHijo(nodo_escalado_cilindro_cuerpo);
       nodo_escalado_cilindro_cuerpo->aniadeHijo(nodo_cilindro);
 
    // Pierna izquierda
-   Android->aniadeHijo(nodo_traslacion_pierna_izquierda);
+   todo_menos_ojos->aniadeHijo(nodo_traslacion_pierna_izquierda);
       nodo_traslacion_pierna_izquierda->aniadeHijo(nodo_parametrizado_rotacion_pierna_izquierda);
          nodo_parametrizado_rotacion_pierna_izquierda->aniadeHijo(pierna);
 
    // Pierna derecha
-   Android->aniadeHijo(nodo_traslacion_pierna_derecha);
+   todo_menos_ojos->aniadeHijo(nodo_traslacion_pierna_derecha);
       nodo_traslacion_pierna_derecha->aniadeHijo(nodo_parametrizado_rotacion_pierna_derecha);
          nodo_parametrizado_rotacion_pierna_derecha->aniadeHijo(pierna);
 
    // Cabeza
-   Android->aniadeHijo(nodo_traslacion_cabeza);
+   todo_menos_ojos->aniadeHijo(nodo_traslacion_cabeza);
       nodo_traslacion_cabeza->aniadeHijo(cabeza);
 
+   // Ojos
+   Android->aniadeHijo(nodo_shader_ojos);
+      nodo_shader_ojos->aniadeHijo(ojos);
+
    // Brazo izquierdo
-   Android->aniadeHijo(nodo_traslacion_brazo_izquierdo);
+   todo_menos_ojos->aniadeHijo(nodo_traslacion_brazo_izquierdo);
       nodo_traslacion_brazo_izquierdo->aniadeHijo(nodo_parametrizado_rotacion_brazo_izquierdo);
          nodo_parametrizado_rotacion_brazo_izquierdo->aniadeHijo(brazo);
 
    // Brazo derecho
-   Android->aniadeHijo(nodo_traslacion_brazo_derecho);
+   todo_menos_ojos->aniadeHijo(nodo_traslacion_brazo_derecho);
       nodo_traslacion_brazo_derecho->aniadeHijo(nodo_parametrizado_rotacion_brazo_derecho);
          nodo_parametrizado_rotacion_brazo_derecho->aniadeHijo(brazo);
+
+   Android->aniadeHijo(nodo_shader_android);
+      nodo_shader_android->aniadeHijo(todo_menos_ojos);
+
 
    raiz->aniadeHijo(nodo_parametrizado_rotacion_cuerpo);
       nodo_parametrizado_rotacion_cuerpo->aniadeHijo(nodo_parametrizado_traslacion);
@@ -367,28 +389,6 @@ void Practica3::Inicializar( int argc, char *argv[] )
 
 void Practica3::DibujarObjetos()
 {
-   /*
-   switch (modo_dibujo)
-   {
-      case ALAMBRE:
-         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-         break;
-      case PUNTOS:
-         glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-         break;
-      case SOLIDO:
-      case AJEDREZ:
-      case SOLIDO_CARAS:
-         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-         break;
-      default:
-         cout << "Enumerado inválido para modo_dibujo" << endl;
-         exit(-3);
-         break;
-
-   }
-   */
-   glUseProgram(idProg);
 
    glEnable( GL_LIGHTING );
    glEnable( GL_NORMALIZE );
@@ -585,7 +585,7 @@ void Practica3::Debug()
 
    string cauce;
 
-   if (idProg == 0)
+   if (idProg_actual == 0)
       cauce = "Fijo";
    else
       cauce = "Programable";

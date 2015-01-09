@@ -11,12 +11,13 @@
 #include <string>
 #include "practica2.hpp"
 #include "file_ply_stl.hpp"
+#include "IDs_Shaders.hpp"
 
 using std::cout;
 using std::vector;
 using std::string;
 
-Practica2::Practica2(GLuint idProg) : Practica(idProg)
+Practica2::Practica2()
 {
    malla = nullptr;
 }
@@ -78,7 +79,7 @@ void Practica2::Inicializar(int argc, char *argv[])
 
 void Practica2::DibujarObjetos()
 {
-   glUseProgram(idProg);
+   UsarPrograma(idProg_P1_P2);
    malla->Visualizar();
 }
 
@@ -129,7 +130,7 @@ void Practica2::Debug()
 
    string cauce;
 
-   if (idProg == 0)
+   if (idProg_actual == 0)
       cauce = "Fijo";
    else
       cauce = "Programable";

@@ -69,7 +69,7 @@ void NodoTransformacionParametrizado::Procesa()
    pila_opengl.push(pila_opengl.top());
    pila_opengl.top() *= *matrizTransformacion;
 
-   GLint modelViewLocation = glGetUniformLocation(idProg_P3_P4,
+   GLint modelViewLocation = glGetUniformLocation(idProg_actual,
                                                   "MVP");
    glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, value_ptr(pila_opengl.top()));
 
@@ -93,7 +93,7 @@ void NodoTransformacion::Procesa()
    pila_opengl.push(pila_opengl.top());
    pila_opengl.top() *= matrizTransformacion;
 
-   GLint modelViewLocation = glGetUniformLocation(idProg_P3_P4,
+   GLint modelViewLocation = glGetUniformLocation(idProg_actual,
                                                   "MVP");
    glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, value_ptr(pila_opengl.top()));
 
@@ -102,5 +102,16 @@ void NodoTransformacion::Procesa()
    pila_opengl.pop();
 
  //glPopMatrix();
+}
+
+NodoShader::NodoShader(GLuint idProgShader)
+{
+   idProg = idProgShader;
+}
+
+void NodoShader::Procesa()
+{
+   UsarPrograma(idProg);
+   NodoGrafoEscena::Procesa();
 }
 

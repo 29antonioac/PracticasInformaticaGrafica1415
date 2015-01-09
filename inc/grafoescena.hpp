@@ -71,5 +71,17 @@ private:
   mat4 matrizTransformacion;
 };
 
+class NodoShader : public NodoGrafoEscena
+{
+public:
+   NodoShader(GLuint idProgShader);
+   ~NodoShader() {}
+
+   void Procesa();
+
+private:
+   GLuint idProg;
+};
+
 
 #endif

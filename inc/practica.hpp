@@ -21,8 +21,7 @@ public:
    virtual void Debug() = 0;
    virtual void Ayuda(vector<string> & strings_control) = 0;
 protected:
-   GLuint idProg;
-   Practica(GLuint idProg) : idProg(idProg) {};
+   Practica(){};
    Practica(Practica const&);
    virtual ~Practica() {};
    void operator=(Practica const&);

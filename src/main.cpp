@@ -218,7 +218,7 @@ void FijarCamara()
 void DibujarEjes()
 {
 
-   glUseProgram(idProg_Ejes);
+   UsarPrograma(idProg_Ejes);
 
    // Get a handle for our "MVP" uniform
    GLuint MatrixID = glGetUniformLocation(idProg_Ejes, "MVP");
@@ -627,6 +627,18 @@ GLuint CrearPrograma( const char * archFrag, const char * archVert )
    return idProg ;
 }
 
+void LimpiarTodo()
+{
+   cout << "Borrar practica1" << endl;
+   delete practica1;
+   cout << "Borrar practica2" << endl;
+   delete practica2;
+   cout << "Borrar practica3" << endl;
+   delete practica3;
+   cout << "Borrar practica4" << endl;
+   delete practica4;
+}
+
 // *********************************************************************
 // **
 // ** Funciones de inicialización
@@ -679,6 +691,8 @@ void Inicializa_GLUT( int argc, char * argv[] )
    glutIdleFunc(Animar);
    //glutTimerFunc(500,Animar,0);
 
+   //glutCloseFunc(LimpiarTodo);
+
    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,
                  GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 }
@@ -707,7 +721,9 @@ void Inicializa_OpenGL( )
 
    idProg_Ejes    = CrearPrograma("src/shaders/Ejes_fragment.glsl","src/shaders/Ejes_vertex.glsl");
    idProg_P1_P2   = CrearPrograma("src/shaders/P1_P2_fragment.glsl","src/shaders/P1_P2_vertex.glsl");
-   idProg_P3_P4   = CrearPrograma("src/shaders/P3_P4_fragment.glsl","src/shaders/P3_P4_vertex.glsl");
+   idProg_P3_Android = CrearPrograma("src/shaders/P3_Android_fragment.glsl","src/shaders/P3_Android_vertex.glsl");
+   idProg_P3_Ojos = CrearPrograma("src/shaders/P3_Ojos_fragment.glsl","src/shaders/P3_Ojos_vertex.glsl");
+   idProg_P4   = CrearPrograma("src/shaders/P3_P4_fragment.glsl","src/shaders/P3_P4_vertex.glsl");
 
    // habilitar test de comparación de profundidades para 3D (y 2D)
    // es necesario, no está habilitado por defecto:
@@ -741,10 +757,10 @@ void Inicializa_OpenGL( )
 
 void Inicializar_Practicas(int argc, char *argv[])
 {
-   practica1 = new Practica1(idProg_P1_P2);
-   practica2 = new Practica2(idProg_P1_P2);
-   practica3 = new Practica3(idProg_P3_P4);
-   practica4 = new Practica4(idProg_P3_P4);
+   practica1 = new Practica1();
+   practica2 = new Practica2();
+   practica3 = new Practica3();
+   practica4 = new Practica4();
 
 
    practica1->Inicializar(argc, argv);
@@ -796,6 +812,7 @@ void Inicializar( int argc, char *argv[] )
    Inicializar_Practicas(argc, argv);
 }
 
+
 // *********************************************************************
 // **
 // ** Función principal
@@ -815,14 +832,7 @@ int main( int argc, char *argv[] )
    // Si salimos con Q, es que salimos bien, así que borramos datos
    cout << "Saliendo, borrando cosas" << endl;
 
-   cout << "Borrar practica1" << endl;
-   delete practica1;
-   cout << "Borrar practica2" << endl;
-   delete practica2;
-   cout << "Borrar practica3" << endl;
-   delete practica3;
-   cout << "Borrar practica4" << endl;
-   delete practica4;
+   LimpiarTodo();
 
    // ya está
    return 0;

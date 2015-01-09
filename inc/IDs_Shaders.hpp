@@ -1,8 +1,16 @@
 #ifndef IDS_SHADER_HPP
 #define IDS_SHADER_HPP
 
-#include <GL/gl.h>
+#include <GL/glew.h>
 
-extern GLuint idProg_Ejes, idProg_P1_P2, idProg_P3_P4; // ID del par fragment-vertex shader
+
+// ID del par fragment-vertex shader
+extern GLuint idProg_Ejes, idProg_P1_P2;
+extern GLuint idProg_P3_Android, idProg_P3_Ojos;
+extern GLuint idProg_P4_lata, idProg_P4_tapas, idProg_P4_peon_madera, idProg_P4_peon_blanco, idProg_P4_peon_negro;
+
+extern GLuint idProg_actual;
+
+bool UsarPrograma(GLuint idProg);
 
 #endif
