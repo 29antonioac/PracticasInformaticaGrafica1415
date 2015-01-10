@@ -66,6 +66,8 @@ private:
 
    vector<glm::vec3> vertices_semiesfera;
 
+   GLint IDLuz;
+
 
 
 

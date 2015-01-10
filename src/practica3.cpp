@@ -335,6 +335,8 @@ void Practica3::Inicializar( int argc, char *argv[] )
 
    // Luces y material (extensión de la práctica 4)
 
+         /*
+
    glLightModeli( GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE );
    glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR ) ;
    glLightModeli( GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE );
@@ -380,6 +382,14 @@ void Practica3::Inicializar( int argc, char *argv[] )
    //vec3 ej(1.1,2.2,3.3);
 
    //cout << "Ejemplo" << ej << " -> " << AniadeW(ej,1.0) << endl;
+    * */
+   IDLuz = glGetUniformLocation(idProg_P3_Android, "posicion_luz_coordenadas_mundo");
+   if (IDLuz == -1)
+   {
+      cout << "Error en IDLuz, saliendo";
+      glutLeaveMainLoop();
+   }
+
 
 
 
@@ -390,17 +400,18 @@ void Practica3::Inicializar( int argc, char *argv[] )
 void Practica3::DibujarObjetos()
 {
 
-   glEnable( GL_LIGHTING );
-   glEnable( GL_NORMALIZE );
-   glDisable( GL_COLOR_MATERIAL );
+   //glEnable( GL_LIGHTING );
+   //glEnable( GL_NORMALIZE );
+  //glDisable( GL_COLOR_MATERIAL );
 
    // Dibujar aquí
-   fuentes.Activar();
+   //fuentes.Activar();
+   glUniform3f(IDLuz,0.0,0.0,4.0);
    raiz->Procesa();
 
-   glDisable( GL_LIGHTING );
-   glDisable( GL_NORMALIZE );
-   glEnable( GL_COLOR_MATERIAL );
+   //glDisable( GL_LIGHTING );
+   //glDisable( GL_NORMALIZE );
+   //glEnable( GL_COLOR_MATERIAL );
 
 }
 

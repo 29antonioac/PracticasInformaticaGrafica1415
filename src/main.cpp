@@ -221,10 +221,20 @@ void DibujarEjes()
    UsarPrograma(idProg_Ejes);
 
    // Get a handle for our "MVP" uniform
-   GLuint MatrixID = glGetUniformLocation(idProg_Ejes, "MVP");
+   GLint IDModelado = glGetUniformLocation(idProg_Ejes, "Modelado");
+   GLint IDVista = glGetUniformLocation(idProg_Ejes, "Vista");
+   GLint IDProyeccion = glGetUniformLocation(idProg_Ejes, "Proyeccion");
+
+   if (IDModelado == -1 || IDVista == -1 || IDProyeccion == -1)
+   {
+      cout << "Algún error con los ID de uniform, saliedo.." << endl;
+      glutLeaveMainLoop();
+   }
 
 
-   glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+   glUniformMatrix4fv(IDModelado, 1, GL_FALSE, &Modelado[0][0]);
+   glUniformMatrix4fv(IDVista, 1, GL_FALSE, &Vista[0][0]);
+   glUniformMatrix4fv(IDProyeccion, 1, GL_FALSE, &Proyeccion[0][0]);
 
    glBindVertexArray(id_VAO);
 
@@ -282,7 +292,7 @@ void FGE_Redibujado()
    FijarViewportProyeccion() ; // necesario pues la escala puede cambiar
    FijarCamara();
    // Actualizamos nuestra pila interna
-   pila_opengl.top() = MVP;
+   pila_opengl.top() = Modelado;
    LimpiarVentana();
    DibujarEjes() ;
    practicaActual->DibujarObjetos();
@@ -691,7 +701,7 @@ void Inicializa_GLUT( int argc, char * argv[] )
    glutIdleFunc(Animar);
    //glutTimerFunc(500,Animar,0);
 
-   //glutCloseFunc(LimpiarTodo);
+   glutCloseFunc(LimpiarTodo);
 
    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,
                  GLUT_ACTION_GLUTMAINLOOP_RETURNS);
@@ -752,7 +762,7 @@ void Inicializa_OpenGL( )
    // ??
    FijarViewportProyeccion() ;
    FijarCamara() ;
-   pila_opengl.push(MVP);
+   pila_opengl.push(Modelado);
    
    
    // ya está
@@ -832,11 +842,6 @@ int main( int argc, char *argv[] )
    // llamar al bucle de gestión de eventos de glut, tiene el 
    // control hasta el final de la aplicación
    glutMainLoop();
-   
-   // Si salimos con Q, es que salimos bien, así que borramos datos
-   cout << "Saliendo, borrando cosas" << endl;
-
-   LimpiarTodo();
 
    // ya está
    return 0;
