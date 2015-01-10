@@ -280,6 +280,9 @@ void MallaTVT::Visualizar()
    {
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+      if (modo_dibujo == SOLIDO_CARAS) glShadeModel(GL_FLAT);
+      else glShadeModel(GL_SMOOTH);
+
       if (!normales_vertices.empty())
       {
          normal_vertices = true;
@@ -376,6 +379,7 @@ void MallaTVT::Visualizar()
 
 void MallaTVT::VisualizarModoInmediato()
 {
+   glShadeModel(GL_FLAT);
    glBegin( GL_TRIANGLES );
    for (unsigned i = 0; i < tri.size(); i++)
    {
@@ -391,6 +395,7 @@ void MallaTVT::VisualizarModoInmediato()
       }
    }
    glEnd();
+   glShadeModel(GL_SMOOTH);
 }
 
 void MallaTVT::VisualizarNormalesCaras()
