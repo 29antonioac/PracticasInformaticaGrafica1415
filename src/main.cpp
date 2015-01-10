@@ -719,11 +719,15 @@ void Inicializa_OpenGL( )
       exit(1);
    }
 
-   idProg_Ejes    = CrearPrograma("src/shaders/Ejes_fragment.glsl","src/shaders/Ejes_vertex.glsl");
-   idProg_P1_P2   = CrearPrograma("src/shaders/P1_P2_fragment.glsl","src/shaders/P1_P2_vertex.glsl");
-   idProg_P3_Android = CrearPrograma("src/shaders/P3_Android_fragment.glsl","src/shaders/P3_Android_vertex.glsl");
-   idProg_P3_Ojos = CrearPrograma("src/shaders/P3_Ojos_fragment.glsl","src/shaders/P3_Ojos_vertex.glsl");
-   idProg_P4   = CrearPrograma("src/shaders/P3_P4_fragment.glsl","src/shaders/P3_P4_vertex.glsl");
+   idProg_Ejes             = CrearPrograma("src/shaders/Ejes_fragment.glsl","src/shaders/Ejes_vertex.glsl");
+   idProg_P1_P2            = CrearPrograma("src/shaders/P1_P2_fragment.glsl","src/shaders/P1_P2_vertex.glsl");
+   idProg_P3_Android       = CrearPrograma("src/shaders/P3_Android_fragment.glsl","src/shaders/P3_Android_vertex.glsl");
+   idProg_P3_Ojos          = CrearPrograma("src/shaders/P3_Ojos_fragment.glsl","src/shaders/P3_Ojos_vertex.glsl");
+   idProg_P4_lata          = CrearPrograma("src/shaders/P4_lata_fragment.glsl","src/shaders/P4_lata_vertex.glsl");
+   idProg_P4_tapas         = CrearPrograma("src/shaders/P4_tapas_fragment.glsl","src/shaders/P4_tapas_vertex.glsl");
+   idProg_P4_peon_madera   = CrearPrograma("src/shaders/P4_peon_madera_fragment.glsl","src/shaders/P4_peon_madera_vertex.glsl");
+   idProg_P4_peon_blanco   = CrearPrograma("src/shaders/P4_peon_blanco_fragment.glsl","src/shaders/P4_peon_blanco_vertex.glsl");
+   idProg_P4_peon_negro    = CrearPrograma("src/shaders/P4_peon_negro_fragment.glsl","src/shaders/P4_peon_negro_vertex.glsl");
 
    // habilitar test de comparación de profundidades para 3D (y 2D)
    // es necesario, no está habilitado por defecto:

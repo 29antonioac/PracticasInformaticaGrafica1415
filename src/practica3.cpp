@@ -406,19 +406,25 @@ void Practica3::DibujarObjetos()
 
 void Practica3::CambioModoDibujo(visualizacion modo_dibujo)
 {
+   /*
    this->modo_dibujo = modo_dibujo;
    if (this->semiesfera != nullptr)
       this->semiesfera->CambioModoDibujo(this->modo_dibujo);
+   if (this->semiesfera_ojo != nullptr)
+      this->semiesfera->CambioModoDibujo(this->modo_dibujo);
    if (this->cilindro != nullptr)
       this->cilindro->CambioModoDibujo(this->modo_dibujo);
+   */
 }
 
 void Practica3::CambioModoNormales()
 {
+   /*
    if (this->semiesfera != nullptr)
       this->semiesfera->CambioModoNormales();
    if (this->cilindro != nullptr)
       this->cilindro->CambioModoNormales();
+      */
 }
 
 void Practica3::CambioGradoLibertad(int grado_libertad)

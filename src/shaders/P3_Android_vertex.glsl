@@ -3,6 +3,7 @@
 // Entrada de datos
 layout(location = 0) in vec3 posicion_vertice;
 layout(location = 1) in vec3 color_vertice;
+layout(location = 2) in vec3 normal_vertice;
 
 // Salida de datos, sera interpolada para cada fragment
 //out vec3 color_fragment;

@@ -197,6 +197,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * nodo_traslacion_peon_blanco = new NodoTransformacion(matriz_traslacion_peones);
    NodoGrafoEscena * nodo_traslacion_peon_negro = new NodoTransformacion(matriz_rotacion_peon_negro * matriz_traslacion_peones);
    NodoGrafoEscena * nodo_escalado_lata = new NodoTransformacion(glm::scale(glm::mat4(1.0),glm::vec3(4.0,4.0,4.0)));
+   NodoGrafoEscena * nodo_escalado_tapas = new NodoTransformacion(glm::scale(glm::mat4(1.0),glm::vec3(4.0,4.0,4.0)));
    NodoGrafoEscena * nodo_peon_blanco = new NodoTerminal(peon_blanco);
    NodoGrafoEscena * nodo_peon_negro = new NodoTerminal(peon_negro);
    NodoGrafoEscena * nodo_peon_madera = new NodoTerminal(peon_madera);
@@ -204,20 +205,33 @@ void Practica4::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * nodo_tapa_sup = new NodoTerminal(tapa_sup);
    NodoGrafoEscena * nodo_tapa_inf = new NodoTerminal(tapa_inf);
 
-   raiz->aniadeHijo(nodo_traslacion_peon_blanco);
-      nodo_traslacion_peon_blanco->aniadeHijo(nodo_peon_blanco);
+   // Nodos Shader
+   NodoGrafoEscena * nodo_shader_lata = new NodoShader(idProg_P4_lata);
+   NodoGrafoEscena * nodo_shader_tapas = new NodoShader(idProg_P4_tapas);
+   NodoGrafoEscena * nodo_shader_peon_blanco = new NodoShader(idProg_P4_peon_blanco);
+   NodoGrafoEscena * nodo_shader_peon_madera = new NodoShader(idProg_P4_peon_madera);
+   NodoGrafoEscena * nodo_shader_peon_negro = new NodoShader(idProg_P4_peon_negro);
 
-   raiz->aniadeHijo(nodo_traslacion_peon_negro);
-      nodo_traslacion_peon_negro->aniadeHijo(nodo_peon_negro);
 
+   raiz->aniadeHijo(nodo_shader_peon_blanco);
+      nodo_shader_peon_blanco->aniadeHijo(nodo_traslacion_peon_blanco);
+         nodo_traslacion_peon_blanco->aniadeHijo(nodo_peon_blanco);
 
-   raiz->aniadeHijo(nodo_traslacion_peon_madera);
-      nodo_traslacion_peon_madera->aniadeHijo(nodo_peon_madera);
+   raiz->aniadeHijo(nodo_shader_peon_negro);
+      nodo_shader_peon_negro->aniadeHijo(nodo_traslacion_peon_negro);
+         nodo_traslacion_peon_negro->aniadeHijo(nodo_peon_negro);
 
-   raiz->aniadeHijo(nodo_escalado_lata);
-      nodo_escalado_lata->aniadeHijo(nodo_cuerpo_lata);
-      nodo_escalado_lata->aniadeHijo(nodo_tapa_sup);
-      nodo_escalado_lata->aniadeHijo(nodo_tapa_inf);
+   raiz->aniadeHijo(nodo_shader_peon_madera);
+      nodo_shader_peon_madera->aniadeHijo(nodo_traslacion_peon_madera);
+         nodo_traslacion_peon_madera->aniadeHijo(nodo_peon_madera);
+
+   raiz->aniadeHijo(nodo_shader_lata);
+      nodo_shader_lata->aniadeHijo(nodo_escalado_lata);
+         nodo_escalado_lata->aniadeHijo(nodo_cuerpo_lata);
+   raiz->aniadeHijo(nodo_shader_tapas);
+      nodo_shader_tapas->aniadeHijo(nodo_escalado_tapas);
+         nodo_escalado_tapas->aniadeHijo(nodo_tapa_sup);
+         nodo_escalado_tapas->aniadeHijo(nodo_tapa_inf);
 
 
 }
@@ -242,12 +256,12 @@ void Practica4::DibujarObjetos()
 
 void Practica4::CambioModoDibujo(visualizacion modo_dibujo)
 {
-   this->modo_dibujo = modo_dibujo;
+   //this->modo_dibujo = modo_dibujo;
 }
 
 void Practica4::CambioModoNormales()
 {
-   this->cuerpo_lata->CambioModoNormales();
+   //this->cuerpo_lata->CambioModoNormales();
 
 }
 

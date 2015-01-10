@@ -1,4 +1,5 @@
 #include "MallaTVT.hpp"
+#include "IDs_Shaders.hpp"
 #include <glm/vec3.hpp> // glm::vec3
 #include <glm/vec4.hpp> // glm::vec4, glm::ivec4
 #include <glm/mat4x4.hpp> // glm::mat4
@@ -381,12 +382,18 @@ void MallaTVT::Visualizar()
 
    if (dibujo_normales == AMBAS || dibujo_normales == CARAS )
    {
+      GLuint idProg_temp = idProg_actual;
+      UsarPrograma(idProg_Ejes);
       VisualizarNormalesCaras();
+      UsarPrograma(idProg_temp);
    }
 
    if (dibujo_normales == AMBAS || dibujo_normales == VERTICES)
    {
+      GLuint idProg_temp = idProg_actual;
+      UsarPrograma(idProg_Ejes);
       VisualizarNormalesVertices();
+      UsarPrograma(idProg_temp);
    }
 
 
