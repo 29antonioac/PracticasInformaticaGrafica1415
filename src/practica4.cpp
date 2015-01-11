@@ -240,17 +240,17 @@ void Practica4::Inicializar( int argc, char *argv[] )
 void Practica4::DibujarObjetos()
 {
 
-   glEnable( GL_LIGHTING );
-   glEnable( GL_NORMALIZE );
-   glDisable( GL_COLOR_MATERIAL );
+   //glEnable( GL_LIGHTING );
+   //glEnable( GL_NORMALIZE );
+   //glDisable( GL_COLOR_MATERIAL );
 
    // Dibujar aquí
-   fuentes.Activar();
+   //fuentes.Activar();
    raiz->Procesa();
 
-   glDisable( GL_LIGHTING );
-   glDisable( GL_NORMALIZE );
-   glEnable( GL_COLOR_MATERIAL );
+   //glDisable( GL_LIGHTING );
+   //glDisable( GL_NORMALIZE );
+   //glEnable( GL_COLOR_MATERIAL );
 
 }
 

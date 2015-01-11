@@ -12,7 +12,9 @@
 #include <vector>
 #include "practica1.hpp"
 #include "file_ply_stl.hpp"
+#include "PilaMatrices.hpp"
 #include "IDs_Shaders.hpp"
+#include "grafoescena.hpp"
 
 using std::cout;
 using std::endl;
@@ -51,7 +53,35 @@ void Practica1::Inicializar( int argc, char *argv[] )
    malla = new MallaTVT(MALLA,vertices_ply,caras_ply);
 
    cout << "-----------------------------------" << endl;
+/*
+   IDModelado = glGetUniformLocation(idProg_P1_P2,"Modelado");
+   IDVista = glGetUniformLocation(idProg_P1_P2,"Vista");
+   IDProyeccion = glGetUniformLocation(idProg_P1_P2,"Proyeccion");
 
+   if (IDModelado == -1)
+   {
+      cout << "IDModelado es -1";
+      glutLeaveMainLoop();
+   }
+   if (IDVista == -1)
+   {
+      cout << "IDVista es -1";
+      glutLeaveMainLoop();
+   }
+   if (IDProyeccion == -1)
+   {
+      cout << "IDProyeccion es -1";
+      glutLeaveMainLoop();
+   }
+   */
+   raiz = new NodoGrafoEscena;
+   NodoGrafoEscena * nodo_shader = new NodoShader(idProg_P1_P2);
+   NodoGrafoEscena * nodo_malla = new NodoTerminal(malla);
+   NodoGrafoEscena * nodo_transformacion = new NodoTransformacion(scale(glm::mat4(),glm::vec3(1.0,1.0,1.0)));
+
+   raiz->aniadeHijo(nodo_shader);
+      nodo_shader->aniadeHijo(nodo_transformacion);
+         nodo_transformacion->aniadeHijo(nodo_malla);
 
    
 }
@@ -61,8 +91,19 @@ void Practica1::Inicializar( int argc, char *argv[] )
 
 void Practica1::DibujarObjetos()
 {
-   UsarPrograma(idProg_P1_P2);
-   malla->Visualizar();
+
+   //UsarPrograma(idProg_P1_P2);
+   /*
+   glUniformMatrix4fv(IDModelado, 1, GL_FALSE, &Modelado[0][0]);
+   glUniformMatrix4fv(IDVista, 1, GL_FALSE, &Vista[0][0]);
+   glUniformMatrix4fv(IDProyeccion, 1, GL_FALSE, &Proyeccion[0][0]);*/
+
+   //malla->Visualizar();
+   //cout << "idProg_actual: " << idProg_actual << ", idProg_P1_P2: " << idProg_P1_P2 << endl;
+   raiz->Procesa();
+   //cout << "idProg_actual: " << idProg_actual << ", idProg_P1_P2: " << idProg_P1_P2 << endl;
+
+
 }
 
 void Practica1::CambioModoDibujo(visualizacion modo_dibujo)

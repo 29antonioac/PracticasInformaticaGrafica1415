@@ -301,6 +301,8 @@ void MallaTVT::Visualizar()
 
    bool coordenadas_textura = false;
 
+   glBindVertexArray(id_VAO_malla);
+
    // Pendiente de reorganizar
 
    if (material != nullptr)
@@ -382,6 +384,7 @@ void MallaTVT::Visualizar()
 
    if (dibujo_normales == AMBAS || dibujo_normales == CARAS )
    {
+      glBindVertexArray(id_VAO_lineas[0]);
       GLuint idProg_temp = idProg_actual;
       UsarPrograma(idProg_Ejes);
       VisualizarNormalesCaras();
@@ -390,11 +393,14 @@ void MallaTVT::Visualizar()
 
    if (dibujo_normales == AMBAS || dibujo_normales == VERTICES)
    {
+      glBindVertexArray(id_VAO_lineas[1]);
       GLuint idProg_temp = idProg_actual;
       UsarPrograma(idProg_Ejes);
       VisualizarNormalesVertices();
       UsarPrograma(idProg_temp);
    }
+
+   glBindVertexArray(0);
 
 
 }

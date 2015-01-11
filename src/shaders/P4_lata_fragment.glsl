@@ -1,4 +1,4 @@
-#version 330 core
+#version 410
 
 // Valores interpolados desde el vertex shader
 //in vec3 color_fragment;

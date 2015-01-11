@@ -1,51 +1,71 @@
 #version 330 core
 
 // Valores interpolados desde el vertex shader
-in vec3 posicion_coordenadas_mundo;
-in vec3 normal_espacio_camara;
-in vec3 direccion_ojo_espacio_camara;
-in vec3 direccion_luz_espacio_camara;
+in vec4 normalPunto;
+in vec4 posicionPunto;
+in vec3 vectorObservador;
+
+uniform mat4 Vista;
 
 // Datos de salida
 out vec3 color;
 
-// Parametros uniform
-uniform vec3 posicion_luz_coordenadas_mundo;
+//void FGE (in float exponente_brillo, in vec3 vectorNormal, in vec3 vectorObservador, in vec3 vectorFuente, out float resultado)
+//{
+//    resultado = pow(max(dot(normalize(vectorObservador + vectorFuente), vectorNormal),0.0),exponente_brillo);
+//}
 
-void main(){
+float FGE (float exponente_brillo, vec3 vectorNormal, vec3 vectorObservador, vec3 vectorFuente)
+{
+    return pow(max(dot(normalize(vectorObservador + vectorFuente), vectorNormal),0.0),exponente_brillo);
+}
 
-    // Emision de luz
-    vec3 colorLuz = vec3(1.0,1.0,1.0);
-    float potenciaLuz = 50.0f;
+vec3 EvaluarMIL( vec3 material[4], float exponente_brillo,
+                vec3 vectorNormal, vec3 vectorObservador, vec3 vectorFuente, vec3 colorFuente)
+{
+    vec3 colorEmision = material[0];
+    vec3 colorAmbiental = colorFuente * material[1];
+    vec3 colorDifuso = colorFuente * material[2];
+    vec3 colorEspecular = colorFuente * material[3];
     
-    // Propiedades del material
-    vec3 colorDifuso = vec3(1.0,1.0,1.0);
-    vec3 colorAmbiental = vec3(0.1,0.1,0.1) * colorDifuso;
-    vec3 colorEspecular = vec3(0.8,0.8,0.8);
-    
-    // Distancia a la luz
-    float distancia = length(posicion_luz_coordenadas_mundo - posicion_coordenadas_mundo);
+    vec3 resultado = colorEmision + colorAmbiental;
+    float nl = dot(vectorNormal,vectorFuente);
+    if (nl > 0.0)
+        resultado += colorDifuso*nl + colorEspecular*FGE(exponente_brillo, vectorNormal, vectorObservador, vectorFuente);
+        
+    return resultado;
+}
 
-    // Normal del fragment en coordenadas de camara
-    vec3 n = normalize(normal_espacio_camara);
-    // Direccion de la luz desde el fragment
-    vec3 l = normalize(direccion_luz_espacio_camara);
-    // Coseno del angulo entre la normal y la direccion de la luz
-    float cosTheta = clamp(dot(n,l),0,1);
+void main()
+{
+
+        // Tengo que definirlos
+    vec3 vectorFuente = vec3(10.0,0.0,10.0) - posicionPunto.xyz; // vector hacia la fuente de luz w = 0
+    vec4 temp = Vista * vec4(vectorFuente,0.0);
+    vectorFuente = temp.xyz;
+    vec3 colorFuente = vec3(1.0,1.0,1.0); // color de la fuente de luz
+    vec3 colorMaterial[4]; // colores material 0 = emi 1 = amb 2 = dif 3 = esp
+    float exponenteEspecular = 5.0;
     
-    // Vector ojo
-    vec3 E = normalize(direccion_ojo_espacio_camara);
-    // Direccion en la que el triangulo refleja la luz
-    vec3 R = reflect(-l,n);
-    // Coseno del angulo entre el vector ojo y el vector reflejo
-    float cosAlpha = clamp(dot(E,R),0,1);
-    
-    color = colorAmbiental + 
-            colorDifuso * colorLuz * potenciaLuz * cosTheta / (distancia*distancia) +
-            colorEspecular * colorLuz * potenciaLuz * pow(cosAlpha,5) / (distancia*distancia);
+    colorMaterial[0] = vec3(0.0,0.8,0.0);
+    colorMaterial[1] = vec3(0.1,0.1,0.1) * colorMaterial[0];
+    colorMaterial[2] = vec3(0.3,0.3,0.3);
+    colorMaterial[3] = vec3(0.7,0.7,0.7);
     
     
+    // ----------
+    vec3 normal = normalize(normalPunto.xyz);
+    vec3 observador = normalize(vectorObservador);
+    vec3 color_resultado = vec3(0.0,0.0,0.0);
+    
+    vec3 vector_luz = normalize(vectorFuente);
+
+    color_resultado += EvaluarMIL(colorMaterial, exponenteEspecular,
+                normal, observador, vector_luz, colorFuente);
+    
+
     // color = color interpolado desde el vertex shader
-    //color = vec3(0.0,0.8,0.0);
+    //gl_FragColor = vec4( colorResultante,1.0);
+    color = color_resultado;
 
 }

@@ -69,9 +69,13 @@ void NodoTransformacionParametrizado::Procesa()
    pila_opengl.push(pila_opengl.top());
    pila_opengl.top() *= *matrizTransformacion;
 
-   GLint modelViewLocation = glGetUniformLocation(idProg_actual,
-                                                  "MVP");
-   glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, value_ptr(pila_opengl.top()));
+   GLint IDModelado = glGetUniformLocation(idProg_actual,"Modelado");
+   GLint IDVista = glGetUniformLocation(idProg_actual, "Vista");
+   GLint IDProyeccion = glGetUniformLocation(idProg_actual, "Proyeccion");
+
+   glUniformMatrix4fv(IDModelado, 1, GL_FALSE, value_ptr(pila_opengl.top()));
+   glUniformMatrix4fv(IDVista, 1, GL_FALSE, value_ptr(Vista));
+   glUniformMatrix4fv(IDProyeccion, 1, GL_FALSE, value_ptr(Proyeccion));
 
    NodoGrafoEscena::Procesa();
 

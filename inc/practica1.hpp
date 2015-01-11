@@ -14,6 +14,7 @@
 
 #include "MallaTVT.hpp"
 #include "practica.hpp"
+#include "grafoescena.hpp"
 
 class Practica1 : virtual public Practica
 {
@@ -42,6 +43,10 @@ private:
    vector<int> caras_ply;
 
    string file;
+
+   GLint IDModelado, IDVista, IDProyeccion;
+
+   NodoGrafoEscena * raiz;
 };
 
 #endif

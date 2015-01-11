@@ -14,6 +14,7 @@
 
 #include "MallaTVT.hpp"
 #include "practica.hpp"
+#include "grafoescena.hpp"
 
 
 class Practica2 : virtual public Practica
@@ -42,6 +43,8 @@ private:
 
    unsigned N,M;
    string file;
+
+   NodoGrafoEscena * raiz;
 };
 
 #endif

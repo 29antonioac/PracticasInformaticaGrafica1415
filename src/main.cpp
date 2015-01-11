@@ -219,6 +219,7 @@ void DibujarEjes()
 {
 
    UsarPrograma(idProg_Ejes);
+   cout << "idProg_Ejes: " << idProg_Ejes << endl;
 
    // Get a handle for our "MVP" uniform
    GLint IDModelado = glGetUniformLocation(idProg_Ejes, "Modelado");
@@ -265,6 +266,8 @@ void DibujarEjes()
    glDisableVertexAttribArray(0);
    glDisableVertexAttribArray(1);
 
+   glBindVertexArray(0);
+
    
    
 }
@@ -294,11 +297,14 @@ void FGE_Redibujado()
    // Actualizamos nuestra pila interna
    pila_opengl.top() = Modelado;
    LimpiarVentana();
-   DibujarEjes() ;
+   //DibujarEjes() ;
+   //cout << "Shader antes de dibujar objeto " << idProg_actual << endl;
    practicaActual->DibujarObjetos();
+   //cout << "Shader despues de dibujar objeto " << idProg_actual << endl;
    //Debug_Ayuda();
    glFinish();
    glutSwapBuffers();
+
 }
 
 // ---------------------------------------------------------------------
@@ -637,6 +643,100 @@ GLuint CrearPrograma( const char * archFrag, const char * archVert )
    return idProg ;
 }
 
+GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path){
+ 
+   // Create the shaders
+   GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+   GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+
+   // Read the Vertex Shader code from the file
+   std::string VertexShaderCode;
+   std::ifstream VertexShaderStream(vertex_file_path, std::ios::in);
+   if(VertexShaderStream.is_open())
+   {
+     std::string Line = "";
+     while(getline(VertexShaderStream, Line))
+         VertexShaderCode += "\n" + Line;
+     VertexShaderStream.close();
+   }
+
+   // Read the Fragment Shader code from the file
+   std::string FragmentShaderCode;
+   std::ifstream FragmentShaderStream(fragment_file_path, std::ios::in);
+   if(FragmentShaderStream.is_open()){
+     std::string Line = "";
+     while(getline(FragmentShaderStream, Line))
+         FragmentShaderCode += "\n" + Line;
+     FragmentShaderStream.close();
+   }
+
+   GLint Result = GL_FALSE;
+   int InfoLogLength;
+
+   // Compile Vertex Shader
+   //printf("Compiling shader : %s\n", vertex_file_path);
+   cout << "########################################" << endl;
+   cout << "Compilando vertex shader: " << vertex_file_path << endl;
+   char const * VertexSourcePointer = VertexShaderCode.c_str();
+   glShaderSource(VertexShaderID, 1, &VertexSourcePointer , NULL);
+   glCompileShader(VertexShaderID);
+
+   // Check Vertex Shader
+   glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &Result);
+   glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+   std::vector<char> VertexShaderErrorMessage(InfoLogLength);
+   glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
+   cout << "Error vertex shader: ";
+   for (auto c: VertexShaderErrorMessage)
+      cout << c;
+   cout << endl;
+   //fprintf(stdout, "%s\n", &VertexShaderErrorMessage[0]);
+
+   // Compile Fragment Shader
+   //printf("Compiling shader : %s\n", fragment_file_path);
+   cout << "Compilando fragment shader: " << fragment_file_path << endl;
+   char const * FragmentSourcePointer = FragmentShaderCode.c_str();
+   glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer , NULL);
+   glCompileShader(FragmentShaderID);
+
+   // Check Fragment Shader
+   glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &Result);
+   glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+   std::vector<char> FragmentShaderErrorMessage(InfoLogLength);
+   glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
+   cout << "Error fragment shader: ";
+   for (auto c: FragmentShaderErrorMessage)
+      cout << c;
+   cout << endl;
+   //fprintf(stdout, "%s\n", &FragmentShaderErrorMessage[0]);
+
+   // Link the program
+   //fprintf(stdout, "Linking program\n");
+   cout << "Enlazando" << endl;
+   GLuint ProgramID = glCreateProgram();
+   glAttachShader(ProgramID, VertexShaderID);
+   glAttachShader(ProgramID, FragmentShaderID);
+   glLinkProgram(ProgramID);
+
+   // Check the program
+   glGetProgramiv(ProgramID, GL_LINK_STATUS, &Result);
+   glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+   std::vector<char> ProgramErrorMessage( max(InfoLogLength, int(1)) );
+   glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
+   cout << "Error programa: ";
+   for (auto c: ProgramErrorMessage)
+      cout << c;
+   cout << endl;
+   //fprintf(stdout, "%s\n", &ProgramErrorMessage[0]);
+
+   glDeleteShader(VertexShaderID);
+   glDeleteShader(FragmentShaderID);
+
+   cout << "########################################" << endl;
+
+   return ProgramID;
+}
+
 void LimpiarTodo()
 {
    cout << "Borrar practica1" << endl;
@@ -729,6 +829,7 @@ void Inicializa_OpenGL( )
       exit(1);
    }
 
+
    idProg_Ejes             = CrearPrograma("src/shaders/Ejes_fragment.glsl","src/shaders/Ejes_vertex.glsl");
    idProg_P1_P2            = CrearPrograma("src/shaders/P1_P2_fragment.glsl","src/shaders/P1_P2_vertex.glsl");
    idProg_P3_Android       = CrearPrograma("src/shaders/P3_Android_fragment.glsl","src/shaders/P3_Android_vertex.glsl");
@@ -738,6 +839,18 @@ void Inicializa_OpenGL( )
    idProg_P4_peon_madera   = CrearPrograma("src/shaders/P4_peon_madera_fragment.glsl","src/shaders/P4_peon_madera_vertex.glsl");
    idProg_P4_peon_blanco   = CrearPrograma("src/shaders/P4_peon_blanco_fragment.glsl","src/shaders/P4_peon_blanco_vertex.glsl");
    idProg_P4_peon_negro    = CrearPrograma("src/shaders/P4_peon_negro_fragment.glsl","src/shaders/P4_peon_negro_vertex.glsl");
+
+/*
+   idProg_Ejes             = LoadShaders("src/shaders/Ejes_fragment.glsl","src/shaders/Ejes_vertex.glsl");
+   idProg_P1_P2            = LoadShaders("src/shaders/P1_P2_fragment.glsl","src/shaders/P1_P2_vertex.glsl");
+   idProg_P3_Android       = LoadShaders("src/shaders/P3_Android_fragment.glsl","src/shaders/P3_Android_vertex.glsl");
+   idProg_P3_Ojos          = LoadShaders("src/shaders/P3_Ojos_fragment.glsl","src/shaders/P3_Ojos_vertex.glsl");
+   idProg_P4_lata          = LoadShaders("src/shaders/P4_lata_fragment.glsl","src/shaders/P4_lata_vertex.glsl");
+   idProg_P4_tapas         = LoadShaders("src/shaders/P4_tapas_fragment.glsl","src/shaders/P4_tapas_vertex.glsl");
+   idProg_P4_peon_madera   = LoadShaders("src/shaders/P4_peon_madera_fragment.glsl","src/shaders/P4_peon_madera_vertex.glsl");
+   idProg_P4_peon_blanco   = LoadShaders("src/shaders/P4_peon_blanco_fragment.glsl","src/shaders/P4_peon_blanco_vertex.glsl");
+   idProg_P4_peon_negro    = LoadShaders("src/shaders/P4_peon_negro_fragment.glsl","src/shaders/P4_peon_negro_vertex.glsl");
+*/
 
    // habilitar test de comparación de profundidades para 3D (y 2D)
    // es necesario, no está habilitado por defecto:

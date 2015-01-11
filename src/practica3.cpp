@@ -333,69 +333,16 @@ void Practica3::Inicializar( int argc, char *argv[] )
       nodo_parametrizado_rotacion_cuerpo->aniadeHijo(nodo_parametrizado_traslacion);
          nodo_parametrizado_traslacion->aniadeHijo(Android);
 
-   // Luces y material (extensión de la práctica 4)
 
-         /*
-
-   glLightModeli( GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE );
-   glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR ) ;
-   glLightModeli( GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE );
-
-   vec3 luz_direccional_componente_ambiental(1.0,1.0,1.0);
-   vec3 luz_direccional_componente_difusa(0.8,0.8,0.8);
-   vec3 luz_direccional_componente_especular(0.8,0.8,0.8);
-
-   fuente1 = new FuenteLuzPosicional(vec3(20.0,0.0,20.0), luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
-   fuente2 = new FuenteLuzPosicional(vec3(20.0,0.0,-20.0), luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
-   fuente3 = new FuenteLuzPosicional(vec3(-20.0,0.0,20.0), luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
-   fuente4 = new FuenteLuzPosicional(vec3(-20.0,0.0,-20.0), luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
-
-
-   fuentes.Agregar(fuente1);
-   fuentes.Agregar(fuente2);
-   fuentes.Agregar(fuente3);
-   fuentes.Agregar(fuente4);
-
-   vec3 android_componente_emision(0.0,1.0,0.0);  // Color verde
-   vec3 android_componente_ambiental(0.0,0.0,0.0);
-   vec3 android_componente_difusa(0.3,0.3,0.3);
-   vec3 android_componente_especular(0.8,0.8,0.8);
-   float android_exponente_especular = 2.0;
-
-   vec3 ojo_componente_emision(0.0,0.0,0.0);  // Color negro
-   vec3 ojo_componente_ambiental(0.0,0.0,0.0);
-   vec3 ojo_componente_difusa(0.0,0.0,0.0);
-   vec3 ojo_componente_especular(0.0,0.0,0.0);
-   float ojo_exponente_especular = 0.0;
-
-   material_android = new Material(android_componente_emision, android_componente_ambiental,
-         android_componente_difusa, android_componente_especular, android_exponente_especular);
-
-   material_ojo = new Material(ojo_componente_emision, ojo_componente_ambiental,
-            ojo_componente_difusa, ojo_componente_especular, ojo_exponente_especular);
-
-
-   semiesfera->SetMaterial(material_android);
-   cilindro->SetMaterial(material_android);
-   semiesfera_ojo->SetMaterial(material_ojo);
-
-   //vec3 ej(1.1,2.2,3.3);
-
-   //cout << "Ejemplo" << ej << " -> " << AniadeW(ej,1.0) << endl;
-    * */
-   IDLuz = glGetUniformLocation(idProg_P3_Android, "posicion_luz_coordenadas_mundo");
-   if (IDLuz == -1)
-   {
-      cout << "Error en IDLuz, saliendo";
-      glutLeaveMainLoop();
-   }
-
-
-
+   //IDLuz = glGetUniformLocation(idProg_P3_Android, "posicion_luz_coordenadas_mundo");
+   //if (IDLuz == -1)
+   //{
+   ///   cout << "Error en IDLuz, saliendo";
+    //  glutLeaveMainLoop();
+  // }
 
 }
 
-#define DEBUG
 
 void Practica3::DibujarObjetos()
 {
@@ -406,8 +353,10 @@ void Practica3::DibujarObjetos()
 
    // Dibujar aquí
    //fuentes.Activar();
-   glUniform3f(IDLuz,0.0,0.0,4.0);
+   //glUniform3f(IDLuz,10.0,0.0,10.0);
    raiz->Procesa();
+   //UsarPrograma(idProg_P3_Android);
+   //hormiga->Visualizar();
 
    //glDisable( GL_LIGHTING );
    //glDisable( GL_NORMALIZE );

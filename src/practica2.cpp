@@ -75,12 +75,24 @@ void Practica2::Inicializar(int argc, char *argv[])
       malla->Barrido_Traslacion(N,0.5,0.5,0.5);
 
    cout << "-----------------------------------" << endl;
+
+   raiz = new NodoGrafoEscena;
+   NodoGrafoEscena * nodo_shader = new NodoShader(idProg_P1_P2);
+   NodoGrafoEscena * nodo_malla = new NodoTerminal(malla);
+   NodoGrafoEscena * nodo_transformacion = new NodoTransformacion(scale(glm::mat4(),glm::vec3(1.0,1.0,1.0)));
+
+   raiz->aniadeHijo(nodo_shader);
+      nodo_shader->aniadeHijo(nodo_transformacion);
+         nodo_transformacion->aniadeHijo(nodo_malla);
 }
 
 void Practica2::DibujarObjetos()
 {
-   UsarPrograma(idProg_P1_P2);
+   /*
+   UsarPrograma(idProg_Ejes);
    malla->Visualizar();
+   */
+   raiz->Procesa();
 }
 
 void Practica2::CambioModoDibujo(visualizacion modo_dibujo)
