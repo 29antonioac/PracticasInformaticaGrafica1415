@@ -27,8 +27,6 @@ public:
    void CambioModoNormales();
    void CambioColorFijo();
    bool GestionarEvento(unsigned char tecla);
-   void Debug();
-   void Ayuda(vector<string> & strings_control);
 
    virtual ~Practica2();
 

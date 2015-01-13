@@ -29,8 +29,6 @@ public:
 
    void CambioColorFijo();
    bool GestionarEvento(unsigned char tecla);
-   void Debug();
-   void Ayuda(vector<string> & strings_control);
 
    virtual ~Practica4();
 
@@ -48,6 +46,9 @@ private:
    FuenteLuzPosicional * fuente_posicional;
    FuenteLuzDireccional* fuente_direccional;
    ColeccionFuentesLuz fuentes;
+
+   GLuint id_textura_lata;
+   GLint location_textura_lata;
 
 };
 

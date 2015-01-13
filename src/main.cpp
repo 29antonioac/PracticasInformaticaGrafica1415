@@ -219,7 +219,6 @@ void DibujarEjes()
 {
 
    UsarPrograma(idProg_Ejes);
-   cout << "idProg_Ejes: " << idProg_Ejes << endl;
 
    // Get a handle for our "MVP" uniform
    GLint IDModelado = glGetUniformLocation(idProg_Ejes, "Modelado");
@@ -297,11 +296,8 @@ void FGE_Redibujado()
    // Actualizamos nuestra pila interna
    pila_opengl.top() = Modelado;
    LimpiarVentana();
-   //DibujarEjes() ;
-   //cout << "Shader antes de dibujar objeto " << idProg_actual << endl;
+   DibujarEjes() ;
    practicaActual->DibujarObjetos();
-   //cout << "Shader despues de dibujar objeto " << idProg_actual << endl;
-   //Debug_Ayuda();
    glFinish();
    glutSwapBuffers();
 
@@ -643,7 +639,7 @@ GLuint CrearPrograma( const char * archFrag, const char * archVert )
    return idProg ;
 }
 
-GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path){
+GLuint LoadShaders(const char * fragment_file_path,const char * vertex_file_path){
  
    // Create the shaders
    GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
@@ -686,10 +682,13 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
    glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
    std::vector<char> VertexShaderErrorMessage(InfoLogLength);
    glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-   cout << "Error vertex shader: ";
-   for (auto c: VertexShaderErrorMessage)
-      cout << c;
-   cout << endl;
+   if (Result == GL_FALSE)
+   {
+      cout << "Error vertex shader: ";
+      for (auto c: VertexShaderErrorMessage)
+         cout << c;
+      cout << endl;
+   }
    //fprintf(stdout, "%s\n", &VertexShaderErrorMessage[0]);
 
    // Compile Fragment Shader
@@ -704,10 +703,13 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
    glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
    std::vector<char> FragmentShaderErrorMessage(InfoLogLength);
    glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
-   cout << "Error fragment shader: ";
-   for (auto c: FragmentShaderErrorMessage)
-      cout << c;
-   cout << endl;
+   if (Result == GL_FALSE)
+   {
+      cout << "Error fragment shader: ";
+      for (auto c: FragmentShaderErrorMessage)
+         cout << c;
+      cout << endl;
+   }
    //fprintf(stdout, "%s\n", &FragmentShaderErrorMessage[0]);
 
    // Link the program
@@ -723,10 +725,13 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
    glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
    std::vector<char> ProgramErrorMessage( max(InfoLogLength, int(1)) );
    glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-   cout << "Error programa: ";
-   for (auto c: ProgramErrorMessage)
-      cout << c;
-   cout << endl;
+   if (Result == GL_FALSE)
+   {
+      cout << "Error programa: ";
+      for (auto c: ProgramErrorMessage)
+         cout << c;
+      cout << endl;
+   }
    //fprintf(stdout, "%s\n", &ProgramErrorMessage[0]);
 
    glDeleteShader(VertexShaderID);
@@ -828,8 +833,8 @@ void Inicializa_OpenGL( )
    {  cout << "OpenGL 3.3 no soportado." << endl  ;
       exit(1);
    }
-
-
+/*
+   //idProg_Comun            = CrearPrograma("src/shaders/Comun_fragment.glsl","src/shaders/Comun_vertex.glsl");
    idProg_Ejes             = CrearPrograma("src/shaders/Ejes_fragment.glsl","src/shaders/Ejes_vertex.glsl");
    idProg_P1_P2            = CrearPrograma("src/shaders/P1_P2_fragment.glsl","src/shaders/P1_P2_vertex.glsl");
    idProg_P3_Android       = CrearPrograma("src/shaders/P3_Android_fragment.glsl","src/shaders/P3_Android_vertex.glsl");
@@ -839,8 +844,8 @@ void Inicializa_OpenGL( )
    idProg_P4_peon_madera   = CrearPrograma("src/shaders/P4_peon_madera_fragment.glsl","src/shaders/P4_peon_madera_vertex.glsl");
    idProg_P4_peon_blanco   = CrearPrograma("src/shaders/P4_peon_blanco_fragment.glsl","src/shaders/P4_peon_blanco_vertex.glsl");
    idProg_P4_peon_negro    = CrearPrograma("src/shaders/P4_peon_negro_fragment.glsl","src/shaders/P4_peon_negro_vertex.glsl");
+*/
 
-/*
    idProg_Ejes             = LoadShaders("src/shaders/Ejes_fragment.glsl","src/shaders/Ejes_vertex.glsl");
    idProg_P1_P2            = LoadShaders("src/shaders/P1_P2_fragment.glsl","src/shaders/P1_P2_vertex.glsl");
    idProg_P3_Android       = LoadShaders("src/shaders/P3_Android_fragment.glsl","src/shaders/P3_Android_vertex.glsl");
@@ -850,7 +855,7 @@ void Inicializa_OpenGL( )
    idProg_P4_peon_madera   = LoadShaders("src/shaders/P4_peon_madera_fragment.glsl","src/shaders/P4_peon_madera_vertex.glsl");
    idProg_P4_peon_blanco   = LoadShaders("src/shaders/P4_peon_blanco_fragment.glsl","src/shaders/P4_peon_blanco_vertex.glsl");
    idProg_P4_peon_negro    = LoadShaders("src/shaders/P4_peon_negro_fragment.glsl","src/shaders/P4_peon_negro_vertex.glsl");
-*/
+
 
    // habilitar test de comparación de profundidades para 3D (y 2D)
    // es necesario, no está habilitado por defecto:

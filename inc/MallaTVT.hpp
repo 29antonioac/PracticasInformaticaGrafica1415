@@ -13,6 +13,7 @@
 #include "VBO.hpp"
 #include "Material.hpp"
 
+#include <glm/vec2.hpp> // glm::vec2
 #include <glm/vec3.hpp> // glm::vec3
 #include <glm/vec4.hpp> // glm::vec4, glm::ivec4
 #include <glm/mat4x4.hpp> // glm::mat4
@@ -55,7 +56,7 @@ private:
    tipo_malla tipo;
 
    Material * material;
-   vector<pair<float,float> > coordenadas_textura;
+   vector<glm::vec2 > coordenadas_textura;
 
    float dimension;
 

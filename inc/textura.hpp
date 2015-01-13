@@ -19,6 +19,7 @@ public:
    ~Textura();
    bool Activar();
    unsigned getModo();
+   GLuint getID();
 };
 
 #endif

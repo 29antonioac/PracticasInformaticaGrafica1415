@@ -1,8 +1,12 @@
 #include "IDs_Shaders.hpp"
 
+#include <iostream>
+#include <cstdlib>
+
 GLuint idProg_Ejes, idProg_P1_P2;
 GLuint idProg_P3_Android, idProg_P3_Ojos;
 GLuint idProg_P4_lata, idProg_P4_tapas, idProg_P4_peon_madera, idProg_P4_peon_blanco, idProg_P4_peon_negro;
+GLuint idProg_Comun;
 
 GLuint idProg_actual;
 
@@ -19,4 +23,17 @@ bool UsarPrograma(GLuint idProg)
       return true;
    }
    return false;
+}
+
+GLint ObtenerLocalizacionUniform(GLint idProg, const char * cadena)
+{
+   GLint loc = glGetUniformLocation(idProg, cadena);
+   if (loc != -1)
+      return loc;
+   else
+   {
+      std::cout << "Problema al obtener " << cadena << " como uniform, saliendo..." << std::endl;
+      //glutLeaveMainLoop();
+      exit(2);
+   }
 }

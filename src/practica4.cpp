@@ -17,6 +17,7 @@
 #include "file_ply_stl.hpp"
 #include "FuenteLuz.hpp"
 #include "IDs_Shaders.hpp"
+#include "jpg_imagen.hpp"
 
 #define GLM_FORCE_RADIANS
 #include <glm/vec3.hpp> // glm::vec3
@@ -234,6 +235,25 @@ void Practica4::Inicializar( int argc, char *argv[] )
          nodo_escalado_tapas->aniadeHijo(nodo_tapa_inf);
 
 
+   /* Enviar textura al shader */
+   jpg::Imagen * img = new jpg::Imagen("img/text-madera.jpg");
+
+   glGenTextures(1, &id_textura_lata);
+   glBindTexture(GL_TEXTURE_2D, id_textura_lata);
+   // Crear mipmaps de textura
+   //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img->tamX(), img->tamY(), 0, GL_RGB, GL_UNSIGNED_BYTE, img->leerPixels());
+   glTexStorage2D(GL_TEXTURE_2D, 16, GL_RGB, img->tamX(), img->tamY());
+   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img->tamX(), img->tamY(), GL_RGB, GL_UNSIGNED_BYTE, img->leerPixels());
+   glGenerateMipmap(GL_TEXTURE_2D);  //Generate num_mipmaps number of mipmaps here.
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+   //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img->tamX(), img->tamY(), 0, GL_RGB, GL_UNSIGNED_BYTE, img->leerPixels());
+
+   //id_textura_lata = textura_cuerpo_lata->getID();
+   location_textura_lata = ObtenerLocalizacionUniform(idProg_P4_lata,"textureSampler");
+
+
 }
 
 
@@ -246,6 +266,12 @@ void Practica4::DibujarObjetos()
 
    // Dibujar aquí
    //fuentes.Activar();
+
+   glActiveTexture(GL_TEXTURE0);
+   glBindTexture(GL_TEXTURE_2D, id_textura_lata);
+   // Set our "myTextureSampler" sampler to user Texture Unit 0
+   glUniform1i(location_textura_lata, 0);
+
    raiz->Procesa();
 
    //glDisable( GL_LIGHTING );
@@ -311,48 +337,4 @@ bool Practica4::GestionarEvento(unsigned char tecla)
          break;
    }
    return redisp;
-}
-
-
-void Practica4::Debug()
-{
-
-   vector<string> debug_strings;
-
-   string cauce;
-
-   if (idProg_actual == 0)
-      cauce = "Fijo";
-   else
-      cauce = "Programable";
-
-   debug_strings.push_back(string("Beta: " + to_string(fuente_direccional->getBeta())));
-   debug_strings.push_back(string("Alpha: " + to_string(fuente_direccional->getAlpha())));
-
-   debug_strings.push_back(string("Modo de normales: " + enumToString(peon_madera->getModoNormales())));
-   debug_strings.push_back(string("Modo de dibujo: " + enumToString(modo_dibujo)));
-   debug_strings.push_back(string("Cauce: " + cauce));
-   debug_strings.push_back(string("Practica 4"));
-
-   void * font = GLUT_BITMAP_9_BY_15;
-
-   unsigned num_lineas = 0;
-   for (auto &s: debug_strings)
-   {
-      glRasterPos2i(10, 10+15*num_lineas);
-      for (auto &c: s)
-      {
-        glutBitmapCharacter(font, c);
-      }
-      num_lineas++;
-   }
-}
-
-void Practica4::Ayuda(vector<string> & strings_control)
-{
-
-   strings_control.push_back("Z/X para modificar beta (angulo con eje -X)");
-   strings_control.push_back("C/V para modificar alpha (angulo con eje Y)");
-
-
 }

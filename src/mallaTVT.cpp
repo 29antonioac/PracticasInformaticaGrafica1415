@@ -319,6 +319,7 @@ void MallaTVT::Visualizar()
       coordenadas_textura = material->Activar();
 
       if (coordenadas_textura) vbo_coordenadas_textura->Activar();
+      if (coordenadas_textura) cout << "He activado las cctt" << endl;
 
       vbo_triangulos->Visualizar(modo_dibujo, color_primario, color_secundario);
 
@@ -570,6 +571,7 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
       {
          float distancia = glm::distance(ver[i], ver[i-1]);
          distancias.push_back(distancias[i-1] + distancia);
+         //cout << "Distancia " << i << " = " << distancias[i] << endl;
          // Añadir el primer perfil de nuevo para unir la textura
          ver.push_back(ver[i]);
       }
@@ -579,7 +581,11 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
          //cout << "Perfil " << perfil << ":" << endl;
          for (unsigned vertice = 0; vertice < vertices_perfil; vertice++)
          {
-            coordenadas_textura.push_back(pair<float,float>(perfil*1.0/(caras-1),1-distancias[vertice]/distancias[vertices_perfil-1]));
+            //cout << "Perfil = " << perfil << ", caras-1 = " << caras - 1 << "|" ;
+            float si = perfil*1.0/((caras-1)*1.0);
+            float ti = 1-distancias[vertice]/distancias[vertices_perfil-1];
+            coordenadas_textura.push_back(glm::vec2(si,ti));
+            //cout << "U = " << si << ", V = " << ti << "|";
          }
          //cout << "\n\n\n\n" << endl;
       }

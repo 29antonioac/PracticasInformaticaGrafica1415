@@ -79,7 +79,8 @@ void Practica2::Inicializar(int argc, char *argv[])
    raiz = new NodoGrafoEscena;
    NodoGrafoEscena * nodo_shader = new NodoShader(idProg_P1_P2);
    NodoGrafoEscena * nodo_malla = new NodoTerminal(malla);
-   NodoGrafoEscena * nodo_transformacion = new NodoTransformacion(scale(glm::mat4(),glm::vec3(1.0,1.0,1.0)));
+   NodoGrafoEscena * nodo_transformacion = new NodoTransformacion(scale(glm::mat4(),glm::vec3(3.0,3.0,3.0)));
+
 
    raiz->aniadeHijo(nodo_shader);
       nodo_shader->aniadeHijo(nodo_transformacion);
@@ -88,10 +89,6 @@ void Practica2::Inicializar(int argc, char *argv[])
 
 void Practica2::DibujarObjetos()
 {
-   /*
-   UsarPrograma(idProg_Ejes);
-   malla->Visualizar();
-   */
    raiz->Procesa();
 }
 
@@ -123,56 +120,3 @@ bool Practica2::GestionarEvento(unsigned char tecla)
    return redisp;
 }
 
-void Practica2::Debug()
-{
-
-   string str_color_fijo;
-   if (malla->ColorFijo())
-      str_color_fijo = "Si";
-   else
-      str_color_fijo = "No";
-
-   string str_modo;
-   if (M == 0)
-      str_modo = "Revolucion";
-   else if (M == 1)
-      str_modo = "Barrido rotacion";
-   else if (M == 2)
-      str_modo = "Barrido traslacion";
-
-   string cauce;
-
-   if (idProg_actual == 0)
-      cauce = "Fijo";
-   else
-      cauce = "Programable";
-
-   vector<string> debug_strings;
-
-   debug_strings.push_back(string("Modo: " + str_modo));
-   debug_strings.push_back(string("Numero de perfiles: " + std::to_string(N)));
-   debug_strings.push_back(string("Modo de normales: " + enumToString(malla->getModoNormales())));
-   debug_strings.push_back(string("Color fijo: " + str_color_fijo));
-   debug_strings.push_back(string("Modo de dibujo: " + enumToString(malla->getModoDibujo())));
-   debug_strings.push_back(string("Archivo cargado: " + file));
-   debug_strings.push_back(string("Cauce: " + cauce));
-   debug_strings.push_back(string("Practica 2"));
-   void * font = GLUT_BITMAP_9_BY_15;
-   unsigned num_lineas = 0;
-   for (auto &s: debug_strings)
-   {
-      glRasterPos2i(10, 10+15*num_lineas);
-      for (auto &c: s)
-      {
-        glutBitmapCharacter(font, c);
-      }
-      num_lineas++;
-
-   }
-
-}
-
-void Practica2::Ayuda(vector<string> & strings_control)
-{
-
-}

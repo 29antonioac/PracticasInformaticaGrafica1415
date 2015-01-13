@@ -105,23 +105,12 @@ void Practica3::Inicializar( int argc, char *argv[] )
    unsigned vertices_perfil_semiesfera = 20;
    //float incremento_perfil_semiesfera = (M_PI/2)/vertices_perfil_semiesfera;
    float incremento_perfil_semiesfera = (PI/2)/vertices_perfil_semiesfera;
-   cout << "inc: " << incremento_perfil_semiesfera << endl;
 
    mat4 matriz_rotacion_perfil_semiesfera = rotate(mat4(1.0),incremento_perfil_semiesfera,vec3(0.0f,0.0f,1.0f));
-
-   for (unsigned i = 0; i < 4; i++)
-   {
-      for (unsigned j = 0; j < 4; j++)
-      {
-         cout << "\t" << matriz_rotacion_perfil_semiesfera[i][j] << " ";
-      }
-      cout << endl;
-   }
 
    for (unsigned i = 1; i <= vertices_perfil_semiesfera; i++)
    {
       vertices_semiesfera.push_back(vec3( matriz_rotacion_perfil_semiesfera * vec4(vertices_semiesfera[i-1],0.0)));
-      cout << "(" << vertices_semiesfera[i][0] << "," << vertices_semiesfera[i][1] << "," << vertices_semiesfera[i][2] << ")" << endl;
    }
 
    semiesfera = new MallaTVT(PERFIL,vertices_semiesfera);
@@ -328,10 +317,13 @@ void Practica3::Inicializar( int argc, char *argv[] )
    Android->aniadeHijo(nodo_shader_android);
       nodo_shader_android->aniadeHijo(todo_menos_ojos);
 
+      // Vamos a ampliar un poco el muñeco
 
-   raiz->aniadeHijo(nodo_parametrizado_rotacion_cuerpo);
-      nodo_parametrizado_rotacion_cuerpo->aniadeHijo(nodo_parametrizado_traslacion);
-         nodo_parametrizado_traslacion->aniadeHijo(Android);
+   NodoGrafoEscena * nodo_escalado_general = new NodoTransformacion(scale(mat4(),vec3(3.0,3.0,3.0)));
+   raiz->aniadeHijo(nodo_escalado_general);
+      nodo_escalado_general->aniadeHijo(nodo_parametrizado_rotacion_cuerpo);
+         nodo_parametrizado_rotacion_cuerpo->aniadeHijo(nodo_parametrizado_traslacion);
+            nodo_parametrizado_traslacion->aniadeHijo(Android);
 
 
    //IDLuz = glGetUniformLocation(idProg_P3_Android, "posicion_luz_coordenadas_mundo");
@@ -541,56 +533,3 @@ void Practica3::Animar()
    *rotacion_pierna_derecha = rotate(mat4(1.0),-angulo_rotacion_piernas,vec3(1.0,0.0,0.0));
 }
 
-void Practica3::Debug()
-{
-   string str_color_fijo;
-   if (semiesfera->ColorFijo())
-      str_color_fijo = "Si";
-   else
-      str_color_fijo = "No";
-
-   string cauce;
-
-   if (idProg_actual == 0)
-      cauce = "Fijo";
-   else
-      cauce = "Programable";
-
-   vector<string> debug_strings;
-   debug_strings.push_back(string("Velocidad angular piernas: " + to_string(velocidad_angular_piernas)));
-   debug_strings.push_back(string("Velocidad angular brazos: " + to_string(velocidad_angular_brazos)));
-   debug_strings.push_back(string("Velocidad angular cuerpo: " + to_string(velocidad_angular_cuerpo)));
-   debug_strings.push_back(string("Angulo de rotacion piernas: " + to_string(angulo_rotacion_piernas)));
-   debug_strings.push_back(string("Angulo de rotacion brazos: " + to_string(angulo_rotacion_brazos)));
-   debug_strings.push_back(string("Angulo de rotacion cuerpo: " + to_string(angulo_rotacion_cuerpo)));
-   debug_strings.push_back(string("Distancia al eje Y: " + to_string(distancia_eje_Y)));
-   debug_strings.push_back(string("Modo de normales: " + enumToString(semiesfera->getModoNormales())));
-   debug_strings.push_back(string("Color fijo: " + str_color_fijo));
-   debug_strings.push_back(string("Modo de dibujo: " + enumToString(modo_dibujo)));
-   debug_strings.push_back(string("Cauce: " + cauce));
-   debug_strings.push_back(string("Practica 3"));
-   void * font = GLUT_BITMAP_9_BY_15;
-   unsigned num_lineas = 0;
-   for (auto &s: debug_strings)
-   {
-      glRasterPos2i(10, 10+15*num_lineas);
-      for (auto &c: s)
-      {
-        glutBitmapCharacter(font, c);
-      }
-      num_lineas++;
-   }
-}
-
-void Practica3::Ayuda(vector<string> & strings_control)
-{
-   strings_control.push_back("M/m para modificar velocidad de rotacion de las piernas");
-   strings_control.push_back("N/n para modificar velocidad de rotacion de los brazos");
-   strings_control.push_back("B/b para modificar velocidad de rotacion del cuerpo");
-   strings_control.push_back("V/v para modificar distancia al eje Y");
-   strings_control.push_back("C/c para modificar rotacion de las piernas");
-   strings_control.push_back("X/x para modificar rotacion de los brazos");
-   strings_control.push_back("Z/z para modificar rotacion del cuerpo");
-
-
-}

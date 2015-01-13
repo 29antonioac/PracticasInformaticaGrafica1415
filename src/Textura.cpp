@@ -78,3 +78,8 @@ unsigned Textura::getModo()
 {
    return modo_generacion_coordenadas_textura;
 }
+
+GLuint Textura::getID()
+{
+   return this->id_textura;
+}

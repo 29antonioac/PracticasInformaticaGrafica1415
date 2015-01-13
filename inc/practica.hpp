@@ -18,8 +18,6 @@ public:
    virtual void CambioModoNormales() = 0;
    virtual void CambioColorFijo() = 0;
    virtual bool GestionarEvento(unsigned char tecla) = 0;
-   virtual void Debug() = 0;
-   virtual void Ayuda(vector<string> & strings_control) = 0;
 protected:
    Practica(){};
    Practica(Practica const&);
