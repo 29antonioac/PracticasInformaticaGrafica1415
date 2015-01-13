@@ -16,6 +16,7 @@ protected:
 public:
    FuenteLuz(Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular);
    virtual void Activar() = 0;
+   void Desactivar();
    virtual ~FuenteLuz() {};
    static unsigned getFuentes() { return numero_fuentes; }
 
@@ -49,6 +50,7 @@ private:
    vector<FuenteLuz *> fuentes;
 public:
    void Activar();
+   void Desactivar();
    void Agregar(FuenteLuz * fuente);
 };
 

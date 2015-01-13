@@ -16,6 +16,7 @@ public:
          Tupla3f componente_especular, float exponente_especular, Textura * textura = nullptr);
    bool Activar();
    bool NecesitoCoordenadasTextura();
+   bool HayTextura();
 };
 
 

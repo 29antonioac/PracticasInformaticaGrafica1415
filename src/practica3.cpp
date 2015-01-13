@@ -310,10 +310,6 @@ void Practica3::Inicializar( int argc, char *argv[] )
    cilindro->SetMaterial(material_android);
    semiesfera_ojo->SetMaterial(material_ojo);
 
-   Tupla3f ej(1.1,2.2,3.3);
-
-   cout << "Ejemplo" << ej << " -> " << AniadeW(ej,1.0) << endl;
-
 
 
 }
@@ -351,6 +347,7 @@ void Practica3::DibujarObjetos()
    // Dibujar aquí
    fuentes.Activar();
    raiz->Procesa();
+   fuentes.Desactivar();
 
    glDisable( GL_LIGHTING );
    glDisable( GL_NORMALIZE );

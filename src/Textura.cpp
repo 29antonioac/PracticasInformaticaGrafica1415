@@ -55,6 +55,8 @@ bool Textura::Activar()
 
    glBindTexture(GL_TEXTURE_2D, id_textura);
 
+   glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+
    if (modo_generacion_coordenadas_textura == 0)
    {
       glDisable(GL_TEXTURE_GEN_S);

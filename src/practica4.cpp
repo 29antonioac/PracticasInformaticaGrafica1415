@@ -225,6 +225,7 @@ void Practica4::DibujarObjetos()
    // Dibujar aquí
    fuentes.Activar();
    raiz->Procesa();
+   fuentes.Desactivar();
 
    glDisable( GL_LIGHTING );
    glDisable( GL_NORMALIZE );
@@ -276,7 +277,6 @@ bool Practica4::GestionarEvento(unsigned char tecla)
          fuente_direccional->ModificaBeta(1);
          break;
       case 'X':
-         cout << "Pulso Z" << endl;
          fuente_direccional->ModificaBeta(-1);
          break;
       case 'C':

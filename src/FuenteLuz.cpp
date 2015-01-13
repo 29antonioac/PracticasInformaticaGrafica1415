@@ -1,6 +1,7 @@
 #include "FuenteLuz.hpp"
 
 #include <GL/gl.h>
+#include <iostream>
 
 unsigned FuenteLuz::numero_fuentes = 0;
 
@@ -11,6 +12,11 @@ FuenteLuz::FuenteLuz(Tupla3f componente_ambiental, Tupla3f componente_difusa, Tu
    this->componente_especular = AniadeW(componente_especular,1.0);
    this->id_luz = GL_LIGHT0 + numero_fuentes;
    numero_fuentes++;
+}
+
+void FuenteLuz::Desactivar()
+{
+   glDisable(this->id_luz);
 }
 
 FuenteLuzPosicional::FuenteLuzPosicional(Tupla3f posicion, Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular)
@@ -30,6 +36,9 @@ void FuenteLuzDireccional::Activar()
 {
    glEnable(id_luz);
 
+   GLfloat matrix[16];
+   //glGetFloatv (GL_VIE, matrix);
+
    //const float ejeZ[4] = {0.0,0.0,1.0,0.0};
 
    //glMatrixMode(GL_MODELVIEW);
@@ -42,6 +51,8 @@ void FuenteLuzDireccional::Activar()
             //ejeZ = Matriz4x4::RotacionEjeY(alpha) *
          Tupla4f ejeZ(cosf(alpha)*sinf(beta),sinf(alpha)*sinf(beta),cosf(beta),0.0);
 
+         std::cout << "Posicion luz: " << ejeZ << std::endl;
+
    	   glLightfv(id_luz, GL_POSITION, ejeZ.data());
    	   glLightfv(id_luz, GL_AMBIENT, this->componente_ambiental.data());
          glLightfv(id_luz, GL_DIFFUSE, this->componente_difusa.data());
@@ -53,16 +64,16 @@ void FuenteLuzDireccional::Activar()
 void FuenteLuzDireccional::ModificaAlpha(int signo)
 {
 	assert(signo == 1 || signo == -1);
-	//if (alpha > 2*M_PI) alpha -= 2*M_PI;
-	//else if (alpha < -2*M_PI) alpha += 2*M_PI;
+	if (alpha > 2*M_PI) alpha -= 2*M_PI;
+	else if (alpha < -2*M_PI) alpha += 2*M_PI;
 	alpha += signo*M_PI/6;
 }
 
 void FuenteLuzDireccional::ModificaBeta(int signo)
 {
 	assert(signo == 1 || signo == -1);
-	//if (beta > 2*M_PI) beta -= 2*M_PI;
-	//else if (beta < -2*M_PI) beta += 2*M_PI;
+	if (beta > 2*M_PI) beta -= 2*M_PI;
+	else if (beta < -2*M_PI) beta += 2*M_PI;
 	beta += signo*M_PI/6;
 }
 
@@ -84,6 +95,8 @@ void FuenteLuzPosicional::Activar()
 
       //glLoadIdentity();
 
+      std::cout << "Posicion luz: " << this->posicion << std::endl;
+
       glLightfv(id_luz, GL_POSITION,this->posicion.data());
       glLightfv(id_luz, GL_AMBIENT, this->componente_ambiental.data());
       glLightfv(id_luz, GL_DIFFUSE, this->componente_difusa.data());
@@ -101,6 +114,14 @@ void ColeccionFuentesLuz::Activar()
    }
 }
 
+void ColeccionFuentesLuz::Desactivar()
+{
+   for (unsigned i = 0; i < fuentes.size(); i++)
+   {
+      fuentes[i]->Desactivar();
+   }
+}
+
 void ColeccionFuentesLuz::Agregar(FuenteLuz * fuente)
 {
    if (fuentes.size() < 8)
@@ -108,3 +129,5 @@ void ColeccionFuentesLuz::Agregar(FuenteLuz * fuente)
    else
       std::cout << "Ya hay 8 fuentes, que son las máximas!" << std::endl;
 }
+
+

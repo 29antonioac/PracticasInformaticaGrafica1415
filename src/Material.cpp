@@ -15,26 +15,22 @@ Material::Material(Tupla3f componente_emision, Tupla3f componente_ambiental,
 bool Material::Activar()
 {
    bool respuesta = false;
+   glLightModelfv( GL_LIGHT_MODEL_AMBIENT, Tupla4f(0,0,0,1.0).data());
    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, componente_emision.data());
    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, componente_ambiental.data());
    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, componente_difusa.data());
    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, componente_especular.data());
    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, exponente_especular);
 
-
-
-      glDisable(GL_TEXTURE_2D);
-      glColorMaterial(GL_FRONT_AND_BACK, GL_EMISSION);
-      glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
-      glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-      glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
-      glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+   //glDisable(GL_TEXTURE_2D);
+   glColorMaterial(GL_FRONT_AND_BACK, GL_EMISSION);
+   glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
+   glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+   glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
+   glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
    if (textura != nullptr)
-   {
-      glEnable(GL_TEXTURE_2D);
       respuesta = textura->Activar();
-   }
 
    return respuesta;
 }
@@ -45,4 +41,9 @@ bool Material::NecesitoCoordenadasTextura()
       return true;
    else
       return false;
+}
+
+bool Material::HayTextura()
+{
+   return (textura != nullptr);
 }

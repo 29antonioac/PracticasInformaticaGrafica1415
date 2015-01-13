@@ -293,6 +293,9 @@ void MallaTVT::Visualizar()
 
       coordenadas_textura = material->Activar();
 
+      if (material->HayTextura())
+         glEnable(GL_TEXTURE_2D);
+
       if (coordenadas_textura) vbo_coordenadas_textura->Activar();
 
       vbo_triangulos->Visualizar(modo_dibujo, color_primario, color_secundario);
@@ -306,8 +309,6 @@ void MallaTVT::Visualizar()
    }
    else
    {
-      glDisable(GL_TEXTURE_2D);
-
       switch (modo_dibujo)
       {
          case ALAMBRE:
@@ -373,7 +374,7 @@ void MallaTVT::Visualizar()
    {
       VisualizarNormalesVertices();
    }
-
+   glDisable(GL_TEXTURE_2D);
 
 }
 
