@@ -21,16 +21,16 @@ bool Material::Activar()
    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, componente_especular.data());
    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, exponente_especular);
 
-   if (textura == nullptr)
-   {
+
+
       glDisable(GL_TEXTURE_2D);
       glColorMaterial(GL_FRONT_AND_BACK, GL_EMISSION);
       glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
       glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
       glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
       glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-   }
-   else
+
+   if (textura != nullptr)
    {
       glEnable(GL_TEXTURE_2D);
       respuesta = textura->Activar();

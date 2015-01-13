@@ -30,21 +30,24 @@ void FuenteLuzDireccional::Activar()
 {
    glEnable(id_luz);
 
-   const float ejeZ[4] = {0.0,0.0,1.0,0.0};
+   //const float ejeZ[4] = {0.0,0.0,1.0,0.0};
 
-   glMatrixMode(GL_MODELVIEW);
-   glPushMatrix();
+   //glMatrixMode(GL_MODELVIEW);
+   //glPushMatrix();
 
    	   //glLoadIdentity();
 
-   	   glRotatef(this->alpha, 0.0,1.0,0.0);
-   	   glRotatef(this->beta, -1.0,0.0,0.0);
-   	   glLightfv(id_luz, GL_POSITION, ejeZ);
+   //glRotatef(this->alpha, 0.0,1.0,0.0);
+            //glRotatef(this->beta, -1.0,0.0,0.0);
+            //ejeZ = Matriz4x4::RotacionEjeY(alpha) *
+         Tupla4f ejeZ(cosf(alpha)*sinf(beta),sinf(alpha)*sinf(beta),cosf(beta),0.0);
+
+   	   glLightfv(id_luz, GL_POSITION, ejeZ.data());
    	   glLightfv(id_luz, GL_AMBIENT, this->componente_ambiental.data());
          glLightfv(id_luz, GL_DIFFUSE, this->componente_difusa.data());
          glLightfv(id_luz, GL_SPECULAR,this->componente_especular.data());
 
-   glPopMatrix();
+   //glPopMatrix();
 }
 
 void FuenteLuzDireccional::ModificaAlpha(int signo)
@@ -76,8 +79,8 @@ void FuenteLuzPosicional::Activar()
 {
    glEnable(id_luz);
 
-   glMatrixMode(GL_MODELVIEW);
-   glPushMatrix();
+   //glMatrixMode(GL_MODELVIEW);
+   //glPushMatrix();
 
       //glLoadIdentity();
 
@@ -86,7 +89,7 @@ void FuenteLuzPosicional::Activar()
       glLightfv(id_luz, GL_DIFFUSE, this->componente_difusa.data());
       glLightfv(id_luz, GL_SPECULAR,this->componente_especular.data());
 
-   glPopMatrix();
+   //glPopMatrix();
 }
 
 

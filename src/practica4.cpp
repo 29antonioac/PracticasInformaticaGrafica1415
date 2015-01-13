@@ -86,7 +86,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
    Tupla3f luz_direccional_componente_ambiental(0.0,1.0,0.0);
    Tupla3f luz_direccional_componente_difusa(0.0,1.0,0.0);
    Tupla3f luz_direccional_componente_especular(0.0,1.0,0.0);
-   Tupla3f luz_posicion(0.0,10.0,0.0);
+   Tupla3f luz_posicion(0.0,20.0,0.0);
 
    fuente_direccional = new FuenteLuzDireccional(alpha, beta, luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
    fuente_posicional = new FuenteLuzPosicional(luz_posicion, luz_posicional_componente_ambiental, luz_posicional_componente_difusa, luz_posicional_componente_especular);
