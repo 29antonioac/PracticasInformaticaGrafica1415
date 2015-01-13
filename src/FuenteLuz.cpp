@@ -64,17 +64,17 @@ void FuenteLuzDireccional::Activar()
 void FuenteLuzDireccional::ModificaAlpha(int signo)
 {
 	assert(signo == 1 || signo == -1);
-	if (alpha > 2*M_PI) alpha -= 2*M_PI;
-	else if (alpha < -2*M_PI) alpha += 2*M_PI;
+	if (alpha > 2*M_PI) alpha = 2*M_PI;
+	else if (alpha < 0) alpha = 0;
 	alpha += signo*M_PI/6;
 }
 
 void FuenteLuzDireccional::ModificaBeta(int signo)
 {
 	assert(signo == 1 || signo == -1);
-	if (beta > 2*M_PI) beta -= 2*M_PI;
-	else if (beta < -2*M_PI) beta += 2*M_PI;
-	beta += signo*M_PI/6;
+   if (beta > 2*M_PI) beta = 2*M_PI;
+   else if (beta < 0) beta = 0;
+	beta += signo*M_PI/10;
 }
 
 float FuenteLuzDireccional::getAlpha()

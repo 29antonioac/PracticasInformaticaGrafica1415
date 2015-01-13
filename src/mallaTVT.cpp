@@ -333,8 +333,6 @@ void MallaTVT::Visualizar()
       }
       else
       {
-
-
          // Ver si usamos array de colores o vértices
          if (!color_fijo && !colores_vertices.empty())
          {

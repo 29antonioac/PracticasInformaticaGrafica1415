@@ -186,9 +186,9 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
 
    raiz = new NodoGrafoEscena;
-   NodoGrafoEscena * nodo_traslacion_peon_madera = new NodoTransformacion(Matriz4x4::RotacionEjeY(-M_PI/2) * Matriz4x4::Traslacion(0.0,0.0,3.0));
-   NodoGrafoEscena * nodo_traslacion_peon_blanco = new NodoTransformacion(Matriz4x4::Traslacion(0.0,0.0,2.0));
-   NodoGrafoEscena * nodo_traslacion_peon_negro = new NodoTransformacion(Matriz4x4::RotacionEjeY(M_PI/2) * Matriz4x4::Traslacion(0.0,0.0,3.0));
+   NodoGrafoEscena * nodo_traslacion_peon_madera = new NodoTransformacion(Matriz4x4::Traslacion(-3.0,1.3,1.3));
+   NodoGrafoEscena * nodo_traslacion_peon_blanco = new NodoTransformacion(Matriz4x4::Traslacion(0.0,1.3,2.3));
+   NodoGrafoEscena * nodo_traslacion_peon_negro = new NodoTransformacion(Matriz4x4::Traslacion(3.0,1.3,3.3));
    NodoGrafoEscena * nodo_escalado_lata = new NodoTransformacion(Matriz4x4::Escalado(4.0,4.0,4.0));
    NodoGrafoEscena * nodo_peon_blanco = new NodoTerminal(peon_blanco);
    NodoGrafoEscena * nodo_peon_negro = new NodoTerminal(peon_negro);
@@ -241,7 +241,11 @@ void Practica4::CambioModoDibujo(visualizacion modo_dibujo)
 void Practica4::CambioModoNormales()
 {
    this->cuerpo_lata->CambioModoNormales();
-
+   this->tapa_inf->CambioModoNormales();
+   this->tapa_sup->CambioModoNormales();
+   this->peon_madera->CambioModoNormales();
+   this->peon_blanco->CambioModoNormales();
+   this->peon_negro->CambioModoNormales();
 }
 
 
