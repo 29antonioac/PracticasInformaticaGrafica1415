@@ -80,13 +80,16 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
    float alpha = 3 * M_PI / 4;
    float beta = M_PI / 6;
-   Tupla3f luz_posicional_componente_ambiental(0.0,0.0,1.0);
-   Tupla3f luz_posicional_componente_difusa(0.0,0.0,1.0);
-   Tupla3f luz_posicional_componente_especular(0.0,0.0,1.0);
-   Tupla3f luz_direccional_componente_ambiental(0.0,1.0,0.0);
-   Tupla3f luz_direccional_componente_difusa(0.0,1.0,0.0);
-   Tupla3f luz_direccional_componente_especular(0.0,1.0,0.0);
-   Tupla3f luz_posicion(0.0,20.0,0.0);
+
+   //Tupla3f ambiente(0.0,0.0,0.0); Tupla3f difusa(1.0,1.0,1.0); Tupla3f especular(1.0,1.0,1.0);
+
+   Tupla3f luz_posicional_componente_ambiental(0.0,0.0,0.0);
+   Tupla3f luz_posicional_componente_difusa(1.0,1.0,1.0);
+   Tupla3f luz_posicional_componente_especular(1.0,1.0,1.0);
+   Tupla3f luz_direccional_componente_ambiental(0.0,0.0,0.0);
+   Tupla3f luz_direccional_componente_difusa(1.0,1.0,1.0);
+   Tupla3f luz_direccional_componente_especular(1.0,1.0,1.0);
+   Tupla3f luz_posicion(0.0,10,5.5);
 
    fuente_direccional = new FuenteLuzDireccional(alpha, beta, luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
    fuente_posicional = new FuenteLuzPosicional(luz_posicion, luz_posicional_componente_ambiental, luz_posicional_componente_difusa, luz_posicional_componente_especular);
@@ -103,9 +106,9 @@ void Practica4::Inicializar( int argc, char *argv[] )
    // Crear material del peon blanco (sin textura, material puramente difuso sin brillo especular)
    Tupla3f peon_blanco_componente_emision(0.8,0.8,0.8);  // Color blanco
    Tupla3f peon_blanco_componente_ambiental(0.0,0.0,0.0);
-   Tupla3f peon_blanco_componente_difusa(0.4,0.4,0.4);
+   Tupla3f peon_blanco_componente_difusa(0.3,0.3,0.3);
    Tupla3f peon_blanco_componente_especular(0.0,0.0,0.0);
-   float peon_blanco_exponente_especular = 0.0;
+   float peon_blanco_exponente_especular = 5.0;
 
    material_peon_blanco = new Material(peon_blanco_componente_emision, peon_blanco_componente_ambiental,
          peon_blanco_componente_difusa, peon_blanco_componente_especular, peon_blanco_exponente_especular);
@@ -114,18 +117,18 @@ void Practica4::Inicializar( int argc, char *argv[] )
    Tupla3f peon_negro_componente_emision(0.0,0.0,0.0);  // Color negro
    Tupla3f peon_negro_componente_ambiental(0.0,0.0,0.0);
    Tupla3f peon_negro_componente_difusa(0.1,0.1,0.1);
-   Tupla3f peon_negro_componente_especular(1.0,1.0,1.0);
-   float peon_negro_exponente_especular = 30.0;
+   Tupla3f peon_negro_componente_especular(0.7,0.7,0.7);
+   float peon_negro_exponente_especular = 5.0;
 
    material_peon_negro = new Material(peon_negro_componente_emision, peon_negro_componente_ambiental,
          peon_negro_componente_difusa, peon_negro_componente_especular, peon_negro_exponente_especular);
 
    // Crear material del peón de madera (con textura generada automáticamente, material difuso-especular)
-   Tupla3f peon_madera_componente_emision(1.0,1.0,1.0);  // Color blanco puro
+   Tupla3f peon_madera_componente_emision(0.8,0.8,0.8);  // Color blanco puro
    Tupla3f peon_madera_componente_ambiental(0.0,0.0,0.0);
-   Tupla3f peon_madera_componente_difusa(0.1,0.1,0.1);
-   Tupla3f peon_madera_componente_especular(1.0,1.0,1.0);
-   float peon_madera_exponente_especular = 30.0;
+   Tupla3f peon_madera_componente_difusa(0.3,0.3,0.3);
+   Tupla3f peon_madera_componente_especular(0.7,0.7,0.7);
+   float peon_madera_exponente_especular = 5.0;
 
    float cs[4] = {1.0,0.0,0.0,0.0}; // Vector ex
    float ct[4] = {0.0,1.0,0.0,0.0}; // Vector ey
@@ -162,9 +165,9 @@ void Practica4::Inicializar( int argc, char *argv[] )
    // Crear lata
    Tupla3f cuerpo_lata_componente_emision(1.0,1.0,1.0);  // Color blanco puro
    Tupla3f cuerpo_lata_componente_ambiental(0.0,0.0,0.0);
-   Tupla3f cuerpo_lata_componente_difusa(0.1,0.1,0.1);
+   Tupla3f cuerpo_lata_componente_difusa(0.4,0.4,0.4);
    Tupla3f cuerpo_lata_componente_especular(1.0,1.0,1.0);
-   float cuerpo_lata_exponente_especular = 30.0;
+   float cuerpo_lata_exponente_especular = 5.0;
 
    Textura * textura_cuerpo_lata = new Textura("img/text-lata-1.jpg",0,cs,ct);
 
@@ -178,9 +181,9 @@ void Practica4::Inicializar( int argc, char *argv[] )
    // Crear tapas
    Tupla3f tapa_componente_emision(0.6,0.6,0.6);  // Color gris
    Tupla3f tapa_componente_ambiental(0.0,0.0,0.0);
-   Tupla3f tapa_componente_difusa(0.0,0.0,0.0);
+   Tupla3f tapa_componente_difusa(0.3,0.3,0.3);
    Tupla3f tapa_componente_especular(1.0,1.0,1.0);
-   float tapa_exponente_especular = 15.0;
+   float tapa_exponente_especular = 1.0;
 
    material_tapa = new Material(tapa_componente_emision, tapa_componente_ambiental,
             tapa_componente_difusa, tapa_componente_especular, tapa_exponente_especular);
@@ -190,7 +193,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
    tapa_sup->Revolucion(caras_revolucion,false);
    tapa_inf = new MallaTVT(PERFIL,vertices_ply_tapa_inf);
    tapa_inf->SetMaterial(material_tapa);
-   tapa_inf->Revolucion(caras_revolucion,false);
+   tapa_inf->Revolucion(caras_revolucion,true);
 
 
 

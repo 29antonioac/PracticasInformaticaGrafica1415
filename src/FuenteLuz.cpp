@@ -41,8 +41,6 @@ void FuenteLuzDireccional::Activar()
 
    Tupla4f ejeZ(cosf(alpha)*sinf(beta),sinf(alpha)*sinf(beta),cosf(beta),0.0);
 
-   std::cout << "Posicion luz: " << ejeZ << std::endl;
-
    glLightfv(id_luz, GL_POSITION, ejeZ.data());
    glLightfv(id_luz, GL_AMBIENT, this->componente_ambiental.data());
    glLightfv(id_luz, GL_DIFFUSE, this->componente_difusa.data());
@@ -54,7 +52,7 @@ void FuenteLuzDireccional::ModificaAlpha(int signo)
 	assert(signo == 1 || signo == -1);
 	if (alpha > 2*M_PI) alpha = 2*M_PI;
 	else if (alpha < 0) alpha = 0;
-	alpha += signo*M_PI/6;
+	alpha += signo*M_PI/30;
 }
 
 void FuenteLuzDireccional::ModificaBeta(int signo)
@@ -62,7 +60,7 @@ void FuenteLuzDireccional::ModificaBeta(int signo)
 	assert(signo == 1 || signo == -1);
    if (beta > 2*M_PI) beta = 2*M_PI;
    else if (beta < 0) beta = 0;
-	beta += signo*M_PI/10;
+	beta += signo*M_PI/30;
 }
 
 float FuenteLuzDireccional::getAlpha()
@@ -77,15 +75,6 @@ float FuenteLuzDireccional::getBeta()
 void FuenteLuzPosicional::Activar()
 {
    glEnable(id_luz);
-
-
-   std::cout << "Posicion luz: " << this->posicion << std::endl;
-
-   glBegin(GL_POINTS);
-   glColor3f(0.5f,0.5f,0.5f);
-   //glPointSize(3.0);
-   glVertex4fv(this->posicion.data());
-   glEnd();
 
    glLightfv(id_luz, GL_POSITION,this->posicion.data());
    glLightfv(id_luz, GL_AMBIENT, this->componente_ambiental.data());
