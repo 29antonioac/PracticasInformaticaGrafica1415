@@ -310,6 +310,32 @@ void Practica3::Inicializar( int argc, char *argv[] )
    cilindro->SetMaterial(material_android);
    semiesfera_ojo->SetMaterial(material_ojo);
 
+   /*
+
+   cout << "Número de fuentes: " << FuenteLuz::getFuentes() << endl;
+
+   Tupla3f posicion(0.0,-10.0,0.0);
+   Tupla3f otraposicion(7.0,0.0,0.0);
+
+   //Tupla3f ambiente(0.0,1.0,0.0); Tupla3f difusa(1.0,0.5,0.7); Tupla3f especular(0.0,0.7,0.0);
+
+   Tupla3f ambiente(0.0,0.0,0.0); Tupla3f difusa(1.0,1.0,1.0); Tupla3f especular(1.0,1.0,1.0);
+
+   fuente1 = new FuenteLuzPosicional(posicion, ambiente, difusa, especular); fuentes.Agregar(fuente1);
+
+   cout << "Número de fuentes: " << FuenteLuz::getFuentes() << endl;
+
+   fuente2 = new FuenteLuzPosicional(otraposicion, ambiente, difusa, especular); fuentes.Agregar(fuente2);
+   cout << "Número de fuentes: " << FuenteLuz::getFuentes() << endl;
+
+   Tupla3f comp_emision(0.0,1.0,0.0); Tupla3f comp_amb(0.2,0.2,0.2); Tupla3f comp_dif(0.8,0.8,0.8); Tupla3f comp_esp(0.0,0.0,0.0);
+
+   float exp_esp = 1;
+
+   mat = new Material(comp_emision, comp_amb, comp_dif, comp_esp, exp_esp);
+
+*/
+
 
 
 }
@@ -347,7 +373,7 @@ void Practica3::DibujarObjetos()
    // Dibujar aquí
    fuentes.Activar();
    raiz->Procesa();
-   fuentes.Desactivar();
+   //fuentes.Desactivar();
 
    glDisable( GL_LIGHTING );
    glDisable( GL_NORMALIZE );

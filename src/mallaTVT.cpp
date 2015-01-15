@@ -276,7 +276,7 @@ void MallaTVT::Visualizar()
 
    // Pendiente de reorganizar
 
-   if (material != nullptr)
+   if (false)
    {
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -291,12 +291,16 @@ void MallaTVT::Visualizar()
 
       vbo_vertices->Activar();
 
-      coordenadas_textura = material->Activar();
+      if (material != nullptr)
+      {
+         coordenadas_textura = material->Activar();
 
-      if (material->HayTextura())
-         glEnable(GL_TEXTURE_2D);
+         if (material->HayTextura())
+            glEnable(GL_TEXTURE_2D);
 
-      if (coordenadas_textura) vbo_coordenadas_textura->Activar();
+         if (coordenadas_textura) vbo_coordenadas_textura->Activar();
+      }
+
 
       vbo_triangulos->Visualizar(modo_dibujo, color_primario, color_secundario);
 
@@ -327,7 +331,7 @@ void MallaTVT::Visualizar()
             break;
 
       }
-      if (modo_dibujo == SOLIDO_CARAS)
+      if (modo_dibujo == SOLIDO_CARAS && material == nullptr)
       {
          VisualizarModoInmediato();
       }
@@ -346,6 +350,19 @@ void MallaTVT::Visualizar()
             vbo_normales_vertices->Activar();
          }
 
+         if (material != nullptr)
+         {
+            coordenadas_textura = material->Activar();
+
+            if (material->HayTextura())
+              glEnable(GL_TEXTURE_2D);
+
+            if (coordenadas_textura) vbo_coordenadas_textura->Activar();
+         }
+
+         if (modo_dibujo == SOLIDO_CARAS) glShadeModel(GL_FLAT);
+         else glShadeModel(GL_SMOOTH);
+
          vbo_vertices->Activar();
 
          if (modo_dibujo == PUNTOS)
@@ -361,6 +378,8 @@ void MallaTVT::Visualizar()
          glDisableClientState( GL_COLOR_ARRAY );
       if (normal_vertices)
          glDisableClientState( GL_NORMAL_ARRAY );
+      if (coordenadas_textura)
+         glDisableClientState( GL_TEXTURE_COORD_ARRAY );
    }
 
    if (dibujo_normales == AMBAS || dibujo_normales == CARAS )
@@ -378,7 +397,7 @@ void MallaTVT::Visualizar()
 
 void MallaTVT::VisualizarModoInmediato()
 {
-   glShadeModel(GL_FLAT);
+
    glBegin( GL_TRIANGLES );
    for (unsigned i = 0; i < tri.size(); i++)
    {
@@ -388,13 +407,14 @@ void MallaTVT::VisualizarModoInmediato()
          glNormal3fv( normales_caras[i].data() );
       }
 
-      for (int j = 0; j < 3; ++j) {
+      for (int j = 0; j < 3; ++j)
+      {
          unsigned int iv = tri[i][j]; // iv = índice de vértice
          glVertex3fv(ver[iv].data());
       }
    }
    glEnd();
-   glShadeModel(GL_SMOOTH);
+
 }
 
 void MallaTVT::VisualizarNormalesCaras()
@@ -551,7 +571,8 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
          //cout << "Perfil " << perfil << ":" << endl;
          for (unsigned vertice = 0; vertice < vertices_perfil; vertice++)
          {
-            coordenadas_textura.push_back(pair<float,float>(perfil*1.0/(caras-1),1-distancias[vertice]/distancias[vertices_perfil-1]));
+            Tupla2f coordenada(perfil*1.0/(caras-1),1-distancias[vertice]/distancias[vertices_perfil-1]);
+            coordenadas_textura.push_back(coordenada);
          }
          //cout << "\n\n\n\n" << endl;
       }

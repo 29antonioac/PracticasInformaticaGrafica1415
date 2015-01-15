@@ -48,7 +48,7 @@ private:
    tipo_malla tipo;
 
    Material * material;
-   vector<pair<float,float> > coordenadas_textura;
+   vector<Tupla2f> coordenadas_textura;
 
    float dimension;
 

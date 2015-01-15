@@ -27,6 +27,7 @@ private:
    T coo[N];
 public:
    inline Tupla<N,T>();
+   inline Tupla( const T x, const T y );
    inline Tupla( const T x, const T y, const T z );
    inline Tupla( const T x, const T y, const T z, const T w);
    inline Tupla( const T coot[N] );
@@ -70,6 +71,16 @@ inline Tupla<N,T>::Tupla()
 {
    for (unsigned i = 0; i < N; i++)
       coo[i] = 0;
+}
+
+// Constructor de tupla con 2 elementos
+template <unsigned N,class T>
+inline Tupla<N,T>::Tupla( const T x, const T y )
+{
+   assert (N == 2);
+
+   coo[X] = x;
+   coo[Y] = y;
 }
 
 // Constructor de tupla con 3 elementos
@@ -317,13 +328,16 @@ T* Tupla<N,T>::data()
 }
 
 // Especializaciones
+template class Tupla<2,float>;
 template class Tupla<3,int>;
 template class Tupla<3,float>;
 template class Tupla<4,float>;
 
+typedef Tupla<2,float>  Tupla2f;
 typedef Tupla<3,float>  Tupla3f;
 typedef Tupla<4,float>  Tupla4f;
 typedef Tupla<3,int>    Tupla3i;
+
 
 
 

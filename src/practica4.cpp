@@ -141,12 +141,22 @@ void Practica4::Inicializar( int argc, char *argv[] )
    peon_blanco->Revolucion(caras_revolucion);
    peon_blanco->SetMaterial(material_peon_blanco);
 
+   /*
    peon_negro = new MallaTVT(peon_blanco);
    //peon_negro = peon_negro->Revolucion(20);
    peon_negro->SetMaterial(material_peon_negro);
 
    peon_madera = new MallaTVT(peon_blanco);
    //peon_madera = peon_madera->Revolucion(20);
+   peon_madera->SetMaterial(material_peon_madera);
+   */
+
+   peon_negro = new MallaTVT(PERFIL,vertices_ply_peon);
+   peon_negro->Revolucion(20);
+   peon_negro->SetMaterial(material_peon_negro);
+
+   peon_madera = new MallaTVT(PERFIL,vertices_ply_peon);
+   peon_madera->Revolucion(20);
    peon_madera->SetMaterial(material_peon_madera);
 
    // Crear lata
@@ -186,8 +196,8 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
 
    raiz = new NodoGrafoEscena;
-   NodoGrafoEscena * nodo_traslacion_peon_madera = new NodoTransformacion(Matriz4x4::Traslacion(-3.0,1.3,1.3));
-   NodoGrafoEscena * nodo_traslacion_peon_blanco = new NodoTransformacion(Matriz4x4::Traslacion(0.0,1.3,2.3));
+   NodoGrafoEscena * nodo_traslacion_peon_madera = new NodoTransformacion(Matriz4x4::Traslacion(-3.0,1.3,1.5));
+   NodoGrafoEscena * nodo_traslacion_peon_blanco = new NodoTransformacion(Matriz4x4::Traslacion(0.0,1.3,2.5));
    NodoGrafoEscena * nodo_traslacion_peon_negro = new NodoTransformacion(Matriz4x4::Traslacion(3.0,1.3,3.3));
    NodoGrafoEscena * nodo_escalado_lata = new NodoTransformacion(Matriz4x4::Escalado(4.0,4.0,4.0));
    NodoGrafoEscena * nodo_peon_blanco = new NodoTerminal(peon_blanco);
@@ -196,6 +206,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * nodo_cuerpo_lata = new NodoTerminal(cuerpo_lata);
    NodoGrafoEscena * nodo_tapa_sup = new NodoTerminal(tapa_sup);
    NodoGrafoEscena * nodo_tapa_inf = new NodoTerminal(tapa_inf);
+
 
    raiz->aniadeHijo(nodo_traslacion_peon_blanco);
       nodo_traslacion_peon_blanco->aniadeHijo(nodo_peon_blanco);
@@ -206,6 +217,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
    raiz->aniadeHijo(nodo_traslacion_peon_madera);
       nodo_traslacion_peon_madera->aniadeHijo(nodo_peon_madera);
+
 
    raiz->aniadeHijo(nodo_escalado_lata);
       nodo_escalado_lata->aniadeHijo(nodo_cuerpo_lata);
@@ -302,8 +314,8 @@ void Practica4::Debug()
 
    vector<string> debug_strings;
 
-   debug_strings.push_back(string("Beta: " + to_string(fuente_direccional->getBeta())));
-   debug_strings.push_back(string("Alpha: " + to_string(fuente_direccional->getAlpha())));
+   //debug_strings.push_back(string("Beta: " + to_string(fuente_direccional->getBeta())));
+   //debug_strings.push_back(string("Alpha: " + to_string(fuente_direccional->getAlpha())));
 
    debug_strings.push_back(string("Modo de normales: " + enumToString(peon_madera->getModoNormales())));
    debug_strings.push_back(string("Modo de dibujo: " + enumToString(modo_dibujo)));

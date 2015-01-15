@@ -31,11 +31,7 @@ Textura::Textura(string archivo, unsigned modo_generacion_coordenadas_textura, f
 
 bool Textura::Activar()
 {
-   glEnable(GL_TEXTURE_2D);
-
    glBindTexture(GL_TEXTURE_2D, id_textura);
-
-   glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 
    if (modo_generacion_coordenadas_textura == 0)
    {
@@ -43,27 +39,34 @@ bool Textura::Activar()
       glDisable(GL_TEXTURE_GEN_T);
       return true;
    }
-   else if (modo_generacion_coordenadas_textura == 1) // Generación de coordenadas en coordenadas de objeto
+   else if (modo_generacion_coordenadas_textura == 1)
    {
+      glEnable(GL_TEXTURE_GEN_S);
+      glEnable(GL_TEXTURE_GEN_T);
+
       glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
       glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
 
       glTexGenfv(GL_S, GL_OBJECT_PLANE, cs);
       glTexGenfv(GL_T, GL_OBJECT_PLANE, ct);
 
+      return false;
    }
-   else     // Generación de coordenadas en coordenadas de ojo
+
+   else
    {
+      glEnable(GL_TEXTURE_GEN_S);
+      glEnable(GL_TEXTURE_GEN_T);
+
       glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
       glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
 
       glTexGenfv(GL_S, GL_EYE_PLANE, cs);
       glTexGenfv(GL_T, GL_EYE_PLANE, ct);
 
-      glEnable(GL_TEXTURE_GEN_S);
-      glEnable(GL_TEXTURE_GEN_T);
       return false;
    }
+
 }
 
 unsigned Textura::getModo()

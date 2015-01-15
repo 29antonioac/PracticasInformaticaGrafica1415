@@ -5,6 +5,7 @@
 
 unsigned FuenteLuz::numero_fuentes = 0;
 
+
 FuenteLuz::FuenteLuz(Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular)
 {
    this->componente_ambiental = AniadeW(componente_ambiental,1.0);
@@ -14,15 +15,17 @@ FuenteLuz::FuenteLuz(Tupla3f componente_ambiental, Tupla3f componente_difusa, Tu
    numero_fuentes++;
 }
 
+
 void FuenteLuz::Desactivar()
 {
    glDisable(this->id_luz);
 }
 
+
 FuenteLuzPosicional::FuenteLuzPosicional(Tupla3f posicion, Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular)
    : FuenteLuz::FuenteLuz(componente_ambiental, componente_difusa, componente_especular)
 {
-   this->posicion = AniadeW(posicion,1.0);
+   this->posicion = AniadeW(posicion,1.0f);
 }
 
 FuenteLuzDireccional::FuenteLuzDireccional(float alpha, float beta, Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular)
@@ -36,29 +39,14 @@ void FuenteLuzDireccional::Activar()
 {
    glEnable(id_luz);
 
-   GLfloat matrix[16];
-   //glGetFloatv (GL_VIE, matrix);
+   Tupla4f ejeZ(cosf(alpha)*sinf(beta),sinf(alpha)*sinf(beta),cosf(beta),0.0);
 
-   //const float ejeZ[4] = {0.0,0.0,1.0,0.0};
+   std::cout << "Posicion luz: " << ejeZ << std::endl;
 
-   //glMatrixMode(GL_MODELVIEW);
-   //glPushMatrix();
-
-   	   //glLoadIdentity();
-
-   //glRotatef(this->alpha, 0.0,1.0,0.0);
-            //glRotatef(this->beta, -1.0,0.0,0.0);
-            //ejeZ = Matriz4x4::RotacionEjeY(alpha) *
-         Tupla4f ejeZ(cosf(alpha)*sinf(beta),sinf(alpha)*sinf(beta),cosf(beta),0.0);
-
-         std::cout << "Posicion luz: " << ejeZ << std::endl;
-
-   	   glLightfv(id_luz, GL_POSITION, ejeZ.data());
-   	   glLightfv(id_luz, GL_AMBIENT, this->componente_ambiental.data());
-         glLightfv(id_luz, GL_DIFFUSE, this->componente_difusa.data());
-         glLightfv(id_luz, GL_SPECULAR,this->componente_especular.data());
-
-   //glPopMatrix();
+   glLightfv(id_luz, GL_POSITION, ejeZ.data());
+   glLightfv(id_luz, GL_AMBIENT, this->componente_ambiental.data());
+   glLightfv(id_luz, GL_DIFFUSE, this->componente_difusa.data());
+   glLightfv(id_luz, GL_SPECULAR,this->componente_especular.data());
 }
 
 void FuenteLuzDireccional::ModificaAlpha(int signo)
@@ -90,21 +78,21 @@ void FuenteLuzPosicional::Activar()
 {
    glEnable(id_luz);
 
-   //glMatrixMode(GL_MODELVIEW);
-   //glPushMatrix();
 
-      //glLoadIdentity();
+   std::cout << "Posicion luz: " << this->posicion << std::endl;
 
-      std::cout << "Posicion luz: " << this->posicion << std::endl;
+   glBegin(GL_POINTS);
+   glColor3f(0.5f,0.5f,0.5f);
+   //glPointSize(3.0);
+   glVertex4fv(this->posicion.data());
+   glEnd();
 
-      glLightfv(id_luz, GL_POSITION,this->posicion.data());
-      glLightfv(id_luz, GL_AMBIENT, this->componente_ambiental.data());
-      glLightfv(id_luz, GL_DIFFUSE, this->componente_difusa.data());
-      glLightfv(id_luz, GL_SPECULAR,this->componente_especular.data());
+   glLightfv(id_luz, GL_POSITION,this->posicion.data());
+   glLightfv(id_luz, GL_AMBIENT, this->componente_ambiental.data());
+   glLightfv(id_luz, GL_DIFFUSE, this->componente_difusa.data());
+   glLightfv(id_luz, GL_SPECULAR,this->componente_especular.data());
 
-   //glPopMatrix();
 }
-
 
 void ColeccionFuentesLuz::Activar()
 {
@@ -129,5 +117,7 @@ void ColeccionFuentesLuz::Agregar(FuenteLuz * fuente)
    else
       std::cout << "Ya hay 8 fuentes, que son las máximas!" << std::endl;
 }
+
+
 
 
