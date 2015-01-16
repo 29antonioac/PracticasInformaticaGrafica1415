@@ -20,6 +20,7 @@ MallaTVT::MallaTVT(tipo_malla tipo, vector<GLfloat> vertices, vector<int> caras,
       Tupla3i cara(caras[i],caras[i+1],caras[i+2]);
       tri.push_back(cara);
    }
+   this->vertices_inicial = ver.size();
 
    this->material = material;
    this->tipo = tipo;
@@ -30,6 +31,7 @@ MallaTVT::MallaTVT(tipo_malla tipo, vector<GLfloat> vertices, vector<int> caras,
 MallaTVT::MallaTVT(tipo_malla tipo, vector<Tupla3f> vertices, vector<Tupla3i> caras, Material * material)
 {
    ver = vertices;
+   this->vertices_inicial = ver.size();
 
    // Pasamos las caras a vectores de Tupla3f
    for (unsigned i = 0; i < caras.size(); i+=2)
@@ -72,6 +74,9 @@ MallaTVT::MallaTVT(MallaTVT * malla)
    this->vbo_lineas_normales_caras     = malla->vbo_lineas_normales_caras;
    this->vbo_lineas_normales_vertices  = malla->vbo_lineas_normales_vertices;
    this->vbo_coordenadas_textura       = malla->vbo_coordenadas_textura;
+
+   // Copiar número de vértices de un perfil
+   this->vertices_inicial = malla->vertices_inicial;
 
    // Copiar modo de dibujo y de normales
    this->modo_dibujo       = malla->modo_dibujo;
@@ -124,10 +129,6 @@ void MallaTVT::Inicializar()
    color_secundario = Tupla3f(0.0,0.0,0.0);
 
    color_fijo = false;
-
-   // Vemos si hay que calcular tabla de coordenadas de textura
-   //if (tipo == REVOLUCION && material->HayTextura())
-   //   CalcularCoordenadasTextura();
 
    CrearVBOs();
 }
@@ -199,6 +200,28 @@ void MallaTVT::CalcularVectoresNormales()
       normales_vertices[A] += normales_caras[cara];
       normales_vertices[B] += normales_caras[cara];
       normales_vertices[C] += normales_caras[cara];
+   }
+
+   // Corregir normales del último perfil!
+   if (this->tipo == REVOLUCION_TAPADO)
+   {
+      cout << "Voy a corregir normales tapadas! " << endl;
+      for (unsigned vertice = 0; vertice < vertices_inicial; vertice++)
+      {
+         Tupla3f normal_corregida = (normales_vertices[vertice] + normales_vertices[ver.size() - 3 - vertice]) / 2;
+         normales_vertices[vertice] = normal_corregida;
+         normales_vertices[ver.size() - 3 - vertice] = normal_corregida;
+      }
+   }
+   else if (this->tipo == REVOLUCION_NO_TAPADO)
+   {
+      cout << "Voy a corregir normales no tapadas! " << endl;
+      for (unsigned vertice = 0; vertice < vertices_inicial; vertice++)
+      {
+         Tupla3f normal_corregida = (normales_vertices[vertice] + normales_vertices[ver.size() - 1 - vertice]) / 2;
+         normales_vertices[vertice] = normal_corregida;
+         normales_vertices[ver.size() - 1 - vertice] = normal_corregida;
+      }
    }
 
    for (unsigned vertice = 0; vertice < ver.size(); vertice++)
@@ -464,30 +487,34 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
    unsigned vertices_perfil = ver.size();
 
 
-   // Crear matriz de perfiles
-   vector<vector<Tupla3f> > perfiles;
+   // Crear perfiles rotando cada vértice
 
-   perfiles.push_back(ver);
-   vector<Tupla3f> perfil_actual;
-   vector<int> vertices_fijos;
+   unsigned indice_vertice_actual, indice_vertice_anterior;
    Tupla3f vertice_actual;
 
    for (unsigned perfil = 1; perfil < caras; perfil++)
    {
-      perfil_actual.clear();
       for (unsigned i = 0; i < vertices_perfil; i++)
       {
-         vertice_actual = Matriz4x4::RotacionEjeY(alpha)*perfiles[perfil-1][i];
-         perfil_actual.push_back(vertice_actual);
+         indice_vertice_actual = perfil*vertices_perfil + i;
+         indice_vertice_anterior = indice_vertice_actual - vertices_perfil;
+         vertice_actual = Matriz4x4::RotacionEjeY(alpha)*ver[indice_vertice_anterior];
          ver.push_back(vertice_actual);
       }
-      perfiles.push_back(perfil_actual);
    }
 
 
+   // Crear copia del primer perfil para poder aplicar texturas al sólido.
+   // Los triángulos debo unirlos a esta nueva copia que creamos
+
+   for (unsigned vertice = 0; vertice < vertices_perfil; vertice++)
+   {
+      ver.push_back(ver[vertice]);
+   }
+
 
    // Añadir triángulos
-   for (unsigned perfil = 0; perfil < caras-1; perfil++)
+   for (unsigned perfil = 0; perfil < caras; perfil++)
    {
       for (unsigned vertice = 1; vertice < vertices_perfil; vertice++)     // Cogemos los triángulos igual que en el guión de prácticas
       {
@@ -501,41 +528,6 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
       }
    }
 
-
-   // Último perfil a fuego
-/*
-   unsigned perfil = caras - 1;
-   for (unsigned vertice = 1; vertice < vertices_perfil; vertice++)     // Cogemos los triángulos igual que en el guión de prácticas
-   {
-      unsigned indice_vertice_actual = perfil * vertices_perfil + vertice;
-      unsigned indice_vertice_anterior = indice_vertice_actual - 1;
-      unsigned indice_vertice_siguiente_perfil = vertice;
-      unsigned indice_vertice_anterior_siguiente_perfil = vertice - 1;
-
-      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
-      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
-   }
-*/
-
-   // Crear copia del primer perfil para poder aplicar texturas al sólido.
-   // Los triángulos debo unirlos a esta nueva copia que creamos
-
-   for (unsigned vertice = 0; vertice < vertices_perfil; vertice++)
-   {
-      ver.push_back(ver[vertice]);
-   }
-
-   unsigned perfil = caras - 1;
-   for (unsigned vertice = 1; vertice < vertices_perfil; vertice++)     // Cogemos los triángulos igual que en el guión de prácticas
-   {
-      unsigned indice_vertice_actual = perfil * vertices_perfil + vertice;
-      unsigned indice_vertice_anterior = indice_vertice_actual - 1;
-      unsigned indice_vertice_siguiente_perfil = indice_vertice_actual + vertices_perfil;
-      unsigned indice_vertice_anterior_siguiente_perfil = indice_vertice_anterior + vertices_perfil;
-
-      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
-      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
-   }
 
 
    if (tapas)
@@ -571,6 +563,11 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
       }
 
       tri.push_back(Tupla3i(centro_tapa_superior, caras*vertices_perfil - 1,vertices_perfil - 1));
+      this->tipo = REVOLUCION_TAPADO;
+   }
+   else
+   {
+      this->tipo = REVOLUCION_NO_TAPADO;
    }
 
 
@@ -699,6 +696,8 @@ void MallaTVT::Barrido_Rotacion(const unsigned caras)
    tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
    tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
 
+   this->tipo = BARRIDO_ROTACION;
+
    Inicializar();
 
 }
@@ -800,6 +799,8 @@ void MallaTVT::Barrido_Traslacion(const unsigned caras, const float dx, const fl
    }
 
    tri.push_back(Tupla3i(centro_tapa_superior, caras * vertices_perfil - 1, (caras - 1) * vertices_perfil));
+
+   this->tipo = BARRIDO_TRASLACION;
 
    Inicializar();
 }

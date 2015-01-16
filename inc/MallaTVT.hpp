@@ -43,6 +43,8 @@ private:
    VBO_Lineas     * vbo_lineas_normales_vertices;
    VBO_Coordenadas_Textura * vbo_coordenadas_textura;
 
+   unsigned vertices_inicial;
+
    visualizacion modo_dibujo;
    normales dibujo_normales;
    tipo_malla tipo;

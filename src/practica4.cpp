@@ -70,7 +70,7 @@ Practica4::~Practica4()
 
 void Practica4::Inicializar( int argc, char *argv[] )
 {
-   unsigned caras_revolucion = 100;
+   unsigned caras_revolucion = 4;
 
    // Luces, cámara y acción!
 
@@ -153,7 +153,6 @@ void Practica4::Inicializar( int argc, char *argv[] )
    //peon_madera = peon_madera->Revolucion(20);
    peon_madera->SetMaterial(material_peon_madera);
 
-
    /*
    peon_negro = new MallaTVT(PERFIL,vertices_ply_peon);
    peon_negro->Revolucion(20);
@@ -212,7 +211,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * nodo_tapa_sup = new NodoTerminal(tapa_sup);
    NodoGrafoEscena * nodo_tapa_inf = new NodoTerminal(tapa_inf);
 
-
+/*
    raiz->aniadeHijo(nodo_traslacion_peon_blanco);
       nodo_traslacion_peon_blanco->aniadeHijo(nodo_peon_blanco);
 
@@ -222,7 +221,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
    raiz->aniadeHijo(nodo_traslacion_peon_madera);
       nodo_traslacion_peon_madera->aniadeHijo(nodo_peon_madera);
-
+*/
 
    raiz->aniadeHijo(nodo_escalado_lata);
       nodo_escalado_lata->aniadeHijo(nodo_cuerpo_lata);
@@ -270,23 +269,6 @@ void Practica4::CambioModoNormales()
    this->peon_madera->CambioModoNormales();
    this->peon_blanco->CambioModoNormales();
    this->peon_negro->CambioModoNormales();
-}
-
-
-void Practica4::CambioGradoLibertad(int grado_libertad)
-{
-
-   if (grado_libertad != 1 && grado_libertad != -1
-         && grado_libertad != 2 && grado_libertad != -2
-         && grado_libertad != 3 && grado_libertad != -3
-         && grado_libertad != 4 && grado_libertad != -4)
-   {
-      cout << "Grado de libertad inválido" << endl;
-      exit(-4);
-   }
-
-
-
 }
 
 void Practica4::CambioColorFijo()
