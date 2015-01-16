@@ -501,7 +501,9 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
       }
    }
 
+
    // Último perfil a fuego
+/*
    unsigned perfil = caras - 1;
    for (unsigned vertice = 1; vertice < vertices_perfil; vertice++)     // Cogemos los triángulos igual que en el guión de prácticas
    {
@@ -513,6 +515,28 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
       tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
       tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
    }
+*/
+
+   // Crear copia del primer perfil para poder aplicar texturas al sólido.
+   // Los triángulos debo unirlos a esta nueva copia que creamos
+
+   for (unsigned vertice = 0; vertice < vertices_perfil; vertice++)
+   {
+      ver.push_back(ver[vertice]);
+   }
+
+   unsigned perfil = caras - 1;
+   for (unsigned vertice = 1; vertice < vertices_perfil; vertice++)     // Cogemos los triángulos igual que en el guión de prácticas
+   {
+      unsigned indice_vertice_actual = perfil * vertices_perfil + vertice;
+      unsigned indice_vertice_anterior = indice_vertice_actual - 1;
+      unsigned indice_vertice_siguiente_perfil = indice_vertice_actual + vertices_perfil;
+      unsigned indice_vertice_anterior_siguiente_perfil = indice_vertice_anterior + vertices_perfil;
+
+      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
+      tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
+   }
+
 
    if (tapas)
    {
@@ -550,31 +574,33 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
    }
 
 
+
+
+
    // Comprobamos si hay que calcular coordenadas de textura
    if (material != nullptr && material->NecesitoCoordenadasTextura())
    {
       // Calculamos coordenadas de textura
       vector<float> distancias;
       distancias.push_back(0.0);
-      ver.push_back(ver[0]);
 
       for (unsigned i = 1; i < vertices_perfil; i++)
       {
          float distancia = (ver[i] - ver[i-1]).len();
          distancias.push_back(distancias[i-1] + distancia);
-         // Añadir el primer perfil de nuevo para unir la textura
-         ver.push_back(ver[i]);
+
       }
 
       for (unsigned perfil = 0; perfil <= caras; perfil++)
       {
-         //cout << "Perfil " << perfil << ":" << endl;
+         cout << "Perfil " << perfil << ":" << endl;
          for (unsigned vertice = 0; vertice < vertices_perfil; vertice++)
          {
-            Tupla2f coordenada(perfil*1.0/(caras-1),1-distancias[vertice]/distancias[vertices_perfil-1]);
+            Tupla2f coordenada(perfil*1.0/(caras),1-distancias[vertice]/distancias[vertices_perfil-1]);
             coordenadas_textura.push_back(coordenada);
+            cout << "Vertice " << vertice << "\t-> UV = " << coordenada << endl;
          }
-         //cout << "\n\n\n\n" << endl;
+         cout << "\n\n" << endl;
       }
    }
 

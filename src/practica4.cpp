@@ -105,7 +105,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
    // Crear material del peon blanco (sin textura, material puramente difuso sin brillo especular)
    Tupla3f peon_blanco_componente_emision(0.8,0.8,0.8);  // Color blanco
-   Tupla3f peon_blanco_componente_ambiental(0.0,0.0,0.0);
+   Tupla3f peon_blanco_componente_ambiental(peon_blanco_componente_emision * 0.1);
    Tupla3f peon_blanco_componente_difusa(0.3,0.3,0.3);
    Tupla3f peon_blanco_componente_especular(0.0,0.0,0.0);
    float peon_blanco_exponente_especular = 5.0;
@@ -115,7 +115,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
    // Crear material del peón negro (sin textura, material especular sin apenas reflectividad difusa)
    Tupla3f peon_negro_componente_emision(0.0,0.0,0.0);  // Color negro
-   Tupla3f peon_negro_componente_ambiental(0.0,0.0,0.0);
+   Tupla3f peon_negro_componente_ambiental(peon_negro_componente_emision * 0.1);
    Tupla3f peon_negro_componente_difusa(0.1,0.1,0.1);
    Tupla3f peon_negro_componente_especular(0.7,0.7,0.7);
    float peon_negro_exponente_especular = 5.0;
@@ -125,7 +125,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
    // Crear material del peón de madera (con textura generada automáticamente, material difuso-especular)
    Tupla3f peon_madera_componente_emision(0.8,0.8,0.8);  // Color blanco puro
-   Tupla3f peon_madera_componente_ambiental(0.0,0.0,0.0);
+   Tupla3f peon_madera_componente_ambiental(peon_madera_componente_emision * 0.1);
    Tupla3f peon_madera_componente_difusa(0.3,0.3,0.3);
    Tupla3f peon_madera_componente_especular(0.7,0.7,0.7);
    float peon_madera_exponente_especular = 5.0;
@@ -144,7 +144,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
    peon_blanco->Revolucion(caras_revolucion);
    peon_blanco->SetMaterial(material_peon_blanco);
 
-   /*
+
    peon_negro = new MallaTVT(peon_blanco);
    //peon_negro = peon_negro->Revolucion(20);
    peon_negro->SetMaterial(material_peon_negro);
@@ -152,8 +152,9 @@ void Practica4::Inicializar( int argc, char *argv[] )
    peon_madera = new MallaTVT(peon_blanco);
    //peon_madera = peon_madera->Revolucion(20);
    peon_madera->SetMaterial(material_peon_madera);
-   */
 
+
+   /*
    peon_negro = new MallaTVT(PERFIL,vertices_ply_peon);
    peon_negro->Revolucion(20);
    peon_negro->SetMaterial(material_peon_negro);
@@ -161,10 +162,11 @@ void Practica4::Inicializar( int argc, char *argv[] )
    peon_madera = new MallaTVT(PERFIL,vertices_ply_peon);
    peon_madera->Revolucion(20);
    peon_madera->SetMaterial(material_peon_madera);
+   */
 
    // Crear lata
    Tupla3f cuerpo_lata_componente_emision(1.0,1.0,1.0);  // Color blanco puro
-   Tupla3f cuerpo_lata_componente_ambiental(0.0,0.0,0.0);
+   Tupla3f cuerpo_lata_componente_ambiental(cuerpo_lata_componente_emision * 0.1);
    Tupla3f cuerpo_lata_componente_difusa(0.4,0.4,0.4);
    Tupla3f cuerpo_lata_componente_especular(1.0,1.0,1.0);
    float cuerpo_lata_exponente_especular = 5.0;
@@ -180,7 +182,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
    // Crear tapas
    Tupla3f tapa_componente_emision(0.6,0.6,0.6);  // Color gris
-   Tupla3f tapa_componente_ambiental(0.0,0.0,0.0);
+   Tupla3f tapa_componente_ambiental(tapa_componente_emision * 0.1);
    Tupla3f tapa_componente_difusa(0.3,0.3,0.3);
    Tupla3f tapa_componente_especular(1.0,1.0,1.0);
    float tapa_exponente_especular = 1.0;
@@ -251,6 +253,13 @@ void Practica4::DibujarObjetos()
 void Practica4::CambioModoDibujo(visualizacion modo_dibujo)
 {
    this->modo_dibujo = modo_dibujo;
+
+   this->cuerpo_lata->CambioModoDibujo(this->modo_dibujo);
+   this->tapa_inf->CambioModoDibujo(this->modo_dibujo);
+   this->tapa_sup->CambioModoDibujo(this->modo_dibujo);
+   this->peon_madera->CambioModoDibujo(this->modo_dibujo);
+   this->peon_blanco->CambioModoDibujo(this->modo_dibujo);
+   this->peon_negro->CambioModoDibujo(this->modo_dibujo);
 }
 
 void Practica4::CambioModoNormales()
@@ -317,8 +326,8 @@ void Practica4::Debug()
 
    vector<string> debug_strings;
 
-   //debug_strings.push_back(string("Beta: " + to_string(fuente_direccional->getBeta())));
-   //debug_strings.push_back(string("Alpha: " + to_string(fuente_direccional->getAlpha())));
+   debug_strings.push_back(string("Beta: " + to_string(fuente_direccional->getBeta())));
+   debug_strings.push_back(string("Alpha: " + to_string(fuente_direccional->getAlpha())));
 
    debug_strings.push_back(string("Modo de normales: " + enumToString(peon_madera->getModoNormales())));
    debug_strings.push_back(string("Modo de dibujo: " + enumToString(modo_dibujo)));
