@@ -21,6 +21,8 @@ MallaTVT::MallaTVT(tipo_malla tipo, vector<GLfloat> vertices, vector<int> caras,
       tri.push_back(cara);
    }
    this->vertices_inicial = ver.size();
+   this->vertices_en_eje_Y = 0;
+
 
    this->material = material;
    this->tipo = tipo;
@@ -46,6 +48,7 @@ MallaTVT::MallaTVT(tipo_malla tipo, vector<Tupla3f> vertices, vector<Tupla3i> ca
 
    this->material = material;
    this->tipo = tipo;
+   this->vertices_en_eje_Y = 0;
 
    Inicializar();
 }
@@ -77,6 +80,7 @@ MallaTVT::MallaTVT(MallaTVT * malla)
 
    // Copiar número de vértices de un perfil
    this->vertices_inicial = malla->vertices_inicial;
+   this->vertices_en_eje_Y = malla->vertices_en_eje_Y;
 
    // Copiar modo de dibujo y de normales
    this->modo_dibujo       = malla->modo_dibujo;
@@ -202,27 +206,8 @@ void MallaTVT::CalcularVectoresNormales()
       normales_vertices[C] += normales_caras[cara];
    }
 
-   // Corregir normales del último perfil!
-   if (this->tipo == REVOLUCION_TAPADO)
-   {
-      cout << "Voy a corregir normales tapadas! " << endl;
-      for (unsigned vertice = 0; vertice < vertices_inicial; vertice++)
-      {
-         Tupla3f normal_corregida = (normales_vertices[vertice] + normales_vertices[ver.size() - 3 - vertice]) / 2;
-         normales_vertices[vertice] = normal_corregida;
-         normales_vertices[ver.size() - 3 - vertice] = normal_corregida;
-      }
-   }
-   else if (this->tipo == REVOLUCION_NO_TAPADO)
-   {
-      cout << "Voy a corregir normales no tapadas! " << endl;
-      for (unsigned vertice = 0; vertice < vertices_inicial; vertice++)
-      {
-         Tupla3f normal_corregida = (normales_vertices[vertice] + normales_vertices[ver.size() - 1 - vertice]) / 2;
-         normales_vertices[vertice] = normal_corregida;
-         normales_vertices[ver.size() - 1 - vertice] = normal_corregida;
-      }
-   }
+   // Si hay coordenadas de textura, las normales hay que corregirlas
+   if (material != nullptr && material->NecesitoCoordenadasTextura()) CorregirVectoresNormales();
 
    for (unsigned vertice = 0; vertice < ver.size(); vertice++)
    {
@@ -252,6 +237,45 @@ void MallaTVT::CalcularCoordenadasTextura(unsigned vertices_perfil)
 
    }
 */
+}
+
+void MallaTVT::CorregirVectoresNormales()
+{
+   // Corregir normales del último perfil
+   if (this->tipo == REVOLUCION_TAPADO)
+   {
+      cout << "Voy a corregir normales tapadas! " << endl;
+      unsigned indice_ultimo_perfil;
+
+      unsigned offset;
+      if (vertices_en_eje_Y == 0)
+         offset = 1;
+      else if (vertices_en_eje_Y == 1)
+         offset = 0;
+      else if (vertices_en_eje_Y == 2)
+         offset = 1;
+
+      for (unsigned vertice = 0; vertice < vertices_inicial; vertice++)
+      {
+         indice_ultimo_perfil = ver.size() - offset - 1 - vertices_inicial + vertice;
+         Tupla3f normal_corregida = (normales_vertices[vertice] + normales_vertices[indice_ultimo_perfil]);
+         normales_vertices[vertice] = normal_corregida;
+         normales_vertices[indice_ultimo_perfil] = normal_corregida;
+      }
+   }
+   else if (this->tipo == REVOLUCION_NO_TAPADO)
+   {
+      unsigned indice_ultimo_perfil;
+      cout << "Voy a corregir normales no tapadas! " << endl;
+
+      for (unsigned vertice = 0; vertice < vertices_inicial; vertice++)
+      {
+         indice_ultimo_perfil = ver.size() - vertices_inicial + vertice;
+         Tupla3f normal_corregida = (normales_vertices[vertice] + normales_vertices[indice_ultimo_perfil]);
+         normales_vertices[vertice] = normal_corregida;
+         normales_vertices[indice_ultimo_perfil] = normal_corregida;
+      }
+   }
 }
 
 void MallaTVT::CrearVBOs()
@@ -299,39 +323,11 @@ void MallaTVT::Visualizar()
 
    // Pendiente de reorganizar
 
-   if (false)
+   if (this->tipo == PERFIL)
    {
-      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-      if (modo_dibujo == SOLIDO_CARAS) glShadeModel(GL_FLAT);
-      else glShadeModel(GL_SMOOTH);
-
-      if (!normales_vertices.empty())
-      {
-         normal_vertices = true;
-         vbo_normales_vertices->Activar();
-      }
-
-      vbo_vertices->Activar();
-
-      if (material != nullptr)
-      {
-         coordenadas_textura = material->Activar();
-
-         if (material->HayTextura())
-            glEnable(GL_TEXTURE_2D);
-
-         if (coordenadas_textura) vbo_coordenadas_textura->Activar();
-      }
-
-
-      vbo_triangulos->Visualizar(modo_dibujo, color_primario, color_secundario);
-
-      if (coordenadas_textura)
-         glDisableClientState( GL_TEXTURE_COORD_ARRAY );
-
-      glDisable(GL_TEXTURE_GEN_S);
-      glDisable(GL_TEXTURE_GEN_T);
+      glVertexPointer(3,GL_FLOAT,0,ver.data());
+      glEnableClientState(GL_VERTEX_ARRAY);
+      glDrawArrays(GL_LINE_STRIP,0,ver.size());
 
    }
    else
@@ -354,7 +350,7 @@ void MallaTVT::Visualizar()
             break;
 
       }
-      if (modo_dibujo == SOLIDO_CARAS && material == nullptr)
+      if (modo_dibujo == SOLIDO_CARAS) // && material == nullptr)
       {
          VisualizarModoInmediato();
       }
@@ -420,12 +416,24 @@ void MallaTVT::Visualizar()
 
 void MallaTVT::VisualizarModoInmediato()
 {
+   // Activar sombreado plano
+   glShadeModel(GL_FLAT);
 
+   bool usar_coordenadas_textura;
+
+   if (material != nullptr)
+   {
+      usar_coordenadas_textura = material->Activar();
+      if (material->HayTextura()) glEnable(GL_TEXTURE_2D);
+   }
+
+   // Dibujar usando normales y coordenadas de textura
    glBegin( GL_TRIANGLES );
    for (unsigned i = 0; i < tri.size(); i++)
    {
       if(!normales_caras.empty())
       {
+         // El color sólo sirve si no hay textura, pero hacer más comprobaciones no es útil
          glColor3fv( normales_caras[i].abs().data() );
          glNormal3fv( normales_caras[i].data() );
       }
@@ -433,6 +441,7 @@ void MallaTVT::VisualizarModoInmediato()
       for (int j = 0; j < 3; ++j)
       {
          unsigned int iv = tri[i][j]; // iv = índice de vértice
+         if (usar_coordenadas_textura) glTexCoord2fv(coordenadas_textura[iv].data());
          glVertex3fv(ver[iv].data());
       }
    }
@@ -442,18 +451,43 @@ void MallaTVT::VisualizarModoInmediato()
 
 void MallaTVT::VisualizarNormalesCaras()
 {
+   GLboolean hay_luz, hay_textura;
+   // Comprobamos si hay luz para quitarla y volverla a poner luego
+   glGetBooleanv(GL_LIGHTING,&hay_luz);
+   // Comprobamos si hay texturas para quitaslas y volverlas a poner luego
+   glGetBooleanv(GL_TEXTURE_2D,&hay_textura);
+
+   if(hay_luz) glDisable(GL_LIGHTING);
+   if(hay_textura) glDisable(GL_TEXTURE_2D);
+
    glColor3f(0.0,0.0,1.0);
 
    vbo_lineas_normales_caras->Activar();
    vbo_lineas_normales_caras->Visualizar();
+
+   // Reactivamos luz si antes había
+   if(hay_luz) glEnable(GL_LIGHTING);
+   if(hay_textura) glEnable(GL_TEXTURE_2D);
 }
 
 void MallaTVT::VisualizarNormalesVertices()
 {
+   GLboolean hay_luz, hay_textura;
+   // Comprobamos si hay luz para quitarla y volverla a poner luego
+   glGetBooleanv(GL_LIGHTING,&hay_luz);
+   // Comprobamos si hay texturas para quitaslas y volverlas a poner luego
+   glGetBooleanv(GL_TEXTURE_2D,&hay_textura);
+
+   if(hay_luz) glDisable(GL_LIGHTING);
+
    glColor3f(1.0,0.0,0.0);
 
    vbo_lineas_normales_vertices->Activar();
    vbo_lineas_normales_vertices->Visualizar();
+
+   // Reactivamos luz si antes había
+   if(hay_luz) glEnable(GL_LIGHTING);
+   if(hay_textura) glEnable(GL_TEXTURE_2D);
 }
 
 void MallaTVT::Revolucion(const unsigned caras, bool tapas)
@@ -463,6 +497,8 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
 
    vector<Tupla3f> centro_tapas;
 
+   bool necesito_coordenadas_textura = material != nullptr && material->NecesitoCoordenadasTextura();
+
 
    if (ver.front()[X] != 0.0f)
    {
@@ -470,6 +506,7 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
    }
    else
    {
+      vertices_en_eje_Y++;
       centro_tapas.push_back(ver.front());
       ver.erase(ver.begin());
    }
@@ -480,6 +517,7 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
    }
    else
    {
+      vertices_en_eje_Y++;
       centro_tapas.push_back(ver.back());
       ver.pop_back();
    }
@@ -504,24 +542,57 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
    }
 
 
-   // Crear copia del primer perfil para poder aplicar texturas al sólido.
-   // Los triángulos debo unirlos a esta nueva copia que creamos
-
-   for (unsigned vertice = 0; vertice < vertices_perfil; vertice++)
+   if (necesito_coordenadas_textura)
    {
-      ver.push_back(ver[vertice]);
+      // Crear copia del primer perfil para poder aplicar texturas al sólido.
+      // Los triángulos debo unirlos a esta nueva copia que creamos
+
+      for (unsigned vertice = 0; vertice < vertices_perfil; vertice++)
+      {
+         ver.push_back(ver[vertice]);
+      }
+
+
+      // Añadir triángulos
+      for (unsigned perfil = 0; perfil < caras; perfil++)
+      {
+         for (unsigned vertice = 1; vertice < vertices_perfil; vertice++)     // Cogemos los triángulos igual que en el guión de prácticas
+         {
+            unsigned indice_vertice_actual = perfil * vertices_perfil + vertice;
+            unsigned indice_vertice_anterior = indice_vertice_actual - 1;
+            unsigned indice_vertice_siguiente_perfil = indice_vertice_actual + vertices_perfil;
+            unsigned indice_vertice_anterior_siguiente_perfil = indice_vertice_anterior + vertices_perfil;
+
+            tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
+            tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
+         }
+      }
    }
-
-
-   // Añadir triángulos
-   for (unsigned perfil = 0; perfil < caras; perfil++)
+   else
    {
+      // Añadir triángulos
+      for (unsigned perfil = 0; perfil < caras - 1; perfil++)
+      {
+         for (unsigned vertice = 1; vertice < vertices_perfil; vertice++)     // Cogemos los triángulos igual que en el guión de prácticas
+         {
+            unsigned indice_vertice_actual = perfil * vertices_perfil + vertice;
+            unsigned indice_vertice_anterior = indice_vertice_actual - 1;
+            unsigned indice_vertice_siguiente_perfil = indice_vertice_actual + vertices_perfil;
+            unsigned indice_vertice_anterior_siguiente_perfil = indice_vertice_anterior + vertices_perfil;
+
+            tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
+            tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
+         }
+      }
+
+      // Último perfil a fuego
+      unsigned perfil = caras - 1;
       for (unsigned vertice = 1; vertice < vertices_perfil; vertice++)     // Cogemos los triángulos igual que en el guión de prácticas
       {
          unsigned indice_vertice_actual = perfil * vertices_perfil + vertice;
          unsigned indice_vertice_anterior = indice_vertice_actual - 1;
-         unsigned indice_vertice_siguiente_perfil = indice_vertice_actual + vertices_perfil;
-         unsigned indice_vertice_anterior_siguiente_perfil = indice_vertice_anterior + vertices_perfil;
+         unsigned indice_vertice_siguiente_perfil = vertice;
+         unsigned indice_vertice_anterior_siguiente_perfil = vertice - 1;
 
          tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
          tri.push_back(Tupla3i(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
@@ -575,7 +646,7 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
 
 
    // Comprobamos si hay que calcular coordenadas de textura
-   if (material != nullptr && material->NecesitoCoordenadasTextura())
+   if (necesito_coordenadas_textura)
    {
       // Calculamos coordenadas de textura
       vector<float> distancias;

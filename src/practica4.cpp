@@ -70,7 +70,9 @@ Practica4::~Practica4()
 
 void Practica4::Inicializar( int argc, char *argv[] )
 {
-   unsigned caras_revolucion = 4;
+   unsigned caras_revolucion;
+   if (argc >= 3) caras_revolucion = atoi(argv[3]);
+   else caras_revolucion = 100;
 
    // Luces, cámara y acción!
 
@@ -83,13 +85,13 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
    //Tupla3f ambiente(0.0,0.0,0.0); Tupla3f difusa(1.0,1.0,1.0); Tupla3f especular(1.0,1.0,1.0);
 
-   Tupla3f luz_posicional_componente_ambiental(0.0,0.0,0.0);
+   Tupla3f luz_posicional_componente_ambiental(1.0,1.0,1.0);
    Tupla3f luz_posicional_componente_difusa(1.0,1.0,1.0);
    Tupla3f luz_posicional_componente_especular(1.0,1.0,1.0);
-   Tupla3f luz_direccional_componente_ambiental(0.0,0.0,0.0);
+   Tupla3f luz_direccional_componente_ambiental(1.0,1.0,1.0);
    Tupla3f luz_direccional_componente_difusa(1.0,1.0,1.0);
    Tupla3f luz_direccional_componente_especular(1.0,1.0,1.0);
-   Tupla3f luz_posicion(0.0,10,5.5);
+   Tupla3f luz_posicion(-4.0,10.0,6.0);
 
    fuente_direccional = new FuenteLuzDireccional(alpha, beta, luz_direccional_componente_ambiental, luz_direccional_componente_difusa, luz_direccional_componente_especular);
    fuente_posicional = new FuenteLuzPosicional(luz_posicion, luz_posicional_componente_ambiental, luz_posicional_componente_difusa, luz_posicional_componente_especular);
@@ -153,18 +155,8 @@ void Practica4::Inicializar( int argc, char *argv[] )
    //peon_madera = peon_madera->Revolucion(20);
    peon_madera->SetMaterial(material_peon_madera);
 
-   /*
-   peon_negro = new MallaTVT(PERFIL,vertices_ply_peon);
-   peon_negro->Revolucion(20);
-   peon_negro->SetMaterial(material_peon_negro);
-
-   peon_madera = new MallaTVT(PERFIL,vertices_ply_peon);
-   peon_madera->Revolucion(20);
-   peon_madera->SetMaterial(material_peon_madera);
-   */
-
    // Crear lata
-   Tupla3f cuerpo_lata_componente_emision(1.0,1.0,1.0);  // Color blanco puro
+   Tupla3f cuerpo_lata_componente_emision(0.2,0.2,0.2);  // Color blanco puro
    Tupla3f cuerpo_lata_componente_ambiental(cuerpo_lata_componente_emision * 0.1);
    Tupla3f cuerpo_lata_componente_difusa(0.4,0.4,0.4);
    Tupla3f cuerpo_lata_componente_especular(1.0,1.0,1.0);
@@ -211,7 +203,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * nodo_tapa_sup = new NodoTerminal(tapa_sup);
    NodoGrafoEscena * nodo_tapa_inf = new NodoTerminal(tapa_inf);
 
-/*
+
    raiz->aniadeHijo(nodo_traslacion_peon_blanco);
       nodo_traslacion_peon_blanco->aniadeHijo(nodo_peon_blanco);
 
@@ -221,12 +213,15 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
    raiz->aniadeHijo(nodo_traslacion_peon_madera);
       nodo_traslacion_peon_madera->aniadeHijo(nodo_peon_madera);
-*/
+
 
    raiz->aniadeHijo(nodo_escalado_lata);
       nodo_escalado_lata->aniadeHijo(nodo_cuerpo_lata);
       nodo_escalado_lata->aniadeHijo(nodo_tapa_sup);
       nodo_escalado_lata->aniadeHijo(nodo_tapa_inf);
+
+   //perfil_tapa_sup = new MallaTVT(PERFIL,vertices_ply_tapa_sup);
+   //perfil_tapa_sup->Revolucion(100);
 
 
 }
@@ -234,6 +229,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
 void Practica4::DibujarObjetos()
 {
+
    glEnable( GL_LIGHTING );
    glEnable( GL_NORMALIZE );
    glDisable( GL_COLOR_MATERIAL );
@@ -247,6 +243,9 @@ void Practica4::DibujarObjetos()
    glDisable( GL_NORMALIZE );
    glEnable( GL_COLOR_MATERIAL );
 
+
+   //perfil_tapa_sup->Visualizar();
+
 }
 
 void Practica4::CambioModoDibujo(visualizacion modo_dibujo)
@@ -259,6 +258,7 @@ void Practica4::CambioModoDibujo(visualizacion modo_dibujo)
    this->peon_madera->CambioModoDibujo(this->modo_dibujo);
    this->peon_blanco->CambioModoDibujo(this->modo_dibujo);
    this->peon_negro->CambioModoDibujo(this->modo_dibujo);
+   this->perfil_tapa_sup->CambioModoDibujo(this->modo_dibujo);
 }
 
 void Practica4::CambioModoNormales()

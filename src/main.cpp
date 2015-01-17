@@ -632,7 +632,7 @@ void Inicializar( int argc, char *argv[] )
    practica3->Inicializar(argc, argv);
    practica4->Inicializar(argc, argv);
 
-   practicaActual = practica4;
+   practicaActual = practica2;
 }
 
 // *********************************************************************

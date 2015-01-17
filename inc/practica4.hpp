@@ -47,6 +47,8 @@ private:
    FuenteLuzDireccional* fuente_direccional;
    ColeccionFuentesLuz fuentes;
 
+   MallaTVT * perfil_tapa_sup;
+
 };
 
 #endif
