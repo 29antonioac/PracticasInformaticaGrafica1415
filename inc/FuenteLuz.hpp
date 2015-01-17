@@ -17,6 +17,8 @@ public:
    FuenteLuz(Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular);
    virtual void Activar() = 0;
    void Desactivar();
+   void DibujarFuente();
+   virtual Tupla4f getPosVec() = 0;
    virtual ~FuenteLuz() {};
    static unsigned getFuentes() { return numero_fuentes; }
 
@@ -29,6 +31,7 @@ private:
 public:
    FuenteLuzPosicional(Tupla3f posicion, Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular);
    void Activar();
+   Tupla4f getPosVec();
 };
 
 class FuenteLuzDireccional : virtual public FuenteLuz
@@ -38,6 +41,7 @@ private:
 public:
    FuenteLuzDireccional(float alpha, float beta, Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular);
    void Activar();
+   Tupla4f getPosVec();
    float getAlpha();
    float getBeta();
    void ModificaAlpha(int signo);

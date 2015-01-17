@@ -21,6 +21,30 @@ void FuenteLuz::Desactivar()
    glDisable(this->id_luz);
 }
 
+void FuenteLuz::DibujarFuente()
+{
+   /*
+   glDisable( GL_LIGHTING );
+   glPointSize(60.0f);
+   glColor3f(0.0f,0.0f,1.0f);
+   glBegin(GL_POINTS);
+   glVertex4fv(this->getPosVec().data());
+   glEnd();
+   glEnable( GL_LIGHTING );
+   */
+}
+
+Tupla4f FuenteLuzPosicional::getPosVec()
+{
+   return this->posicion;
+}
+
+Tupla4f FuenteLuzDireccional::getPosVec()
+{
+   Tupla4f res(cosf(alpha)*sinf(beta),sinf(alpha)*sinf(beta),cosf(beta),1.0);
+   return res * 100;
+}
+
 
 FuenteLuzPosicional::FuenteLuzPosicional(Tupla3f posicion, Tupla3f componente_ambiental, Tupla3f componente_difusa, Tupla3f componente_especular)
    : FuenteLuz::FuenteLuz(componente_ambiental, componente_difusa, componente_especular)
@@ -39,6 +63,8 @@ void FuenteLuzDireccional::Activar()
 {
    glEnable(id_luz);
 
+   DibujarFuente();
+
    Tupla4f ejeZ(cosf(alpha)*sinf(beta),sinf(alpha)*sinf(beta),cosf(beta),0.0);
 
    glLightfv(id_luz, GL_POSITION, ejeZ.data());
@@ -50,16 +76,16 @@ void FuenteLuzDireccional::Activar()
 void FuenteLuzDireccional::ModificaAlpha(int signo)
 {
 	assert(signo == 1 || signo == -1);
-	if (alpha > 2*M_PI) alpha = 2*M_PI;
-	else if (alpha < 0) alpha = 0;
+	if (alpha > 2*M_PI) alpha -= 2*M_PI;
+	else if (alpha < 0) alpha += 2*M_PI;
 	alpha += signo*M_PI/30;
 }
 
 void FuenteLuzDireccional::ModificaBeta(int signo)
 {
 	assert(signo == 1 || signo == -1);
-   if (beta > 2*M_PI) beta = 2*M_PI;
-   else if (beta < 0) beta = 0;
+   if (beta > 2*M_PI) beta -= 2*M_PI;
+   else if (beta < 0) beta += 2*M_PI;
 	beta += signo*M_PI/30;
 }
 
@@ -75,6 +101,8 @@ float FuenteLuzDireccional::getBeta()
 void FuenteLuzPosicional::Activar()
 {
    glEnable(id_luz);
+
+   DibujarFuente();
 
    glLightfv(id_luz, GL_POSITION,this->posicion.data());
    glLightfv(id_luz, GL_AMBIENT, this->componente_ambiental.data());
