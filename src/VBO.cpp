@@ -129,6 +129,7 @@ void VBO_Lineas::Visualizar()
 void VBO_Coordenadas_Textura::Activar()
 {
    glBindBuffer(tipo, id_vbo);
+   glEnableVertexAttribArray(3);
    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, 0);
    glBindBuffer(tipo,0);
 

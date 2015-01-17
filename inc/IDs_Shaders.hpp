@@ -3,6 +3,8 @@
 
 #include <GL/glew.h>
 
+#define PRINTER(name) printer(#name, (name))
+
 
 // ID del par fragment-vertex shader
 extern GLuint idProg_Ejes, idProg_P1_P2;

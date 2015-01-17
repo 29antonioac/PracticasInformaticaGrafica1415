@@ -10,6 +10,10 @@ GLuint idProg_Comun;
 
 GLuint idProg_actual;
 
+void printer(char *name, int value) {
+    std::cout << name << " = " << value << std::endl;
+}
+
 bool UsarPrograma(GLuint idProg)
 {
    if (idProg == idProg_Ejes || idProg == idProg_P1_P2
@@ -33,6 +37,10 @@ GLint ObtenerLocalizacionUniform(GLint idProg, const char * cadena)
    else
    {
       std::cout << "Problema al obtener " << cadena << " como uniform, saliendo..." << std::endl;
+      PRINTER(idProg);
+      PRINTER(idProg_actual);
+      PRINTER(idProg_P4_lata);
+      PRINTER(idProg_P4_peon_madera);
       //glutLeaveMainLoop();
       exit(2);
    }

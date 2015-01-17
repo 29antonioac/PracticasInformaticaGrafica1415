@@ -51,6 +51,8 @@ private:
    VBO_Lineas     * vbo_lineas_normales_vertices;
    VBO_Coordenadas_Textura * vbo_coordenadas_textura;
 
+   unsigned vertices_inicial, vertices_en_eje_Y;
+
    visualizacion modo_dibujo;
    normales dibujo_normales;
    tipo_malla tipo;
@@ -64,6 +66,7 @@ private:
 
    GLuint id_VAO_malla, id_VAO_lineas[2];
 
+   void CorregirVectoresNormales();
    void CalcularVectoresNormales();
    void CalcularDimension();
    void CalcularCoordenadasTextura(unsigned vertices_perfil);

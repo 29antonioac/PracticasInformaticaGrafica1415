@@ -9,13 +9,13 @@
 
 MallaTVT::MallaTVT(tipo_malla tipo, vector<GLfloat> vertices, vector<int> caras, Material * material)
 {
-   // Pasamos los vértices a vector de Tupla3f
+   // Pasamos los vértices a vector de glm::vec3
    for (unsigned i = 0; i < vertices.size(); i+=3)
    {
       ver.push_back(glm::vec3(vertices[i],vertices[i+1],vertices[i+2]));
    }
 
-   // Pasamos las caras a vectores de Tupla3f
+   // Pasamos las caras a vectores de glm::vec3
    for (unsigned i = 0; i < caras.size(); i+=6)
    {
       glm::ivec3 cara(caras[i],caras[i+1],caras[i+2]);
@@ -28,6 +28,9 @@ MallaTVT::MallaTVT(tipo_malla tipo, vector<GLfloat> vertices, vector<int> caras,
       tri.push_back(cara);
    }
 
+   this->vertices_en_eje_Y = 0;
+   this->vertices_inicial = ver.size();
+
    this->material = material;
    this->tipo = tipo;
 
@@ -37,8 +40,10 @@ MallaTVT::MallaTVT(tipo_malla tipo, vector<GLfloat> vertices, vector<int> caras,
 MallaTVT::MallaTVT(tipo_malla tipo, vector<glm::vec3> vertices, vector<glm::ivec3> caras, Material * material)
 {
    ver = vertices;
+   this->vertices_inicial = ver.size();
+   this->vertices_en_eje_Y = 0;
 
-   // Pasamos las caras a vectores de Tupla3f
+   // Pasamos las caras a vectores de glm::vec3
    for (unsigned i = 0; i < caras.size(); i+=2)
    {
       tri.push_back(caras[i]);
@@ -86,6 +91,10 @@ MallaTVT::MallaTVT(MallaTVT * malla)
    this->vbo_lineas_normales_caras     = malla->vbo_lineas_normales_caras;
    this->vbo_lineas_normales_vertices  = malla->vbo_lineas_normales_vertices;
    this->vbo_coordenadas_textura       = malla->vbo_coordenadas_textura;
+
+   // Copiar vertices en Y
+   this->vertices_en_eje_Y = malla->vertices_en_eje_Y;
+   this->vertices_inicial = malla->vertices_inicial;
 
    // Copiar modo de dibujo y de normales
    this->modo_dibujo       = malla->modo_dibujo;
@@ -317,7 +326,7 @@ void MallaTVT::Visualizar()
       vbo_vertices->Activar();
 
       coordenadas_textura = material->Activar();
-
+      //coordenadas_textura = true;
       if (coordenadas_textura) vbo_coordenadas_textura->Activar();
       if (coordenadas_textura) cout << "He activado las cctt" << endl;
 
@@ -448,6 +457,8 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
 
    vector<glm::vec3> centro_tapas;
 
+   bool necesito_coordenadas_textura = material != nullptr && material->NecesitoCoordenadasTextura();
+
 
    if (ver.front()[X] != 0.0f)
    {
@@ -455,6 +466,7 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
    }
    else
    {
+      vertices_en_eje_Y++;
       centro_tapas.push_back(ver.front());
       ver.erase(ver.begin());
    }
@@ -465,6 +477,7 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
    }
    else
    {
+      vertices_en_eje_Y++;
       centro_tapas.push_back(ver.back());
       ver.pop_back();
    }
@@ -472,56 +485,82 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
    unsigned vertices_perfil = ver.size();
 
 
-   // Crear matriz de perfiles
-   vector<vector<glm::vec3> > perfiles;
+   // Crear perfiles rotando cada vértice
 
-   perfiles.push_back(ver);
-   vector<glm::vec3> perfil_actual;
-   vector<int> vertices_fijos;
+   unsigned indice_vertice_actual, indice_vertice_anterior;
    glm::vec3 vertice_actual;
 
    for (unsigned perfil = 1; perfil < caras; perfil++)
    {
-      perfil_actual.clear();
       for (unsigned i = 0; i < vertices_perfil; i++)
       {
-         //vertice_actual = mat4::RotacionEjeY(alpha)*perfiles[perfil-1][i];
-         vertice_actual = glm::vec3(glm::rotate(glm::mat4(1.0),alpha,glm::vec3(0.0,1.0,0.0)) * glm::vec4(perfiles[perfil-1][i],1.0));
-         perfil_actual.push_back(vertice_actual);
+         indice_vertice_actual = perfil*vertices_perfil + i;
+         indice_vertice_anterior = indice_vertice_actual - vertices_perfil;
+         //vertice_actual = Matriz4x4::RotacionEjeY(alpha)*ver[indice_vertice_anterior];
+         vertice_actual = glm::vec3(glm::rotate(glm::mat4(), alpha, glm::vec3(0.0,1.0,0.0)) * glm::vec4(ver[indice_vertice_anterior],1.0));
          ver.push_back(vertice_actual);
       }
-      perfiles.push_back(perfil_actual);
    }
 
 
-
-   // Añadir triángulos
-   for (unsigned perfil = 0; perfil < caras-1; perfil++)
+   if (necesito_coordenadas_textura)
    {
+      // Crear copia del primer perfil para poder aplicar texturas al sólido.
+      // Los triángulos debo unirlos a esta nueva copia que creamos
+
+      for (unsigned vertice = 0; vertice < vertices_perfil; vertice++)
+      {
+         ver.push_back(ver[vertice]);
+      }
+
+
+      // Añadir triángulos
+      for (unsigned perfil = 0; perfil < caras; perfil++)
+      {
+         for (unsigned vertice = 1; vertice < vertices_perfil; vertice++)     // Cogemos los triángulos igual que en el guión de prácticas
+         {
+            unsigned indice_vertice_actual = perfil * vertices_perfil + vertice;
+            unsigned indice_vertice_anterior = indice_vertice_actual - 1;
+            unsigned indice_vertice_siguiente_perfil = indice_vertice_actual + vertices_perfil;
+            unsigned indice_vertice_anterior_siguiente_perfil = indice_vertice_anterior + vertices_perfil;
+
+            tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
+            tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
+         }
+      }
+   }
+   else
+   {
+      // Añadir triángulos
+      for (unsigned perfil = 0; perfil < caras - 1; perfil++)
+      {
+         for (unsigned vertice = 1; vertice < vertices_perfil; vertice++)     // Cogemos los triángulos igual que en el guión de prácticas
+         {
+            unsigned indice_vertice_actual = perfil * vertices_perfil + vertice;
+            unsigned indice_vertice_anterior = indice_vertice_actual - 1;
+            unsigned indice_vertice_siguiente_perfil = indice_vertice_actual + vertices_perfil;
+            unsigned indice_vertice_anterior_siguiente_perfil = indice_vertice_anterior + vertices_perfil;
+
+            tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
+            tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
+         }
+      }
+
+      // Último perfil a fuego
+      unsigned perfil = caras - 1;
       for (unsigned vertice = 1; vertice < vertices_perfil; vertice++)     // Cogemos los triángulos igual que en el guión de prácticas
       {
          unsigned indice_vertice_actual = perfil * vertices_perfil + vertice;
          unsigned indice_vertice_anterior = indice_vertice_actual - 1;
-         unsigned indice_vertice_siguiente_perfil = indice_vertice_actual + vertices_perfil;
-         unsigned indice_vertice_anterior_siguiente_perfil = indice_vertice_anterior + vertices_perfil;
+         unsigned indice_vertice_siguiente_perfil = vertice;
+         unsigned indice_vertice_anterior_siguiente_perfil = vertice - 1;
 
          tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
          tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
       }
    }
 
-   // Último perfil a fuego
-   unsigned perfil = caras - 1;
-   for (unsigned vertice = 1; vertice < vertices_perfil; vertice++)     // Cogemos los triángulos igual que en el guión de prácticas
-   {
-      unsigned indice_vertice_actual = perfil * vertices_perfil + vertice;
-      unsigned indice_vertice_anterior = indice_vertice_actual - 1;
-      unsigned indice_vertice_siguiente_perfil = vertice;
-      unsigned indice_vertice_anterior_siguiente_perfil = vertice - 1;
 
-      tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior, indice_vertice_anterior_siguiente_perfil));
-      tri.push_back(glm::ivec3(indice_vertice_actual, indice_vertice_anterior_siguiente_perfil, indice_vertice_siguiente_perfil));
-   }
 
    if (tapas)
    {
@@ -556,24 +595,29 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
       }
 
       tri.push_back(glm::ivec3(centro_tapa_superior, caras*vertices_perfil - 1,vertices_perfil - 1));
+      this->tipo = REVOLUCION_TAPADO;
+   }
+   else
+   {
+      this->tipo = REVOLUCION_NO_TAPADO;
    }
 
 
+
+
+
    // Comprobamos si hay que calcular coordenadas de textura
-   if (material != nullptr && material->NecesitoCoordenadasTextura())
+   if (necesito_coordenadas_textura)
    {
       // Calculamos coordenadas de textura
       vector<float> distancias;
       distancias.push_back(0.0);
-      ver.push_back(ver[0]);
 
       for (unsigned i = 1; i < vertices_perfil; i++)
       {
-         float distancia = glm::distance(ver[i], ver[i-1]);
+         float distancia = glm::distance(ver[i],ver[i-1]);
          distancias.push_back(distancias[i-1] + distancia);
-         //cout << "Distancia " << i << " = " << distancias[i] << endl;
-         // Añadir el primer perfil de nuevo para unir la textura
-         ver.push_back(ver[i]);
+
       }
 
       for (unsigned perfil = 0; perfil <= caras; perfil++)
@@ -581,13 +625,11 @@ void MallaTVT::Revolucion(const unsigned caras, bool tapas)
          //cout << "Perfil " << perfil << ":" << endl;
          for (unsigned vertice = 0; vertice < vertices_perfil; vertice++)
          {
-            //cout << "Perfil = " << perfil << ", caras-1 = " << caras - 1 << "|" ;
-            float si = perfil*1.0/((caras-1)*1.0);
-            float ti = 1-distancias[vertice]/distancias[vertices_perfil-1];
-            coordenadas_textura.push_back(glm::vec2(si,ti));
-            //cout << "U = " << si << ", V = " << ti << "|";
+            glm::vec2 coordenada(perfil*1.0/(caras),1-distancias[vertice]/distancias[vertices_perfil-1]);
+            coordenadas_textura.push_back(coordenada);
+            //cout << "Vertice " << vertice << "\t-> UV = " << coordenada << endl;
          }
-         //cout << "\n\n\n\n" << endl;
+         //cout << "\n\n" << endl;
       }
    }
 

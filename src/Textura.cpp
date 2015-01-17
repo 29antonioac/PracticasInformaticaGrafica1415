@@ -1,8 +1,10 @@
 #include "textura.hpp"
 #include <cassert>
-#include <GL/glut.h>
+
 
 #include <iostream>
+
+unsigned Textura::num_texturas = 0;
 
 Textura::Textura(string archivo, unsigned modo_generacion_coordenadas_textura, float cs[4], float ct[4])
 {
@@ -17,6 +19,8 @@ Textura::Textura(string archivo, unsigned modo_generacion_coordenadas_textura, f
    }
 
    glGenTextures(1, &id_textura);
+   location_textura = ObtenerLocalizacionUniform(idProg_actual,"textureSampler");
+
    glBindTexture(GL_TEXTURE_2D, id_textura);
    // Crear mipmaps de textura
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -56,20 +60,24 @@ Textura::~Textura()
 
 bool Textura::Activar()
 {
-   glEnable(GL_TEXTURE_2D);
+   //glEnable(GL_TEXTURE_2D);
+
+   glActiveTexture(GL_TEXTURE0 + num_texturas);
 
    glBindTexture(GL_TEXTURE_2D, id_textura);
 
+   glUniform1i(location_textura, num_texturas);
+
    if (modo_generacion_coordenadas_textura == 0)
    {
-      glDisable(GL_TEXTURE_GEN_S);
-      glDisable(GL_TEXTURE_GEN_T);
+      //glDisable(GL_TEXTURE_GEN_S);
+      //glDisable(GL_TEXTURE_GEN_T);
       return true;
    }
    else
    {
-      glEnable(GL_TEXTURE_GEN_S);
-      glEnable(GL_TEXTURE_GEN_T);
+      //glEnable(GL_TEXTURE_GEN_S);
+      //glEnable(GL_TEXTURE_GEN_T);
       return false;
    }
 }

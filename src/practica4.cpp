@@ -134,7 +134,12 @@ void Practica4::Inicializar( int argc, char *argv[] )
    float cs[4] = {1.0,0.0,0.0,0.0}; // Vector ex
    float ct[4] = {0.0,1.0,0.0,0.0}; // Vector ey
 
+   GLint idProg_temp = idProg_actual;
+   UsarPrograma(idProg_P4_peon_madera);
+
    Textura * textura_peon_madera = new Textura("img/text-madera.jpg",1,cs,ct);
+
+   UsarPrograma(idProg_temp);
 
    material_peon_madera = new Material(peon_madera_componente_emision, peon_madera_componente_ambiental,
          peon_madera_componente_difusa, peon_madera_componente_especular, peon_madera_exponente_especular,textura_peon_madera);
@@ -160,7 +165,13 @@ void Practica4::Inicializar( int argc, char *argv[] )
    glm::vec3 cuerpo_lata_componente_especular(1.0,1.0,1.0);
    float cuerpo_lata_exponente_especular = 30.0;
 
+
+   idProg_temp = idProg_actual;
+   UsarPrograma(idProg_P4_lata);
+
    Textura * textura_cuerpo_lata = new Textura("img/text-lata-1.jpg",0,cs,ct);
+
+   UsarPrograma(idProg_temp);
 
    material_cuerpo_lata = new Material(cuerpo_lata_componente_emision, cuerpo_lata_componente_ambiental,
          cuerpo_lata_componente_difusa, cuerpo_lata_componente_especular, cuerpo_lata_exponente_especular,textura_cuerpo_lata);
@@ -236,6 +247,8 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
 
    /* Enviar textura al shader */
+
+         /*
    jpg::Imagen * img = new jpg::Imagen("img/text-madera.jpg");
 
    glGenTextures(1, &id_textura_lata);
@@ -253,6 +266,8 @@ void Practica4::Inicializar( int argc, char *argv[] )
    //id_textura_lata = textura_cuerpo_lata->getID();
    location_textura_lata = ObtenerLocalizacionUniform(idProg_P4_lata,"textureSampler");
 
+   */
+
 
 }
 
@@ -266,11 +281,14 @@ void Practica4::DibujarObjetos()
 
    // Dibujar aquí
    //fuentes.Activar();
+   /*
 
    glActiveTexture(GL_TEXTURE0);
    glBindTexture(GL_TEXTURE_2D, id_textura_lata);
    // Set our "myTextureSampler" sampler to user Texture Unit 0
    glUniform1i(location_textura_lata, 0);
+
+   */
 
    raiz->Procesa();
 

@@ -2,7 +2,8 @@
 #define TEXTURA_HPP
 
 #include "jpg_imagen.hpp"
-#include <GL/gl.h>
+#include "IDs_Shaders.hpp"
+#include <GL/glew.h>
 #include <string>
 
 using std::string;
@@ -10,7 +11,8 @@ using std::string;
 class Textura
 {
 private:
-   GLuint id_textura;
+   static unsigned num_texturas;
+   GLuint id_textura, location_textura;
    jpg::Imagen * img;
    unsigned modo_generacion_coordenadas_textura;
    float cs[4], ct[4];
