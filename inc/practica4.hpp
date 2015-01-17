@@ -25,7 +25,6 @@ public:
    void Inicializar(int argc, char * argv[]);
    void CambioModoDibujo(visualizacion modo_dibujo);
    void CambioModoNormales();
-   void CambioGradoLibertad(int grado_libertad);
 
    void CambioColorFijo();
    bool GestionarEvento(unsigned char tecla);
@@ -47,8 +46,8 @@ private:
    FuenteLuzDireccional* fuente_direccional;
    ColeccionFuentesLuz fuentes;
 
-   GLuint id_textura_lata;
-   GLint location_textura_lata;
+   GLint location_luz_direccional;
+   float alpha, beta;
 
 };
 

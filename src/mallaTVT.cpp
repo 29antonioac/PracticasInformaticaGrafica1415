@@ -328,7 +328,7 @@ void MallaTVT::Visualizar()
       coordenadas_textura = material->Activar();
       //coordenadas_textura = true;
       if (coordenadas_textura) vbo_coordenadas_textura->Activar();
-      if (coordenadas_textura) cout << "He activado las cctt" << endl;
+      //if (coordenadas_textura) cout << "He activado las cctt" << endl;
 
       vbo_triangulos->Visualizar(modo_dibujo, color_primario, color_secundario);
 

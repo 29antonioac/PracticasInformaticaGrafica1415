@@ -169,6 +169,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
    idProg_temp = idProg_actual;
    UsarPrograma(idProg_P4_lata);
 
+   location_luz_direccional = ObtenerLocalizacionUniform(idProg_P4_lata, "vector_luz_direccional");
    Textura * textura_cuerpo_lata = new Textura("img/text-lata-1.jpg",0,cs,ct);
 
    UsarPrograma(idProg_temp);
@@ -201,13 +202,13 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
 
    raiz = new NodoGrafoEscena;
-   glm::mat4 matriz_traslacion_peones(glm::translate(glm::mat4(1.0),glm::vec3(0.0,0.0,3.0)));
-   glm::mat4 matriz_rotacion_peon_madera(glm::rotate(glm::mat4(1.0),(float)-M_PI/2,glm::vec3(0.0,1.0,0.0)));
-   glm::mat4 matriz_rotacion_peon_negro(glm::rotate(glm::mat4(1.0),(float)M_PI/2,glm::vec3(0.0,1.0,0.0)));
+   glm::mat4 matriz_traslacion_peon_madera(glm::translate(mat4(), glm::vec3(-3.0,1.3,1.5)));
+   glm::mat4 matriz_traslacion_peon_blanco(glm::translate(mat4(), glm::vec3(0.0,1.3,2.5)));
+   glm::mat4 matriz_traslacion_peon_negro(glm::translate(mat4(), glm::vec3(3.0,1.3,3.3)));
 
-   NodoGrafoEscena * nodo_traslacion_peon_madera = new NodoTransformacion(matriz_rotacion_peon_madera * matriz_traslacion_peones);
-   NodoGrafoEscena * nodo_traslacion_peon_blanco = new NodoTransformacion(matriz_traslacion_peones);
-   NodoGrafoEscena * nodo_traslacion_peon_negro = new NodoTransformacion(matriz_rotacion_peon_negro * matriz_traslacion_peones);
+   NodoGrafoEscena * nodo_traslacion_peon_madera = new NodoTransformacion(matriz_traslacion_peon_madera);
+   NodoGrafoEscena * nodo_traslacion_peon_blanco = new NodoTransformacion(matriz_traslacion_peon_blanco);
+   NodoGrafoEscena * nodo_traslacion_peon_negro = new NodoTransformacion(matriz_traslacion_peon_negro);
    NodoGrafoEscena * nodo_escalado_lata = new NodoTransformacion(glm::scale(glm::mat4(1.0),glm::vec3(4.0,4.0,4.0)));
    NodoGrafoEscena * nodo_escalado_tapas = new NodoTransformacion(glm::scale(glm::mat4(1.0),glm::vec3(4.0,4.0,4.0)));
    NodoGrafoEscena * nodo_peon_blanco = new NodoTerminal(peon_blanco);
@@ -268,6 +269,9 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
    */
 
+   alpha = beta = 0;
+
+
 
 }
 
@@ -275,54 +279,51 @@ void Practica4::Inicializar( int argc, char *argv[] )
 void Practica4::DibujarObjetos()
 {
 
-   //glEnable( GL_LIGHTING );
-   //glEnable( GL_NORMALIZE );
-   //glDisable( GL_COLOR_MATERIAL );
+   // Vamos a actualizar los uniform de la luz direccional
+   glm::vec3 luz_direccional(cosf(alpha)*sinf(beta),sinf(alpha)*sinf(beta),cosf(beta));
 
-   // Dibujar aquí
-   //fuentes.Activar();
-   /*
+   // Guardamos el programa actual
+   GLint idProg_temp = idProg_actual;
 
-   glActiveTexture(GL_TEXTURE0);
-   glBindTexture(GL_TEXTURE_2D, id_textura_lata);
-   // Set our "myTextureSampler" sampler to user Texture Unit 0
-   glUniform1i(location_textura_lata, 0);
+   // Ahora vamos cambiando sucesivamente de programa y reasignando uniform
 
-   */
+   UsarPrograma(idProg_P4_lata);
+   location_luz_direccional = ObtenerLocalizacionUniform(idProg_P4_lata,"vector_luz_direccional");
+   glUniform3fv(location_luz_direccional,1,&luz_direccional[0]);
 
+   UsarPrograma(idProg_P4_peon_madera);
+   location_luz_direccional = ObtenerLocalizacionUniform(idProg_P4_peon_madera,"vector_luz_direccional");
+   glUniform3fv(location_luz_direccional,1,&luz_direccional[0]);
+
+   UsarPrograma(idProg_P4_peon_blanco);
+   location_luz_direccional = ObtenerLocalizacionUniform(idProg_P4_peon_blanco,"vector_luz_direccional");
+   glUniform3fv(location_luz_direccional,1,&luz_direccional[0]);
+
+   UsarPrograma(idProg_P4_peon_negro);
+   location_luz_direccional = ObtenerLocalizacionUniform(idProg_P4_peon_negro,"vector_luz_direccional");
+   glUniform3fv(location_luz_direccional,1,&luz_direccional[0]);
+
+   UsarPrograma(idProg_P4_tapas);
+   location_luz_direccional = ObtenerLocalizacionUniform(idProg_P4_tapas,"vector_luz_direccional");
+   glUniform3fv(location_luz_direccional,1,&luz_direccional[0]);
+
+   // Volvemos al programa anteriormente activo
+   UsarPrograma(idProg_temp);
+
+   // Procesamos el grafo de escena
    raiz->Procesa();
 
-   //glDisable( GL_LIGHTING );
-   //glDisable( GL_NORMALIZE );
-   //glEnable( GL_COLOR_MATERIAL );
 
 }
 
 void Practica4::CambioModoDibujo(visualizacion modo_dibujo)
 {
-   //this->modo_dibujo = modo_dibujo;
+   this->modo_dibujo = modo_dibujo;
+
 }
 
 void Practica4::CambioModoNormales()
 {
-   //this->cuerpo_lata->CambioModoNormales();
-
-}
-
-
-void Practica4::CambioGradoLibertad(int grado_libertad)
-{
-
-   if (grado_libertad != 1 && grado_libertad != -1
-         && grado_libertad != 2 && grado_libertad != -2
-         && grado_libertad != 3 && grado_libertad != -3
-         && grado_libertad != 4 && grado_libertad != -4)
-   {
-      cout << "Grado de libertad inválido" << endl;
-      exit(-4);
-   }
-
-
 
 }
 
@@ -335,20 +336,26 @@ bool Practica4::GestionarEvento(unsigned char tecla)
 {
    bool redisp = true;
 
+   if (beta > 2*M_PI) beta -= 2*M_PI;
+   else if (beta < 0) beta += 2*M_PI;
+
+   if (alpha > 2*M_PI) alpha += 2*M_PI;
+   else if (alpha < 0) alpha += 2*M_PI;
+
    switch(toupper(tecla))
    {
       // Control de luz direccional
       case 'Z':
-         fuente_direccional->ModificaBeta(1);
+         beta += M_PI/30;
          break;
       case 'X':
-         fuente_direccional->ModificaBeta(-1);
+         beta -= M_PI/30;
          break;
       case 'C':
-         fuente_direccional->ModificaAlpha(1);
+         alpha += M_PI/30;
          break;
       case 'V':
-         fuente_direccional->ModificaAlpha(-1);
+         alpha -= M_PI/30;
          break;
       default:
          redisp = false;

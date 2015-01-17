@@ -6,6 +6,8 @@ in vec4 posicionPunto;
 in vec3 vectorObservador;
 
 uniform mat4 Vista;
+uniform vec3 vector_luz_direccional;
+
 
 // Datos de salida
 out vec3 color;
@@ -38,8 +40,8 @@ void main()
     vec3 colorMaterial[4]; // colores material 0 = emi 1 = amb 2 = dif 3 = esp
     float exponenteEspecular = 10.0;
     
-    colorMaterial[0] = vec3(0.3,0.3,0.3);
-    colorMaterial[1] = vec3(0.1,0.1,0.1) * colorMaterial[0];
+    colorMaterial[0] = vec3(0.0,0.0,0.0);
+    colorMaterial[1] = vec3(0.3,0.3,0.3);
     colorMaterial[2] = vec3(0.3,0.3,0.3);
     colorMaterial[3] = vec3(0.0,0.0,0.0);
     
@@ -49,26 +51,23 @@ void main()
     vec3 color_resultado = vec3(0.0,0.0,0.0);
 
     // ------- Cálculo del color para cada fuente ------
-    vec3 vectorFuente = vec3(10.0,0.0,10.0) - posicionPunto.xyz; // Luz posicional
+    vec3 vectorFuente = vec3(-10.0,0.0,10.0) - posicionPunto.xyz; // Luz posicional
     vec4 temp = Vista * vec4(vectorFuente,0.0);
-    vectorFuente = temp.xyz;
+    vectorFuente = normalize(temp.xyz);
 
-    vec3 vector_luz = normalize(vectorFuente);
     // ------------ Otra fuente -------
-    vec3 luz_direccional = vec3(-10.0,0.0,-10.0) - posicionPunto.xyz;; // Luz posicional
+    vec3 luz_direccional = vector_luz_direccional; // Luz direccional
     vec4 temp2 = Vista * vec4(luz_direccional,0.0);
     luz_direccional = normalize(temp2.xyz);
     
 
     color_resultado += EvaluarMIL(colorMaterial, exponenteEspecular,
-                normal, observador, vector_luz, colorFuente);
+                normal, observador, vectorFuente, colorFuente);
                 
     color_resultado += EvaluarMIL(colorMaterial, exponenteEspecular,
                 normal, observador, luz_direccional, colorFuente);            
     
 
     // color = color interpolado desde el vertex shader
-    //gl_FragColor = vec4( colorResultante,1.0);
     color = color_resultado;
-
 }
