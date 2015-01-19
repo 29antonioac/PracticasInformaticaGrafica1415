@@ -20,6 +20,7 @@ using std::string;
 Practica2::Practica2()
 {
    malla = nullptr;
+   camara = nullptr;
 }
 
 Practica2::~Practica2()
@@ -75,6 +76,9 @@ void Practica2::Inicializar(int argc, char *argv[])
       malla->Barrido_Traslacion(N,0.5,0.5,0.5);
 
    cout << "-----------------------------------" << endl;
+
+   // Cámara
+   camara = new Camara;
 }
 
 void Practica2::DibujarObjetos()
@@ -154,4 +158,25 @@ void Practica2::Debug()
 void Practica2::Ayuda(vector<string> & strings_control)
 {
 
+}
+
+void Practica2::FijarCamara()
+{
+   camara->FijarCamara();
+}
+void Practica2::FijarProyeccion(float ventana_tam_x, float ventana_tam_y)
+{
+   camara->FijarProyeccion(ventana_tam_x, ventana_tam_y);
+}
+void Practica2::ModificaEjeXCamara(float nuevo)
+{
+   camara->ModificaEjeX(nuevo);
+}
+void Practica2::ModificaEjeYCamara(float nuevo)
+{
+   camara->ModificaEjeY(nuevo);
+}
+void Practica2::ModificarEscala(int signo)
+{
+   camara->ModificarEscala(signo);
 }

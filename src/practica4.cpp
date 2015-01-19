@@ -46,6 +46,8 @@ Practica4::Practica4()
    material_peon_madera = material_peon_blanco = material_peon_negro =
          material_cuerpo_lata = material_tapa = nullptr;
 
+   camara = nullptr;
+
 }
 
 Practica4::~Practica4()
@@ -106,9 +108,9 @@ void Practica4::Inicializar( int argc, char *argv[] )
    ply::read_vertices("PLY/lata-pinf.ply",vertices_ply_tapa_inf);
 
    // Crear material del peon blanco (sin textura, material puramente difuso sin brillo especular)
-   Tupla3f peon_blanco_componente_emision(0.8,0.8,0.8);  // Color blanco
+   Tupla3f peon_blanco_componente_emision(0.5,0.5,0.5);  // Color blanco
    Tupla3f peon_blanco_componente_ambiental(peon_blanco_componente_emision * 0.1);
-   Tupla3f peon_blanco_componente_difusa(0.3,0.3,0.3);
+   Tupla3f peon_blanco_componente_difusa(0.2,0.2,0.2);
    Tupla3f peon_blanco_componente_especular(0.0,0.0,0.0);
    float peon_blanco_exponente_especular = 5.0;
 
@@ -118,7 +120,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
    // Crear material del peón negro (sin textura, material especular sin apenas reflectividad difusa)
    Tupla3f peon_negro_componente_emision(0.0,0.0,0.0);  // Color negro
    Tupla3f peon_negro_componente_ambiental(peon_negro_componente_emision * 0.1);
-   Tupla3f peon_negro_componente_difusa(0.1,0.1,0.1);
+   Tupla3f peon_negro_componente_difusa(0.01,0.01,0.01);
    Tupla3f peon_negro_componente_especular(0.7,0.7,0.7);
    float peon_negro_exponente_especular = 5.0;
 
@@ -172,7 +174,7 @@ void Practica4::Inicializar( int argc, char *argv[] )
    cuerpo_lata->Revolucion(caras_revolucion, false);  // Para calcular las coordenadas de textura hay que tener ya el material
 
    // Crear tapas
-   Tupla3f tapa_componente_emision(0.6,0.6,0.6);  // Color gris
+   Tupla3f tapa_componente_emision(0.3,0.3,0.3);  // Color gris
    Tupla3f tapa_componente_ambiental(tapa_componente_emision * 0.1);
    Tupla3f tapa_componente_difusa(0.3,0.3,0.3);
    Tupla3f tapa_componente_especular(1.0,1.0,1.0);
@@ -220,8 +222,11 @@ void Practica4::Inicializar( int argc, char *argv[] )
       nodo_escalado_lata->aniadeHijo(nodo_tapa_sup);
       nodo_escalado_lata->aniadeHijo(nodo_tapa_inf);
 
-   //perfil_tapa_sup = new MallaTVT(PERFIL,vertices_ply_tapa_sup);
-   //perfil_tapa_sup->Revolucion(100);
+
+
+   // Cámara
+   camara = new Camara;
+
 
 
 }
@@ -243,9 +248,6 @@ void Practica4::DibujarObjetos()
    glDisable( GL_NORMALIZE );
    glEnable( GL_COLOR_MATERIAL );
 
-
-   //perfil_tapa_sup->Visualizar();
-
 }
 
 void Practica4::CambioModoDibujo(visualizacion modo_dibujo)
@@ -258,7 +260,6 @@ void Practica4::CambioModoDibujo(visualizacion modo_dibujo)
    this->peon_madera->CambioModoDibujo(this->modo_dibujo);
    this->peon_blanco->CambioModoDibujo(this->modo_dibujo);
    this->peon_negro->CambioModoDibujo(this->modo_dibujo);
-   this->perfil_tapa_sup->CambioModoDibujo(this->modo_dibujo);
 }
 
 void Practica4::CambioModoNormales()
@@ -336,4 +337,25 @@ void Practica4::Ayuda(vector<string> & strings_control)
    strings_control.push_back("C/V para modificar alpha (angulo con eje Y)");
 
 
+}
+
+void Practica4::FijarCamara()
+{
+   camara->FijarCamara();
+}
+void Practica4::FijarProyeccion(float ventana_tam_x, float ventana_tam_y)
+{
+   camara->FijarProyeccion(ventana_tam_x, ventana_tam_y);
+}
+void Practica4::ModificaEjeXCamara(float nuevo)
+{
+   camara->ModificaEjeX(nuevo);
+}
+void Practica4::ModificaEjeYCamara(float nuevo)
+{
+   camara->ModificaEjeY(nuevo);
+}
+void Practica4::ModificarEscala(int signo)
+{
+   camara->ModificarEscala(signo);
 }

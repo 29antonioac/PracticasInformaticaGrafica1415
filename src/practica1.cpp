@@ -21,6 +21,7 @@ using std::vector;
 Practica1::Practica1()
 {
    malla = nullptr;
+   camara = nullptr;
 }
 
 Practica1::~Practica1()
@@ -50,6 +51,9 @@ void Practica1::Inicializar( int argc, char *argv[] )
    malla = new MallaTVT(MALLA,vertices_ply,caras_ply);
 
    cout << "-----------------------------------" << endl;
+
+   // Cámara
+   camara = new Camara;
 
 
    
@@ -124,4 +128,27 @@ void Practica1::Debug()
 void Practica1::Ayuda(vector<string> & strings_control)
 {
 
+}
+
+void Practica1::FijarCamara()
+{
+   camara->FijarCamara();
+}
+void Practica1::FijarProyeccion(float ventana_tam_x, float ventana_tam_y)
+{
+   camara->FijarProyeccion(ventana_tam_x, ventana_tam_y);
+}
+
+void Practica1::ModificaEjeXCamara(float nuevo)
+{
+   camara->ModificaEjeX(nuevo);
+}
+void Practica1::ModificaEjeYCamara(float nuevo)
+{
+   camara->ModificaEjeY(nuevo);
+}
+
+void Practica1::ModificarEscala(int signo)
+{
+   camara->ModificarEscala(signo);
 }

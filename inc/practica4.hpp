@@ -3,7 +3,7 @@
 // ** Informática Gráfica, curso 2014-15
 // ** 
 // **
-// ** Práctica 3  (declaraciones públicas)
+// ** Práctica 4  (declaraciones públicas)
 // **
 // *********************************************************************
 
@@ -30,6 +30,12 @@ public:
    void Debug();
    void Ayuda(vector<string> & strings_control);
 
+   void FijarCamara();
+   void FijarProyeccion(float ventana_tam_x, float ventana_tam_y);
+   void ModificaEjeXCamara(float nuevo);
+   void ModificaEjeYCamara(float nuevo);
+   void ModificarEscala(int signo);
+
    virtual ~Practica4();
 
    Practica4();
@@ -47,7 +53,7 @@ private:
    FuenteLuzDireccional* fuente_direccional;
    ColeccionFuentesLuz fuentes;
 
-   MallaTVT * perfil_tapa_sup;
+   Camara * camara;
 
 };
 

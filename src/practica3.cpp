@@ -50,6 +50,8 @@ Practica3::Practica3()
    distancia_eje_Y = velocidad_angular_cuerpo = velocidad_angular_brazos = velocidad_angular_piernas = 0;
 
    rotacion_cuerpo = rotacion_brazo_izquierdo = rotacion_brazo_derecho = rotacion_pierna_izquierda = rotacion_pierna_derecha = traslacion = nullptr;
+
+   camara = nullptr;
 }
 
 Practica3::~Practica3()
@@ -310,31 +312,8 @@ void Practica3::Inicializar( int argc, char *argv[] )
    cilindro->SetMaterial(material_android);
    semiesfera_ojo->SetMaterial(material_ojo);
 
-   /*
-
-   cout << "Número de fuentes: " << FuenteLuz::getFuentes() << endl;
-
-   Tupla3f posicion(0.0,-10.0,0.0);
-   Tupla3f otraposicion(7.0,0.0,0.0);
-
-   //Tupla3f ambiente(0.0,1.0,0.0); Tupla3f difusa(1.0,0.5,0.7); Tupla3f especular(0.0,0.7,0.0);
-
-   Tupla3f ambiente(0.0,0.0,0.0); Tupla3f difusa(1.0,1.0,1.0); Tupla3f especular(1.0,1.0,1.0);
-
-   fuente1 = new FuenteLuzPosicional(posicion, ambiente, difusa, especular); fuentes.Agregar(fuente1);
-
-   cout << "Número de fuentes: " << FuenteLuz::getFuentes() << endl;
-
-   fuente2 = new FuenteLuzPosicional(otraposicion, ambiente, difusa, especular); fuentes.Agregar(fuente2);
-   cout << "Número de fuentes: " << FuenteLuz::getFuentes() << endl;
-
-   Tupla3f comp_emision(0.0,1.0,0.0); Tupla3f comp_amb(0.2,0.2,0.2); Tupla3f comp_dif(0.8,0.8,0.8); Tupla3f comp_esp(0.0,0.0,0.0);
-
-   float exp_esp = 1;
-
-   mat = new Material(comp_emision, comp_amb, comp_dif, comp_esp, exp_esp);
-
-*/
+   // Cámara
+   camara = new Camara;
 
 
 
@@ -598,4 +577,25 @@ void Practica3::Ayuda(vector<string> & strings_control)
    strings_control.push_back("Z/z para modificar rotacion del cuerpo");
 
 
+}
+
+void Practica3::FijarCamara()
+{
+   camara->FijarCamara();
+}
+void Practica3::FijarProyeccion(float ventana_tam_x, float ventana_tam_y)
+{
+   camara->FijarProyeccion(ventana_tam_x, ventana_tam_y);
+}
+void Practica3::ModificaEjeXCamara(float nuevo)
+{
+   camara->ModificaEjeX(nuevo);
+}
+void Practica3::ModificaEjeYCamara(float nuevo)
+{
+   camara->ModificaEjeY(nuevo);
+}
+void Practica3::ModificarEscala(int signo)
+{
+   camara->ModificarEscala(signo);
 }

@@ -5,6 +5,7 @@
 #include <GL/glut.h>
 
 #include "enumerados.hpp"
+#include "Camara.hpp"
 
 using std::vector;
 using std::string;
@@ -20,6 +21,12 @@ public:
    virtual bool GestionarEvento(unsigned char tecla) = 0;
    virtual void Debug() = 0;
    virtual void Ayuda(vector<string> & strings_control) = 0;
+
+   virtual void FijarCamara() = 0;
+   virtual void FijarProyeccion(float ventana_tam_x, float ventana_tam_y) = 0;
+   virtual void ModificaEjeXCamara(float nuevo) = 0;
+   virtual void ModificaEjeYCamara(float nuevo) = 0;
+   virtual void ModificarEscala(int signo) = 0;
 protected:
    Practica() {};
    Practica(Practica const&);

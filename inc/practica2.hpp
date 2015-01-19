@@ -29,6 +29,12 @@ public:
    void Debug();
    void Ayuda(vector<string> & strings_control);
 
+   void FijarCamara();
+   void FijarProyeccion(float ventana_tam_x, float ventana_tam_y);
+   void ModificaEjeXCamara(float nuevo);
+   void ModificaEjeYCamara(float nuevo);
+   void ModificarEscala(int signo);
+
    virtual ~Practica2();
 
    Practica2();
@@ -42,6 +48,9 @@ private:
 
    unsigned N,M;
    string file;
+
+   Camara * camara;
+
 };
 
 #endif

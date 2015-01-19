@@ -28,6 +28,7 @@
 #include "practica2.hpp"
 #include "practica3.hpp"
 #include "practica4.hpp"
+#include "practica5.hpp"
 
 using std::cout;
 using std::endl;
@@ -41,20 +42,21 @@ using std::string;
 // *********************************************************************
 
 // variables que definen la posicion de la camara en coordenadas polares
-
+/*
 float 
    camara_angulo_x ,   // angulo de rotación entorno al eje X
    camara_angulo_y ;   // angulo de rotación entorno al eje Y
-
+*/
 // ---------------------------------------------------------------------
 // variables que definen el view-frustum (zona visible del mundo)
-
+/*
 float 
    frustum_factor_escala ,  // factor de escala homogeneo que se aplica al frustum (sirve para alejar o acercar)
    frustum_ancho ,          // ancho, en coordenadas del mundo
    frustum_dis_del ,        // distancia al plano de recorte delantero (near)
    frustum_dis_tra ;        // distancia al plano de recorte trasero (far)
 
+*/
 // ---------------------------------------------------------------------
 // variables que determinan la posicion y tamaño inicial de la ventana 
 // (el tamaño se actualiza al cambiar el tamaño durante la ejecución)
@@ -72,6 +74,7 @@ Practica1   * practica1 = new Practica1;
 Practica2   * practica2 = new Practica2;
 Practica3   * practica3 = new Practica3;
 Practica4   * practica4 = new Practica4;
+Practica5   * practica5 = new Practica5;
 
 bool debug = false;
 bool ayuda = false;
@@ -91,32 +94,7 @@ bool msaa = true;
 
 void FijarProyeccion()
 {
-   const GLfloat ratioYX = GLfloat( ventana_tam_y )/GLfloat( ventana_tam_x );
-   
-   CError();
-   
-   glMatrixMode(GL_PROJECTION);
-   glLoadIdentity();
-
-   // (3) proyectar en el plano de visión
-   glFrustum
-   (  -frustum_ancho,
-      +frustum_ancho,
-      -frustum_ancho*ratioYX,
-      +frustum_ancho*ratioYX,
-      +frustum_dis_del,
-      +frustum_dis_tra
-   );
-   
-
-   // (2) situar el origen (0,0,0), en mitad del view frustum 
-   //     (en la rama negativa del eje Z)
-   glTranslatef( 0.0,0.0,-0.5*(frustum_dis_del+frustum_dis_tra));
-   
-    // (1) aplicar factor de escala
-   glScalef( frustum_factor_escala, frustum_factor_escala,  frustum_factor_escala );
-   
-   CError();
+   practicaActual->FijarProyeccion(ventana_tam_x,ventana_tam_y);
 }
 
 
@@ -134,17 +112,7 @@ void FijarViewportProyeccion()
 
 void FijarCamara()
 {
-   
-   CError();
-   glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
-   
-   glRotatef(camara_angulo_x,1,0,0);
-   glRotatef(camara_angulo_y,0,1,0);
-  
-   //?
-   //glScalef( factor_escala, factor_escala, factor_escala ); 
-   CError();
+   practicaActual->FijarCamara();
 }
 
 // ---------------------------------------------------------------------
@@ -305,14 +273,15 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
          exit( 0 );
          break ;
       case '+':
-         frustum_factor_escala *= 1.05;
+         practicaActual->ModificarEscala(1);
          break;
       case '-':
-         frustum_factor_escala /= 1.05;
+         practicaActual->ModificarEscala(-1);
          break;
+         /*
       case 'r':
-         camara_angulo_x = 0.0 ;
-         camara_angulo_y = 0.0 ;
+         practicaActual->ModificaEjeXCamara(0.0);
+         practicaActual->ModificaEjeYCamara(0.0);
          break;
       case 'l':
          practicaActual->CambioModoDibujo(ALAMBRE);
@@ -332,6 +301,7 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
       case 'h':
          practicaActual->CambioModoNormales();
          break;
+         */
       case 'f':
          practicaActual->CambioColorFijo();
          break;
@@ -374,22 +344,22 @@ void FGE_PulsarTeclaEspecial( int tecla, int x_raton, int y_raton )
    switch ( tecla )
    {
       case GLUT_KEY_LEFT:
-         camara_angulo_y = camara_angulo_y - da ;
+         practicaActual->ModificaEjeYCamara(-da) ;
          break;
       case GLUT_KEY_RIGHT:
-         camara_angulo_y = camara_angulo_y + da ;
+         practicaActual->ModificaEjeYCamara(+da) ;
          break;
       case GLUT_KEY_UP:
-         camara_angulo_x = camara_angulo_x - da ;
+         practicaActual->ModificaEjeXCamara(-da) ;
          break;
       case GLUT_KEY_DOWN:
-         camara_angulo_x = camara_angulo_x + da ;
+         practicaActual->ModificaEjeXCamara(+da) ;
          break;
       case GLUT_KEY_PAGE_UP:
-         frustum_factor_escala *= 1.05;
+         practicaActual->ModificarEscala(1);
          break;
       case GLUT_KEY_PAGE_DOWN:
-         frustum_factor_escala /= 1.05;
+         practicaActual->ModificarEscala(-1);
          break;
       case GLUT_KEY_F1:
          practicaActual = practica1;
@@ -404,6 +374,7 @@ void FGE_PulsarTeclaEspecial( int tecla, int x_raton, int y_raton )
          practicaActual = practica4;
          break;
       case GLUT_KEY_F5:
+         practicaActual = practica5;
          break;
       case GLUT_KEY_F6:
          if (debug) debug = false;
@@ -432,9 +403,9 @@ void FGE_PulsarRaton(int boton, int estado, int x, int y)
    const float da = 5.0 ; // incremento en grados de ángulos de camara
    bool redisp = true;
 
-   // Si pulsamos el botón izquierdo del ratón
+   // Si pulsamos el botón derecho del ratón
    // nos preparamos para mover la cámara
-   if (boton == GLUT_LEFT_BUTTON)
+   if (boton == GLUT_RIGHT_BUTTON)
    {
       if (estado == GLUT_UP)  // Si levantamos el botón dejamos de girar
       {
@@ -450,19 +421,21 @@ void FGE_PulsarRaton(int boton, int estado, int x, int y)
    }
    else if (boton == 3) // Rueda arriba aumenta el zoom
    {
-      frustum_factor_escala *= 1.05;
+      //frustum_factor_escala *= 1.05;
+      practicaActual->ModificarEscala(1);
    }
    else if (boton == 4) // Rueda abajo disminuye el zoom
    {
-      frustum_factor_escala /= 1.05;
+      //frustum_factor_escala /= 1.05;
+      practicaActual->ModificarEscala(-1);
    }
    else if (boton == 5) // Llevar la rueda a la izquierda gira la cámara a la izquierda
    {
-      camara_angulo_y -= da;
+      practicaActual->ModificaEjeYCamara(-da);
    }
    else if (boton == 6) // Llevar la rueda a la derecha gira la cámara a la derecha
    {
-      camara_angulo_y += da;
+      practicaActual->ModificaEjeYCamara(+da);
    }
 
    if (redisp)
@@ -477,8 +450,8 @@ void FGE_MoverRaton(int x, int y)
    {
 
       // Actualizar la dirección de la cámara
-      camara_angulo_x += (y - origen[1])*0.25f;
-      camara_angulo_y += (x - origen[0])*0.25f;
+      practicaActual->ModificaEjeXCamara((y - origen[1])*0.25f);
+      practicaActual->ModificaEjeYCamara((x - origen[0])*0.25f);
 
       origen[0] = x;
       origen[1] = y;
@@ -504,6 +477,7 @@ void Animar()
 // ** Funciones de inicialización
 // **
 // *********************************************************************
+
 
 // inicialización de GLUT: creación de la ventana, designar FGEs
 
@@ -595,6 +569,7 @@ void Inicializa_OpenGL( )
    // (las tres posibilidades son: GL_POINT, GL_LINE, GL_FILL)
    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
    
+   /*
    // inicializar parámetros del frustum
    frustum_dis_del         = 0.1 ;
    frustum_dis_tra         = 10.0;
@@ -605,10 +580,11 @@ void Inicializa_OpenGL( )
    // inicializar parámetros de la cámara
    camara_angulo_x = 0.0 ;
    camara_angulo_y = 0.0 ;
+   */
 
    // ??
-   FijarViewportProyeccion() ;
-   FijarCamara() ;
+   //FijarViewportProyeccion() ;
+   //FijarCamara() ;
    
    
    // ya está
@@ -631,8 +607,9 @@ void Inicializar( int argc, char *argv[] )
    practica2->Inicializar(argc, argv);
    practica3->Inicializar(argc, argv);
    practica4->Inicializar(argc, argv);
+   practica5->Inicializar(argc, argv);
 
-   practicaActual = practica2;
+   practicaActual = practica5;
 }
 
 // *********************************************************************

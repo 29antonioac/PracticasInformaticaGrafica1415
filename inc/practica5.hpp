@@ -1,21 +1,20 @@
 // *********************************************************************
 // **
 // ** Informática Gráfica, curso 2014-15
-// ** 
 // **
-// ** Práctica 1  (declaraciones públicas)
+// **
+// ** Práctica 5  (declaraciones públicas)
 // **
 // *********************************************************************
 
-#ifndef __IG_PRACTICA1_HPP__
-#define __IG_PRACTICA1_HPP__
+#ifndef __IG_PRACTICA5_HPP__
+#define __IG_PRACTICA5_HPP__
 
-#include <vector>
-
-#include "MallaTVT.hpp"
 #include "practica.hpp"
+#include "tuplas.hpp"
+#include "grafoescena.hpp"
 
-class Practica1 : virtual public Practica
+class Practica5 : virtual public Practica
 {
 public:
 
@@ -23,6 +22,7 @@ public:
    void Inicializar(int argc, char * argv[]);
    void CambioModoDibujo(visualizacion modo_dibujo);
    void CambioModoNormales();
+
    void CambioColorFijo();
    bool GestionarEvento(unsigned char tecla);
    void Debug();
@@ -34,22 +34,24 @@ public:
    void ModificaEjeYCamara(float nuevo);
    void ModificarEscala(int signo);
 
-   virtual ~Practica1();
+   virtual ~Practica5();
 
-   Practica1();
-   Practica1(Practica1 const&);              // No se implementa para evitar copias
-   Practica1& operator=(Practica1 const&);   // No se implementa para evitar asignaciones
+   Practica5();
+   Practica5(Practica5 const&);              // No se implementa para evitar copias
+   Practica5& operator=(Practica5 const&);   // No se implementa para evitar asignaciones
 
 private:
+   visualizacion modo_dibujo;
 
    MallaTVT * malla;
+   NodoGrafoEscena * raiz;
 
-   vector<float> vertices_ply;
-   vector<int> caras_ply;
+   static constexpr unsigned num_camaras = 3;
 
-   string file;
+   Camara * camaras[num_camaras];
+   Camara * camaraActual;
 
-   Camara * camara;
+
 };
 
 #endif
