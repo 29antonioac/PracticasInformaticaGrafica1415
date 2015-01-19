@@ -107,9 +107,33 @@ bool Practica5::GestionarEvento(unsigned char tecla)
 {
    bool redisp = true;
 
-   switch(toupper(tecla))
+   switch(tecla)
    {
-
+      case 'w':
+         camaraActual->ModificarPosicionZ(+0.1);
+         break;
+      case 'a':
+         camaraActual->ModificarPosicionX(+0.1);
+         break;
+      case 's':
+         camaraActual->ModificarPosicionZ(-0.1);
+         break;
+      case 'd':
+         camaraActual->ModificarPosicionX(-0.1);
+         break;
+      case 'r':
+         camaraActual->ReiniciarPosicion();
+         break;
+         /*
+      case 'p':
+         malla->CambioModoDibujo(PUNTOS);
+         break;
+      case 'a':
+         malla->CambioModoDibujo(AJEDREZ);
+         break;
+      case 'h':
+         malla->CambioModoNormales();
+         break;*/
       default:
          redisp = false;
          break;

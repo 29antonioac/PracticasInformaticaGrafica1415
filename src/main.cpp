@@ -278,33 +278,6 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
       case '-':
          practicaActual->ModificarEscala(-1);
          break;
-         /*
-      case 'r':
-         practicaActual->ModificaEjeXCamara(0.0);
-         practicaActual->ModificaEjeYCamara(0.0);
-         break;
-      case 'l':
-         practicaActual->CambioModoDibujo(ALAMBRE);
-         break;
-      case 's':
-         practicaActual->CambioModoDibujo(SOLIDO);
-         break;
-      case 'd':
-         practicaActual->CambioModoDibujo(SOLIDO_CARAS);
-         break;
-      case 'p':
-         practicaActual->CambioModoDibujo(PUNTOS);
-         break;
-      case 'a':
-         practicaActual->CambioModoDibujo(AJEDREZ);
-         break;
-      case 'h':
-         practicaActual->CambioModoNormales();
-         break;
-         */
-      case 'f':
-         practicaActual->CambioColorFijo();
-         break;
       case 'e':
          msaa = !msaa;
          break;

@@ -104,8 +104,30 @@ void Practica2::CambioColorFijo()
 bool Practica2::GestionarEvento(unsigned char tecla)
 {
    bool redisp = true;
-   switch(toupper(tecla))
+   switch(tecla)
    {
+      case 'r':
+         camara->ModificaEjeX(0.0);
+         camara->ModificaEjeY(0.0);
+         break;
+      case 'l':
+         malla->CambioModoDibujo(ALAMBRE);
+         break;
+      case 's':
+         malla->CambioModoDibujo(SOLIDO);
+         break;
+      case 'd':
+         malla->CambioModoDibujo(SOLIDO_CARAS);
+         break;
+      case 'p':
+         malla->CambioModoDibujo(PUNTOS);
+         break;
+      case 'a':
+         malla->CambioModoDibujo(AJEDREZ);
+         break;
+      case 'h':
+         malla->CambioModoNormales();
+         break;
    // Dejamos implementado el switch por si añadimos alguna tecla a esta práctica en particular
       default:
          redisp = false;

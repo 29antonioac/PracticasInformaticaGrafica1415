@@ -18,6 +18,7 @@ private:
 
    static unsigned numero_camaras;
    static const float left, right, top, bottom, near, far;
+   Tupla3f posicion_observador_inicial;
 
 public:
    Camara();
@@ -25,10 +26,13 @@ public:
          float rotacion_eje_X, float rotacion_eje_Y);
    void FijarCamara();
    void FijarProyeccion(float ventana_tam_x, float ventana_tam_y);
-   void ModificaEjeX(float nuevo);
-   void ModificaEjeY(float nuevo);
+   void ModificaEjeX(float incremento);
+   void ModificaEjeY(float incremento);
    void ModificarEscala(int signo);
+   void ModificarPosicionX(float incremento);
+   void ModificarPosicionZ(float incremento);
 
+   void ReiniciarPosicion();
 
 };
 

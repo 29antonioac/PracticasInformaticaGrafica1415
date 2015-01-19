@@ -33,6 +33,7 @@ Camara::Camara()
    this->modo = PRIMERA_PERSONA;
 
    this->posicion_observador = Tupla3f(0.0,0.0,-0.8*(Camara::near + Camara::far));
+   this->posicion_observador_inicial = Tupla3f(0.0,0.0,-0.8*(Camara::near + Camara::far));
    this->posicion_punto_atencion = Tupla3f();
    this->camara_rotacion_x = this->camara_rotacion_y = 0;
 
@@ -48,6 +49,7 @@ Camara::Camara(tipo_camara tipo, modo_camara modo, Tupla3f posicion_observador, 
    this->modo = modo;
 
    this->posicion_observador = posicion_observador;
+   this->posicion_observador_inicial = posicion_observador;
    this->posicion_punto_atencion = posicion_punto_atencion;
    this->camara_rotacion_x = camara_rotacion_x;
    this->camara_rotacion_y = camara_rotacion_y;
@@ -110,13 +112,13 @@ void Camara::FijarProyeccion(float ventana_tam_x, float ventana_tam_y)
    CError();
 }
 
-void Camara::ModificaEjeX(float nuevo)
+void Camara::ModificaEjeX(float incremento)
 {
-   this->camara_rotacion_x += nuevo;
+   this->camara_rotacion_x += incremento;
 }
-void Camara::ModificaEjeY(float nuevo)
+void Camara::ModificaEjeY(float incremento)
 {
-   this->camara_rotacion_y += nuevo;
+   this->camara_rotacion_y += incremento;
 }
 
 void Camara::ModificarEscala(int signo)
@@ -127,4 +129,19 @@ void Camara::ModificarEscala(int signo)
    else              this->factor_escala /= 1.05;
 
 
+}
+
+void Camara::ModificarPosicionX(float incremento)
+{
+   this->posicion_observador[X] += incremento;
+}
+
+void Camara::ModificarPosicionZ(float incremento)
+{
+   this->posicion_observador[Z] += incremento;
+}
+
+void Camara::ReiniciarPosicion()
+{
+   this->posicion_observador = this->posicion_observador_inicial;
 }
