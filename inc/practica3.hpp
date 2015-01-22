@@ -49,18 +49,20 @@ private:
    MallaTVT * semiesfera, * cilindro, * semiesfera_ojo;
 
    Matriz4x4 * rotacion_brazo_izquierdo, * rotacion_brazo_derecho, * rotacion_pierna_izquierda, * rotacion_pierna_derecha,
-      * rotacion_cuerpo, * traslacion;
+      * rotacion_cuerpo, * traslacion, * rotacion_cabeza;
 
    static constexpr float incremento_angulo_rotacion_cuerpo = 2*M_PI/100,
          incremento_angulo_rotacion_brazos = 2*M_PI/100,
          incremento_angulo_rotacion_piernas = 2*M_PI/100,
+         incremento_angulo_rotacion_cabeza = 2*M_PI/100,
          incremento_velocidad_rotacion_cuerpo = 2*M_PI/500,
          incremento_velocidad_rotacion_brazos = 2*M_PI/500,
          incremento_velocidad_rotacion_piernas = 2*M_PI/500,
+         incremento_velocidad_rotacion_cabeza = 2*M_PI/500,
          incremento_traslacion_cuerpo = 0.25;
 
    float direccion_rotacion_brazos, direccion_rotacion_piernas;
-   float distancia_eje_Y, angulo_rotacion_cuerpo, angulo_rotacion_brazos, angulo_rotacion_piernas;
+   float distancia_eje_Y, angulo_rotacion_cuerpo, angulo_rotacion_brazos, angulo_rotacion_piernas, angulo_rotacion_cabeza;
    float velocidad_angular_cuerpo, velocidad_angular_brazos, velocidad_angular_piernas;
 
    // Luces y material (extensión de la práctica 4)

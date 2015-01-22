@@ -49,6 +49,8 @@ Practica3::Practica3()
    direccion_rotacion_brazos = direccion_rotacion_piernas = 1;
    distancia_eje_Y = velocidad_angular_cuerpo = velocidad_angular_brazos = velocidad_angular_piernas = 0;
 
+   angulo_rotacion_cabeza = M_PI;
+
    rotacion_cuerpo = rotacion_brazo_izquierdo = rotacion_brazo_derecho = rotacion_pierna_izquierda = rotacion_pierna_derecha = traslacion = nullptr;
 
    camara = nullptr;
@@ -193,6 +195,7 @@ void Practica3::Inicializar( int argc, char *argv[] )
    rotacion_brazo_derecho = new Matriz4x4(Matriz4x4::RotacionEjeZ(angulo_rotacion_brazos));
    rotacion_cuerpo = new Matriz4x4(Matriz4x4::RotacionEjeY(angulo_rotacion_cuerpo));
    traslacion = new Matriz4x4(Matriz4x4::Traslacion(distancia_eje_Y,0.0,0.0));
+   rotacion_cabeza = new Matriz4x4(Matriz4x4::RotacionEjeY(angulo_rotacion_cabeza));
 
    NodoGrafoEscena * nodo_parametrizado_rotacion_pierna_izquierda = new NodoTransformacionParametrizado(rotacion_pierna_izquierda);
    NodoGrafoEscena * nodo_parametrizado_rotacion_pierna_derecha = new NodoTransformacionParametrizado(rotacion_pierna_derecha);
@@ -200,6 +203,9 @@ void Practica3::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * nodo_parametrizado_rotacion_brazo_derecho = new NodoTransformacionParametrizado(rotacion_brazo_derecho);
    NodoGrafoEscena * nodo_parametrizado_rotacion_cuerpo = new NodoTransformacionParametrizado(rotacion_cuerpo);
    NodoGrafoEscena * nodo_parametrizado_traslacion = new NodoTransformacionParametrizado(traslacion);
+   NodoGrafoEscena * nodo_parametrizado_rotacion_cabeza = new NodoTransformacionParametrizado(rotacion_cabeza);
+
+
 
 
    // Pierna del Android
@@ -252,7 +258,9 @@ void Practica3::Inicializar( int argc, char *argv[] )
 
    // Cabeza
    Android->aniadeHijo(nodo_traslacion_cabeza);
-      nodo_traslacion_cabeza->aniadeHijo(cabeza);
+      nodo_traslacion_cabeza->aniadeHijo(nodo_parametrizado_rotacion_cabeza);
+         nodo_parametrizado_rotacion_cabeza->aniadeHijo(cabeza);
+
 
    // Brazo izquierdo
    Android->aniadeHijo(nodo_traslacion_brazo_izquierdo);
@@ -358,9 +366,6 @@ void Practica3::DibujarObjetos()
    glDisable( GL_NORMALIZE );
    glEnable( GL_COLOR_MATERIAL );
 
-#ifdef DEBUG
-
-#endif
 }
 
 void Practica3::CambioModoDibujo(visualizacion modo_dibujo)
@@ -386,7 +391,8 @@ void Practica3::CambioGradoLibertad(int grado_libertad)
    if (grado_libertad != 1 && grado_libertad != -1
          && grado_libertad != 2 && grado_libertad != -2
          && grado_libertad != 3 && grado_libertad != -3
-         && grado_libertad != 4 && grado_libertad != -4)
+         && grado_libertad != 4 && grado_libertad != -4
+         && grado_libertad != 5 && grado_libertad != -5)
    {
       cout << "Grado de libertad inválido" << endl;
       exit(-4);
@@ -437,6 +443,16 @@ void Practica3::CambioGradoLibertad(int grado_libertad)
 
       *traslacion = Matriz4x4::Traslacion(distancia_eje_Y,0.0,0.0);
    }
+   else if (grado_libertad == 5 || grado_libertad == -5)
+   {
+      //cout << "Moviendo cabeza" << endl;
+      float inc = incremento_angulo_rotacion_cabeza * signo(grado_libertad);
+      angulo_rotacion_cabeza += inc;
+
+      *rotacion_cabeza = Matriz4x4::RotacionEjeY(angulo_rotacion_cabeza);
+   }
+
+
 
 }
 
@@ -479,6 +495,13 @@ bool Practica3::GestionarEvento(unsigned char tecla)
       case 'v':
          CambioGradoLibertad(-4);
          break;
+      case 'i':
+         CambioGradoLibertad(-5);
+         break;
+      case 'I':
+         CambioGradoLibertad(5);
+         break;
+
       case 'b':
          velocidad_angular_cuerpo -= incremento_velocidad_rotacion_cuerpo;
          if (velocidad_angular_cuerpo < 0) velocidad_angular_cuerpo = 0;
