@@ -67,6 +67,7 @@ int
    ventana_tam_x  = 1024,  // ancho inicial y actual de la ventana, en pixels
    ventana_tam_y  = 800 ;  // alto inicial actual de la ventana, en pixels
 
+const float desplazamiento_camara = 0.2;
 
 // Puntero a la práctica actual
 Practica    * practicaActual;
@@ -312,21 +313,20 @@ void FGE_PulsarTeclaNormal( unsigned char tecla, int x_raton, int y_raton )
 void FGE_PulsarTeclaEspecial( int tecla, int x_raton, int y_raton )
 {
    bool redisp = true ;
-   const float da = 5.0 ; // incremento en grados de ángulos de camara
    
    switch ( tecla )
    {
       case GLUT_KEY_LEFT:
-         practicaActual->ModificaEjeYCamara(-da) ;
+         practicaActual->ModificaEjeYCamara(-desplazamiento_camara) ;
          break;
       case GLUT_KEY_RIGHT:
-         practicaActual->ModificaEjeYCamara(+da) ;
+         practicaActual->ModificaEjeYCamara(+desplazamiento_camara) ;
          break;
       case GLUT_KEY_UP:
-         practicaActual->ModificaEjeXCamara(-da) ;
+         practicaActual->ModificaEjeXCamara(-desplazamiento_camara) ;
          break;
       case GLUT_KEY_DOWN:
-         practicaActual->ModificaEjeXCamara(+da) ;
+         practicaActual->ModificaEjeXCamara(+desplazamiento_camara) ;
          break;
       case GLUT_KEY_PAGE_UP:
          practicaActual->ModificarEscala(1);
@@ -373,7 +373,6 @@ int origen[2] = {-1,-1};
 
 void FGE_PulsarRaton(int boton, int estado, int x, int y)
 {
-   const float da = 5.0 ; // incremento en grados de ángulos de camara
    bool redisp = true;
 
    // Si pulsamos el botón derecho del ratón
@@ -404,11 +403,11 @@ void FGE_PulsarRaton(int boton, int estado, int x, int y)
    }
    else if (boton == 5) // Llevar la rueda a la izquierda gira la cámara a la izquierda
    {
-      practicaActual->ModificaEjeYCamara(-da);
+      practicaActual->ModificaEjeYCamara(-desplazamiento_camara);
    }
    else if (boton == 6) // Llevar la rueda a la derecha gira la cámara a la derecha
    {
-      practicaActual->ModificaEjeYCamara(+da);
+      practicaActual->ModificaEjeYCamara(+desplazamiento_camara);
    }
 
    if (redisp)
@@ -423,8 +422,8 @@ void FGE_MoverRaton(int x, int y)
    {
 
       // Actualizar la dirección de la cámara
-      practicaActual->ModificaEjeXCamara((y - origen[1])*0.25f);
-      practicaActual->ModificaEjeYCamara((x - origen[0])*0.25f);
+      practicaActual->ModificaEjeXCamara((y - origen[1])*0.01f);
+      practicaActual->ModificaEjeYCamara((x - origen[0])*0.01f);
 
       origen[0] = x;
       origen[1] = y;

@@ -69,7 +69,7 @@ void Practica5::Inicializar( int argc, char *argv[] )
    raiz->aniadeHijo(nodo_malla);
 
    for (auto &c: camaras)
-      c = new Camara();
+      c = new Camara(PRIMERA_PERSONA);
 
    camaraActual = camaras[0];
 
@@ -147,9 +147,11 @@ void Practica5::Debug()
 
    vector<string> debug_strings;
 
+   debug_strings.push_back(string("Posición punto atención: " + string(camaraActual->getPuntoAtencion())));
+   debug_strings.push_back(string("Posición observador: " + string(camaraActual->getObservador())));
    debug_strings.push_back(string("Modo de normales: " + enumToString(malla->getModoNormales())));
    debug_strings.push_back(string("Modo de dibujo: " + enumToString(modo_dibujo)));
-   debug_strings.push_back(string("Practica 4"));
+   debug_strings.push_back(string("Practica 5"));
 
    void * font = GLUT_BITMAP_9_BY_15;
 
@@ -168,8 +170,8 @@ void Practica5::Debug()
 void Practica5::Ayuda(vector<string> & strings_control)
 {
 
-   strings_control.push_back("Z/X para modificar beta (angulo con eje -X)");
-   strings_control.push_back("C/V para modificar alpha (angulo con eje Y)");
+   strings_control.push_back("W/A/S/D para mover \"personaje\"");
+   //strings_control.push_back("C/V para modificar alpha (angulo con eje Y)");
 
 
 }

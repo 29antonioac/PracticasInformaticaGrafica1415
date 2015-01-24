@@ -49,7 +49,7 @@ Practica3::Practica3()
    direccion_rotacion_brazos = direccion_rotacion_piernas = 1;
    distancia_eje_Y = velocidad_angular_cuerpo = velocidad_angular_brazos = velocidad_angular_piernas = 0;
 
-   angulo_rotacion_cabeza = M_PI;
+   angulo_rotacion_cabeza = 0;
 
    rotacion_cuerpo = rotacion_brazo_izquierdo = rotacion_brazo_derecho = rotacion_pierna_izquierda = rotacion_pierna_derecha = traslacion = nullptr;
 
@@ -331,28 +331,6 @@ void Practica3::Inicializar( int argc, char *argv[] )
 
 void Practica3::DibujarObjetos()
 {
-   /*
-   switch (modo_dibujo)
-   {
-      case ALAMBRE:
-         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-         break;
-      case PUNTOS:
-         glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-         break;
-      case SOLIDO:
-      case AJEDREZ:
-      case SOLIDO_CARAS:
-         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-         break;
-      default:
-         cout << "Enumerado inválido para modo_dibujo" << endl;
-         exit(-3);
-         break;
-
-   }
-   */
-
    glEnable( GL_LIGHTING );
    glEnable( GL_NORMALIZE );
    glDisable( GL_COLOR_MATERIAL );
@@ -449,6 +427,9 @@ void Practica3::CambioGradoLibertad(int grado_libertad)
       float inc = incremento_angulo_rotacion_cabeza * signo(grado_libertad);
       angulo_rotacion_cabeza += inc;
 
+      if (angulo_rotacion_cabeza > 2*M_PI) angulo_rotacion_cabeza -= 2*M_PI;
+      else if (angulo_rotacion_cabeza < 0) angulo_rotacion_cabeza += 2*M_PI;
+
       *rotacion_cabeza = Matriz4x4::RotacionEjeY(angulo_rotacion_cabeza);
    }
 
@@ -495,11 +476,11 @@ bool Practica3::GestionarEvento(unsigned char tecla)
       case 'v':
          CambioGradoLibertad(-4);
          break;
-      case 'i':
-         CambioGradoLibertad(-5);
-         break;
-      case 'I':
+      case 'K':
          CambioGradoLibertad(5);
+         break;
+      case 'k':
+         CambioGradoLibertad(-5);
          break;
 
       case 'b':
@@ -568,6 +549,7 @@ void Practica3::Debug()
    debug_strings.push_back(string("Velocidad angular piernas: " + to_string(velocidad_angular_piernas)));
    debug_strings.push_back(string("Velocidad angular brazos: " + to_string(velocidad_angular_brazos)));
    debug_strings.push_back(string("Velocidad angular cuerpo: " + to_string(velocidad_angular_cuerpo)));
+   debug_strings.push_back(string("Angulo de rotacion cabeza: " + to_string(angulo_rotacion_cabeza)));
    debug_strings.push_back(string("Angulo de rotacion piernas: " + to_string(angulo_rotacion_piernas)));
    debug_strings.push_back(string("Angulo de rotacion brazos: " + to_string(angulo_rotacion_brazos)));
    debug_strings.push_back(string("Angulo de rotacion cuerpo: " + to_string(angulo_rotacion_cuerpo)));
@@ -595,11 +577,10 @@ void Practica3::Ayuda(vector<string> & strings_control)
    strings_control.push_back("N/n para modificar velocidad de rotacion de los brazos");
    strings_control.push_back("B/b para modificar velocidad de rotacion del cuerpo");
    strings_control.push_back("V/v para modificar distancia al eje Y");
+   strings_control.push_back("K/k para modificar rotacion de la cabeza");
    strings_control.push_back("C/c para modificar rotacion de las piernas");
    strings_control.push_back("X/x para modificar rotacion de los brazos");
    strings_control.push_back("Z/z para modificar rotacion del cuerpo");
-
-
 }
 
 void Practica3::FijarCamara()

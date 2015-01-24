@@ -1,6 +1,8 @@
 #include "Camara.hpp"
 #include "error-ogl.hpp"
+#include "Matriz.hpp"
 #include <cassert>
+#include <iostream>
 
 unsigned Camara::numero_camaras = 0;
 const float Camara::left = -0.1,
@@ -8,7 +10,7 @@ const float Camara::left = -0.1,
             Camara::bottom = -0.1,
             Camara::top = 0.1,
             Camara::near = 0.1,
-            Camara::far = 10.0;
+            Camara::far = 100.0;
 
 /*
  * glFrustum
@@ -30,14 +32,35 @@ const float Camara::left = -0.1,
 Camara::Camara()
 {
    this->tipo = PERSPECTIVA;
-   this->modo = PRIMERA_PERSONA;
+   this->modo = EXAMINAR;
 
-   this->posicion_observador = Tupla3f(0.0,0.0,-0.8*(Camara::near + Camara::far));
-   this->posicion_observador_inicial = Tupla3f(0.0,0.0,-0.8*(Camara::near + Camara::far));
+   this->posicion_observador = Tupla3f(0.0,0.0,-5.0);
+   this->posicion_observador_inicial = Tupla3f(0.0,0.0,-5.0);
+
    this->posicion_punto_atencion = Tupla3f();
+   this->posicion_punto_atencion_inicial = Tupla3f();
+
    this->camara_rotacion_x = this->camara_rotacion_y = 0;
 
-   this->factor_escala = 1.0;
+   this->factor_zoom = 0.0;
+
+   numero_camaras++;
+}
+
+Camara::Camara(modo_camara modo)
+{
+   this->tipo = PERSPECTIVA;
+   this->modo = modo;
+
+   this->posicion_observador = Tupla3f(0.0,0.0,-5.0);
+   this->posicion_observador_inicial = Tupla3f(0.0,0.0,-5.0);
+
+   this->posicion_punto_atencion = Tupla3f();
+   this->posicion_punto_atencion_inicial = Tupla3f();
+
+   this->camara_rotacion_x = this->camara_rotacion_y = 0;
+
+   this->factor_zoom = 0.0;
 
    numero_camaras++;
 }
@@ -51,13 +74,16 @@ Camara::Camara(tipo_camara tipo, modo_camara modo, Tupla3f posicion_observador, 
    this->posicion_observador = posicion_observador;
    this->posicion_observador_inicial = posicion_observador;
    this->posicion_punto_atencion = posicion_punto_atencion;
+   this->posicion_punto_atencion_inicial = posicion_punto_atencion;
    this->camara_rotacion_x = camara_rotacion_x;
    this->camara_rotacion_y = camara_rotacion_y;
 
-   this->factor_escala = 1.0;
+   this->factor_zoom = 1.0;
 
    numero_camaras++;
 }
+
+
 
 void Camara::FijarCamara()
 {
@@ -65,8 +91,32 @@ void Camara::FijarCamara()
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
 
+/*
    glRotatef(camara_rotacion_x,1,0,0);
    glRotatef(camara_rotacion_y,0,1,0);
+   */
+
+
+
+   if (modo == EXAMINAR)
+   {
+      Tupla3f zoom (0.0,0.0,factor_zoom);
+      Tupla3f tmp = posicion_observador_inicial + zoom;
+      posicion_observador = Matriz4x4::RotacionEjeY(-camara_rotacion_y) * Matriz4x4::RotacionEjeX(camara_rotacion_x) * tmp;
+   }
+   else  // Modo Primera persona
+   {
+      Tupla3f vector_ojo_foco = posicion_punto_atencion_inicial - posicion_observador;
+      vector_ojo_foco = Matriz4x4::RotacionEjeY(-camara_rotacion_y) * Matriz4x4::RotacionEjeX(camara_rotacion_x) * vector_ojo_foco;
+      posicion_punto_atencion = posicion_observador + vector_ojo_foco;
+   }
+
+
+   gluLookAt(posicion_observador[X], posicion_observador[Y], posicion_observador[Z],
+               posicion_punto_atencion[X], posicion_punto_atencion[Y], posicion_punto_atencion[Z],
+               0.0,1.0,0.0);
+
+
 
    CError();
 }
@@ -101,15 +151,31 @@ void Camara::FijarProyeccion(float ventana_tam_x, float ventana_tam_y)
          far
       );
    }
+   /*
 
    if (modo != EXAMINAR)
+   {
       glTranslatef( posicion_observador[X], posicion_observador[Y], posicion_observador[Z]);
-   else
+
+   }
+   else // esto está mal
       glTranslatef( posicion_punto_atencion[X], posicion_punto_atencion[Y], posicion_punto_atencion[Z]);
 
    glScalef(factor_escala, factor_escala, factor_escala);
+   */
+
 
    CError();
+}
+
+Tupla3f Camara::getObservador()
+{
+   return posicion_observador;
+}
+
+Tupla3f Camara::getPuntoAtencion()
+{
+   return posicion_punto_atencion;
 }
 
 void Camara::ModificaEjeX(float incremento)
@@ -125,23 +191,33 @@ void Camara::ModificarEscala(int signo)
 {
    assert (signo == 1 || signo == -1);
 
-   if (signo == 1)   this->factor_escala *= 1.05;
-   else              this->factor_escala /= 1.05;
+   if (signo == 1)   this->factor_zoom += 1.0;
+   else              this->factor_zoom -= 1.0;
 
 
 }
 
 void Camara::ModificarPosicionX(float incremento)
 {
-   this->posicion_observador[X] += incremento;
+   if (modo == PRIMERA_PERSONA)
+   {
+      this->posicion_observador[X] += incremento;
+      this->posicion_punto_atencion[X] += incremento;
+   }
 }
 
 void Camara::ModificarPosicionZ(float incremento)
 {
-   this->posicion_observador[Z] += incremento;
+   if (modo == PRIMERA_PERSONA)
+   {
+      this->posicion_observador[Z] += incremento;
+      this->posicion_punto_atencion[Z] += incremento;
+   }
 }
 
 void Camara::ReiniciarPosicion()
 {
+   std::cout << "Reiniciar" << std::endl;
    this->posicion_observador = this->posicion_observador_inicial;
+   this->posicion_punto_atencion = this->posicion_punto_atencion_inicial;
 }

@@ -64,6 +64,18 @@ public:
 
       return flujo;
    }
+
+   inline operator std::string() const
+   {
+      std::string flujo = "(";
+      for (unsigned i = 0; i < N - 1; i++)
+      {
+         flujo += std::to_string(coo[i]) + std::string(",");
+      }
+      flujo += std::to_string(coo[N - 1]) + std::string(")");
+
+      return flujo;
+   }
 };
 
 template <unsigned N, class T>
