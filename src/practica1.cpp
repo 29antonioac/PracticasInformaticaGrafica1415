@@ -127,6 +127,10 @@ void Practica1::Debug()
       str_color_fijo = "No";
 
    vector<string> debug_strings;
+   debug_strings.push_back(string("Rotacion eje Y: " + std::to_string(camara->getEjeY())));
+   debug_strings.push_back(string("Rotacion eje X: " + std::to_string(camara->getEjeX())));
+   debug_strings.push_back(string("Posición punto atención: " + string(camara->getPuntoAtencion())));
+   debug_strings.push_back(string("Posición observador: " + string(camara->getObservador())));
    debug_strings.push_back(string("Modo de normales: " + enumToString(malla->getModoNormales())));
    debug_strings.push_back(string("Color fijo: " + str_color_fijo));
    debug_strings.push_back(string("Modo de dibujo: " + enumToString(malla->getModoDibujo())));

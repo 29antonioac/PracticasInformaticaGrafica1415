@@ -29,6 +29,8 @@ public:
    void FijarProyeccion(float ventana_tam_x, float ventana_tam_y);
    Tupla3f getObservador();
    Tupla3f getPuntoAtencion();
+   float getEjeX();
+   float getEjeY();
    void ModificaEjeX(float incremento);
    void ModificaEjeY(float incremento);
    void ModificarEscala(int signo);

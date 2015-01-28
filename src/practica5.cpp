@@ -107,19 +107,21 @@ bool Practica5::GestionarEvento(unsigned char tecla)
 {
    bool redisp = true;
 
+   const float desplazamiento = 0.05;
+
    switch(tecla)
    {
       case 'w':
-         camaraActual->ModificarPosicionZ(+0.1);
+         camaraActual->ModificarPosicionZ(+desplazamiento);
          break;
       case 'a':
-         camaraActual->ModificarPosicionX(+0.1);
+         camaraActual->ModificarPosicionX(+desplazamiento);
          break;
       case 's':
-         camaraActual->ModificarPosicionZ(-0.1);
+         camaraActual->ModificarPosicionZ(-desplazamiento);
          break;
       case 'd':
-         camaraActual->ModificarPosicionX(-0.1);
+         camaraActual->ModificarPosicionX(-desplazamiento);
          break;
       case 'r':
          camaraActual->ReiniciarPosicion();
