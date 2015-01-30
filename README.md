@@ -9,7 +9,7 @@ Pulsando Fx se va cambiando de práctica.
 
 Para ejecutar se usa 
 
-    bin/prac \<nombre_del_ply.ply\> \<nombre_del_perfil.ply\> \<numero_de_caras\> \<modo_practica_2\> 
+    bin/prac <nombre_del_ply.ply> <nombre_del_perfil.ply> <numero_de_caras> <modo_practica_2> 
 
 O se especifica todo o cargará ant.ply, arboldenavidad.ply, 20 y 0. Los ply están en la carpeta PLY. 
   El modo práctica 2 es
