@@ -53,6 +53,7 @@ private:
    vector<Tupla2f> coordenadas_textura;
 
    float dimension;
+   Tupla3f centro_coordenadas_objeto, centro_coordenadas_mundo;
 
    bool color_fijo;
 
@@ -79,6 +80,7 @@ public:
    void Barrido_Traslacion(const unsigned caras, const float dx, const float dy, const float dz);
    visualizacion getModoDibujo();
    normales getModoNormales();
+   Tupla3f getCentro();
    void CambioModoDibujo ( visualizacion modo ) ;
    void CambioModoNormales();
    void CambioColorFijo();

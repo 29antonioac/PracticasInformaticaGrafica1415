@@ -49,7 +49,7 @@ private:
    vector<MallaTVT *> mallas;
 
    Tupla3ub color_moto, color_peon, color_donut;
-   MallaTVT * moto, * peon, * donut;
+   MallaTVT * moto, * peon, * donut, * malla_marcada;
    NodoGrafoEscena * raiz;
 
    static constexpr unsigned num_camaras = 3;

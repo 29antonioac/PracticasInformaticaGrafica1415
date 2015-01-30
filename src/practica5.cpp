@@ -40,7 +40,7 @@ Practica5::Practica5()
    modo_dibujo = ALAMBRE;
 
    raiz = nullptr;
-   moto = peon = donut = nullptr;
+   moto = peon = donut = malla_marcada = nullptr;
    camaraActual = nullptr;
 
    for (auto &c: camaras)
@@ -112,7 +112,7 @@ void Practica5::Inicializar( int argc, char *argv[] )
 
    camaras[0] = new Camara(PRIMERA_PERSONA);
    camaras[1] = new Camara(PRIMERA_PERSONA);
-   camaras[2] = new Camara(PRIMERA_PERSONA);
+   camaras[2] = new Camara(ORTOGONAL);
 
    camaraActual = camaras[0];
 
@@ -146,15 +146,45 @@ void Practica5::ClickRaton(int x, int y)
 
    // Comparar con nuestros valores de colores para cada figura
    if (pixel[0] == 255 && pixel[1] == 255 && pixel[2] == 255)
+   {
       cout << "Nada" << endl;
+      camaraActual->SetModo(PRIMERA_PERSONA);
+      if (malla_marcada != nullptr) malla_marcada->CambioModoDibujo(SOLIDO);
+      malla_marcada = nullptr;
+   }
    else if (pixel[0] == 255)
+   {
       cout << "Moto" << endl;
+      if (malla_marcada != nullptr) malla_marcada->CambioModoDibujo(SOLIDO);
+      malla_marcada = moto;
+   }
    else if (pixel[1] == 255)
+   {
       cout << "Peón" << endl;
+      if (malla_marcada != nullptr) malla_marcada->CambioModoDibujo(SOLIDO);
+      malla_marcada = peon;
+
+   }
    else if (pixel[2] == 255)
+   {
       cout << "Donut" << endl;
+      if (malla_marcada != nullptr) malla_marcada->CambioModoDibujo(SOLIDO);
+      malla_marcada = donut;
+   }
    else
+   {
       cout << "Nada" << endl;
+      camaraActual->SetModo(PRIMERA_PERSONA);
+      if (malla_marcada != nullptr) malla_marcada->CambioModoDibujo(SOLIDO);
+      malla_marcada = nullptr;
+   }
+
+   if (malla_marcada != nullptr)
+   {
+      malla_marcada->CambioModoDibujo(SOLIDO_CARAS);
+      camaraActual->SetPuntoAtencion(malla_marcada->getCentro());
+      camaraActual->SetModo(EXAMINAR);
+   }
 
    // Restablecemos colores de normales de vértices
    CambioColorFijo();

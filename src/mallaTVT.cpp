@@ -158,7 +158,9 @@ void MallaTVT::CalcularDimension()
          dimension_maxima_ejes[coo] -= dimension_minima_ejes[coo];
    }
 
+   centro_coordenadas_objeto = Tupla3f (dimension_maxima_ejes[X],dimension_maxima_ejes[Y], dimension_maxima_ejes[Z]) / 2;
    dimension = max(dimension_maxima_ejes[X],max(dimension_maxima_ejes[Y], dimension_maxima_ejes[Z]));
+   centro_coordenadas_mundo = centro_coordenadas_objeto;
 }
 
 void MallaTVT::CalcularVectoresNormales()
@@ -321,6 +323,14 @@ void MallaTVT::Visualizar()
    bool normal_vertices = false;
    bool coordenadas_textura = false;
 
+   /*
+   GLdouble matrix[16];
+   glGetDoublev (GL_MODELVIEW_MATRIX, matrix);
+
+   Matriz4x4 modelview_actual(matrix,true);
+   centro_coordenadas_mundo = modelview_actual * centro_coordenadas_objeto;
+   */
+
    // Pendiente de reorganizar
 
    if (this->tipo == PERFIL)
@@ -419,7 +429,7 @@ void MallaTVT::VisualizarModoInmediato()
    // Activar sombreado plano
    glShadeModel(GL_FLAT);
 
-   bool usar_coordenadas_textura;
+   bool usar_coordenadas_textura = false;
 
    if (material != nullptr)
    {
@@ -884,6 +894,11 @@ visualizacion MallaTVT::getModoDibujo()
 normales MallaTVT::getModoNormales()
 {
    return dibujo_normales;
+}
+
+Tupla3f MallaTVT::getCentro()
+{
+   return this->centro_coordenadas_mundo;
 }
 
 void MallaTVT::CambioModoDibujo(enum visualizacion modo_dibujo)

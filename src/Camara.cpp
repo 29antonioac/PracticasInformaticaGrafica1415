@@ -71,6 +71,25 @@ Camara::Camara()
    numero_camaras++;
 }
 
+Camara::Camara(tipo_camara tipo)
+{
+   this->tipo = tipo;
+   this->modo = PRIMERA_PERSONA;
+
+   this->posicion_observador = Tupla3f(0.0,0.0,10.0);
+   this->posicion_observador_inicial = Tupla3f(0.0,0.0,10.0);
+
+   this->posicion_punto_atencion = Tupla3f();
+   this->posicion_punto_atencion_inicial = Tupla3f();
+
+   this->camara_rotacion_x = 0;
+   this->camara_rotacion_y = 0;
+
+   this->factor_zoom = 0.0;
+
+   numero_camaras++;
+}
+
 Camara::Camara(modo_camara modo)
 {
    this->tipo = PERSPECTIVA;
@@ -267,6 +286,16 @@ void Camara::ModificarPosicionZ(float incremento)
       posicion_observador += direccion * incremento;
       posicion_punto_atencion_inicial += direccion * incremento;
    }
+}
+
+void Camara::SetPuntoAtencion(Tupla3f punto_atencion)
+{
+   this->posicion_punto_atencion = punto_atencion;
+}
+
+void Camara::SetModo(modo_camara modo)
+{
+   this->modo = modo;
 }
 
 void Camara::ReiniciarPosicion()

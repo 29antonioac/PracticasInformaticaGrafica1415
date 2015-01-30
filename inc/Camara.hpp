@@ -22,6 +22,7 @@ private:
 
 public:
    Camara();
+   Camara(tipo_camara tipo);
    Camara(modo_camara modo);
    Camara(tipo_camara tipo, modo_camara modo, Tupla3f posicion_observador, Tupla3f posicion_punto_atencion,
          float rotacion_eje_X, float rotacion_eje_Y);
@@ -36,6 +37,9 @@ public:
    void ModificarEscala(int signo);
    void ModificarPosicionX(float incremento);
    void ModificarPosicionZ(float incremento);
+
+   void SetPuntoAtencion(Tupla3f punto_atencion);
+   void SetModo(modo_camara modo);
 
    void ReiniciarPosicion();
 
