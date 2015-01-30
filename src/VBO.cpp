@@ -84,7 +84,7 @@ void VBO_Vertices::Visualizar()
    glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void VBO_Triangulos::Visualizar(visualizacion modo, Tupla3f color_primario, Tupla3f color_secundario)
+void VBO_Triangulos::Visualizar(visualizacion modo, Tupla3ub color_primario, Tupla3ub color_secundario)
 {
    if (modo != AJEDREZ)
    {
@@ -98,11 +98,11 @@ void VBO_Triangulos::Visualizar(visualizacion modo, Tupla3f color_primario, Tupl
       unsigned num_impares = numero_datos - num_pares;
 
       glDisableClientState(GL_COLOR_ARRAY);
-      glColor3fv(color_primario.data());
+      glColor3ubv(color_primario.data());
       glBindBuffer( tipo, id_vbo );
       glDrawElements( GL_TRIANGLES, num_impares, GL_UNSIGNED_INT, 0 ) ;
 
-      glColor3fv(color_secundario.data());
+      glColor3ubv(color_secundario.data());
       glDrawElements( GL_TRIANGLES, num_pares, GL_UNSIGNED_INT, (const void *) (num_impares*sizeof(GLuint)) ) ;
       glBindBuffer(tipo,0);
    }

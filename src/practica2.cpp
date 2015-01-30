@@ -81,6 +81,16 @@ void Practica2::Inicializar(int argc, char *argv[])
    camara = new Camara;
 }
 
+void Practica2::EnciendeLuces()
+{
+
+}
+
+void Practica2::ClickRaton(int x, int y)
+{
+
+}
+
 void Practica2::DibujarObjetos()
 {
    malla->Visualizar();

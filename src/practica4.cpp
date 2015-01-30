@@ -231,6 +231,15 @@ void Practica4::Inicializar( int argc, char *argv[] )
 
 }
 
+void Practica4::EnciendeLuces()
+{
+   fuentes.Activar();
+}
+
+void Practica4::ClickRaton(int x, int y)
+{
+
+}
 
 void Practica4::DibujarObjetos()
 {
@@ -240,7 +249,7 @@ void Practica4::DibujarObjetos()
    glDisable( GL_COLOR_MATERIAL );
 
    // Dibujar aquí
-   fuentes.Activar();
+   //fuentes.Activar();
    raiz->Procesa();
    fuentes.Desactivar();
 

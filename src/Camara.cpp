@@ -140,6 +140,7 @@ void Camara::FijarCamara()
                posicion_punto_atencion[X], posicion_punto_atencion[Y], posicion_punto_atencion[Z],
                0.0,1.0,0.0);
 
+
    /*
    glm::vec3 eye(posicion_observador[X], posicion_observador[Y], posicion_observador[Z]);
    glm::vec3 PoV(posicion_punto_atencion[X], posicion_punto_atencion[Y], posicion_punto_atencion[Z]);
@@ -149,6 +150,12 @@ void Camara::FijarCamara()
 
    glMultMatrixf(&matriz_lookAt[0][0]);
    */
+/*
+   glRotatef(-camara_rotacion_y, 0.0,1.0,0.0);
+   glRotatef(-camara_rotacion_x, 1.0,0.0,0.0);
+   glTranslatef(posicion_observador[X], posicion_observador[Y], posicion_observador[Z]);
+   */
+
 
 
 

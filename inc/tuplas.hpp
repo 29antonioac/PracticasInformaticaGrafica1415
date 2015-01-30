@@ -344,11 +344,13 @@ template class Tupla<2,float>;
 template class Tupla<3,int>;
 template class Tupla<3,float>;
 template class Tupla<4,float>;
+template class Tupla<3,unsigned char>;
 
 typedef Tupla<2,float>  Tupla2f;
 typedef Tupla<3,float>  Tupla3f;
 typedef Tupla<4,float>  Tupla4f;
 typedef Tupla<3,int>    Tupla3i;
+typedef Tupla<3,unsigned char> Tupla3ub;
 
 
 

@@ -122,15 +122,15 @@ void MallaTVT::Inicializar()
    for (unsigned i = 0; i < ver.size(); i++)
    {
       Tupla3f color(normales_vertices[i].abs());
-      colores_vertices.push_back(color);
+      colores_vertices.push_back(color );
       //colores_vertices.push_back(Tupla3f(0.0,color[Y],0.0));
    }
 
    this->modo_dibujo = SOLIDO;
    this->dibujo_normales = NADA;
 
-   color_primario = Tupla3f(0.0,1.0,0.0);
-   color_secundario = Tupla3f(0.0,0.0,0.0);
+   color_primario = Tupla3ub(0,255,0);
+   color_secundario = Tupla3ub(0,0,0);
 
    color_fijo = false;
 
@@ -315,7 +315,7 @@ void MallaTVT::CrearVBOs()
 
 void MallaTVT::Visualizar()
 {
-   glColor3fv(color_primario.data());
+   glColor3ubv(color_primario.data());
 
    bool color_vertices = false;
    bool normal_vertices = false;
@@ -909,6 +909,15 @@ void MallaTVT::CambioColorFijo()
       color_fijo = false;
    else
       color_fijo = true;
+}
+
+void MallaTVT::SetColorPrimario(Tupla3ub color)
+{
+   this->color_primario = color;
+}
+void MallaTVT::SetColorSecundario(Tupla3ub color)
+{
+   this->color_secundario = color;
 }
 
 bool MallaTVT::ColorFijo()

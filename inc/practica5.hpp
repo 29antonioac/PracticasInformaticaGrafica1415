@@ -13,6 +13,7 @@
 #include "practica.hpp"
 #include "tuplas.hpp"
 #include "grafoescena.hpp"
+#include "MallaTVT.hpp"
 
 class Practica5 : virtual public Practica
 {
@@ -20,11 +21,13 @@ public:
 
    void DibujarObjetos();
    void Inicializar(int argc, char * argv[]);
+   void EnciendeLuces();
    void CambioModoDibujo(visualizacion modo_dibujo);
    void CambioModoNormales();
 
    void CambioColorFijo();
    bool GestionarEvento(unsigned char tecla);
+   void ClickRaton(int x, int y);
    void Debug();
    void Ayuda(vector<string> & strings_control);
 
@@ -43,7 +46,10 @@ public:
 private:
    visualizacion modo_dibujo;
 
-   MallaTVT * malla;
+   vector<MallaTVT *> mallas;
+
+   Tupla3ub color_moto, color_peon, color_donut;
+   MallaTVT * moto, * peon, * donut;
    NodoGrafoEscena * raiz;
 
    static constexpr unsigned num_camaras = 3;

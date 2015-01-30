@@ -32,8 +32,8 @@ private:
    vector<Tupla3f> colores_vertices, normales_vertices, normales_caras, baricentros;
    vector<pair<Tupla3f,Tupla3f> > lineas_normales_caras, lineas_normales_vertices;
 
-   Tupla3f color_primario;
-   Tupla3f color_secundario;
+   Tupla3ub color_primario;
+   Tupla3ub color_secundario;
 
    VBO_Vertices   * vbo_vertices;
    VBO_Triangulos * vbo_triangulos;
@@ -82,6 +82,8 @@ public:
    void CambioModoDibujo ( visualizacion modo ) ;
    void CambioModoNormales();
    void CambioColorFijo();
+   void SetColorPrimario(Tupla3ub color);
+   void SetColorSecundario(Tupla3ub color);
    bool ColorFijo();
 };
 

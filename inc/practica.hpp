@@ -14,11 +14,13 @@ class Practica
 {
 public:
    virtual void Inicializar(int argc, char * argv[]) = 0;
+   virtual void EnciendeLuces() = 0;
    virtual void DibujarObjetos() = 0;
    virtual void CambioModoDibujo(enum visualizacion) = 0;
    virtual void CambioModoNormales() = 0;
    virtual void CambioColorFijo() = 0;
    virtual bool GestionarEvento(unsigned char tecla) = 0;
+   virtual void ClickRaton(int x, int y) = 0;
    virtual void Debug() = 0;
    virtual void Ayuda(vector<string> & strings_control) = 0;
 

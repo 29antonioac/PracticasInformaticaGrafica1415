@@ -327,7 +327,15 @@ void Practica3::Inicializar( int argc, char *argv[] )
 
 }
 
-#define DEBUG
+void Practica3::EnciendeLuces()
+{
+   fuentes.Activar();
+}
+
+void Practica3::ClickRaton(int x, int y)
+{
+
+}
 
 void Practica3::DibujarObjetos()
 {
@@ -336,9 +344,9 @@ void Practica3::DibujarObjetos()
    glDisable( GL_COLOR_MATERIAL );
 
    // Dibujar aquí
-   fuentes.Activar();
+   //fuentes.Activar();
    raiz->Procesa();
-   //fuentes.Desactivar();
+   fuentes.Desactivar();
 
    glDisable( GL_LIGHTING );
    glDisable( GL_NORMALIZE );

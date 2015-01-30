@@ -59,6 +59,16 @@ void Practica1::Inicializar( int argc, char *argv[] )
    
 }
 
+void Practica1::EnciendeLuces()
+{
+
+}
+
+void Practica1::ClickRaton(int x, int y)
+{
+
+}
+
 // ---------------------------------------------------------------------
 // función a implementar en la práctica 1  dibujar los objetos
 

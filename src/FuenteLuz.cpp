@@ -67,6 +67,8 @@ void FuenteLuzDireccional::Activar()
 
    Tupla4f ejeZ(cosf(alpha)*sinf(beta),sinf(alpha)*sinf(beta),cosf(beta),0.0);
 
+   glMatrixMode(GL_MODELVIEW);
+
    glLightfv(id_luz, GL_POSITION, ejeZ.data());
    glLightfv(id_luz, GL_AMBIENT, this->componente_ambiental.data());
    glLightfv(id_luz, GL_DIFFUSE, this->componente_difusa.data());
@@ -104,6 +106,8 @@ void FuenteLuzPosicional::Activar()
 
    DibujarFuente();
 
+   glMatrixMode(GL_MODELVIEW);
+
    glLightfv(id_luz, GL_POSITION,this->posicion.data());
    glLightfv(id_luz, GL_AMBIENT, this->componente_ambiental.data());
    glLightfv(id_luz, GL_DIFFUSE, this->componente_difusa.data());
@@ -113,6 +117,7 @@ void FuenteLuzPosicional::Activar()
 
 void ColeccionFuentesLuz::Activar()
 {
+
    for (unsigned i = 0; i < fuentes.size(); i++)
    {
       fuentes[i]->Activar();

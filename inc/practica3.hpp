@@ -22,12 +22,14 @@ public:
 
    void DibujarObjetos();
    void Inicializar(int argc, char * argv[]);
+   void EnciendeLuces();
    void CambioModoDibujo(visualizacion modo_dibujo);
    void CambioModoNormales();
    void CambioGradoLibertad(int grado_libertad);
    void Animar();
    void CambioColorFijo();
    bool GestionarEvento(unsigned char tecla);
+   void ClickRaton(int x, int y);
    void Debug();
    void Ayuda(vector<string> & strings_control);
 

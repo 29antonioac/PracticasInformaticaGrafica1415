@@ -219,6 +219,15 @@ void Debug_Ayuda()
 
 }
 
+void EnciendeLuces()
+{
+   practicaActual->EnciendeLuces();
+}
+
+void DibujarObjetos()
+{
+   practicaActual->DibujarObjetos();
+}
 
 // *********************************************************************
 // **
@@ -231,11 +240,24 @@ void Debug_Ayuda()
 
 void FGE_Redibujado()
 {
-   FijarViewportProyeccion() ; // necesario pues la escala puede cambiar
-   FijarCamara();
+
    LimpiarVentana();
+
+
+
+   FijarViewportProyeccion() ; // necesario pues la escala puede cambiar
+
+   FijarCamara();
+
+   EnciendeLuces();
+
+
+
+
    DibujarEjes() ;
-   practicaActual->DibujarObjetos();
+
+   DibujarObjetos();
+
    Debug_Ayuda();
    glFinish();
    glutSwapBuffers();
@@ -391,6 +413,11 @@ void FGE_PulsarRaton(int boton, int estado, int x, int y)
       }
       redisp = false;
    }
+   else if (boton == GLUT_LEFT_BUTTON && estado == GLUT_DOWN)
+   {
+      practicaActual->ClickRaton(x,y);
+      redisp = false;
+   }
    else if (boton == 3) // Rueda arriba aumenta el zoom
    {
       //frustum_factor_escala *= 1.05;
@@ -472,7 +499,7 @@ void Inicializa_GLUT( int argc, char * argv[] )
    glutInitWindowSize( ventana_tam_x, ventana_tam_y );
    
    // establece atributos o tipo de ventana:
-   glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE );
+   glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE | GLUT_ALPHA );
    
    // crea y visualiza una ventana:
    glutCreateWindow("Practicas IG (14-15)");
