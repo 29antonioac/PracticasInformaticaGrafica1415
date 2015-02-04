@@ -29,6 +29,7 @@
 #include "practica3.hpp"
 #include "practica4.hpp"
 #include "practica5.hpp"
+#include "problemas.hpp"
 
 using std::cout;
 using std::endl;
@@ -76,6 +77,7 @@ Practica2   * practica2 = new Practica2;
 Practica3   * practica3 = new Practica3;
 Practica4   * practica4 = new Practica4;
 Practica5   * practica5 = new Practica5;
+Problemas   * problemas = new Problemas;
 
 bool debug = false;
 bool ayuda = false;
@@ -379,6 +381,9 @@ void FGE_PulsarTeclaEspecial( int tecla, int x_raton, int y_raton )
          if (ayuda) ayuda = false;
          else ayuda = true;
          break;
+      case GLUT_KEY_F8:
+         practicaActual = problemas;
+         break;
       default:
          redisp = false ;
          break ;
@@ -417,6 +422,10 @@ void FGE_PulsarRaton(int boton, int estado, int x, int y)
    {
       practicaActual->ClickRaton(x,y);
       redisp = false;
+   }
+   else if (boton == GLUT_MIDDLE_BUTTON)
+   {
+      practicaActual->CambioColorFijo();
    }
    else if (boton == 3) // Rueda arriba aumenta el zoom
    {
@@ -607,6 +616,7 @@ void Inicializar( int argc, char *argv[] )
    practica3->Inicializar(argc, argv);
    practica4->Inicializar(argc, argv);
    practica5->Inicializar(argc, argv);
+   problemas->Inicializar(argc, argv);
 
    practicaActual = practica5;
 }
