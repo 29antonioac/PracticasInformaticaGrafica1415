@@ -87,6 +87,8 @@ public:
    void SetColorPrimario(Tupla3ub color);
    void SetColorSecundario(Tupla3ub color);
    bool ColorFijo();
+
+   void CorrigeCentro(Matriz4x4 transformacion);
 };
 
 #endif

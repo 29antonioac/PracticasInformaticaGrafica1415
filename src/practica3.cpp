@@ -298,10 +298,10 @@ void Practica3::Inicializar( int argc, char *argv[] )
    fuentes.Agregar(fuente4);
 
    Tupla3f android_componente_emision(0.0,1.0,0.0);  // Color verde
-   Tupla3f android_componente_ambiental(0.0,0.0,0.0);
-   Tupla3f android_componente_difusa(0.3,0.3,0.3);
+   Tupla3f android_componente_ambiental(0.0,0.2,0.0);
+   Tupla3f android_componente_difusa(0.4,0.4,0.4);
    Tupla3f android_componente_especular(0.8,0.8,0.8);
-   float android_exponente_especular = 2.0;
+   float android_exponente_especular = 30.0;
 
    Tupla3f ojo_componente_emision(0.0,0.0,0.0);  // Color negro
    Tupla3f ojo_componente_ambiental(0.0,0.0,0.0);

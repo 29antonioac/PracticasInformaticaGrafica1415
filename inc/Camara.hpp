@@ -11,14 +11,14 @@ private:
    tipo_camara tipo;
    modo_camara modo;
 
-   Tupla3f posicion_observador, posicion_punto_atencion;
+   Tupla3f posicion_observador, posicion_observador_anterior, posicion_punto_atencion, posicion_punto_atencion_anterior;
    float camara_rotacion_x, camara_rotacion_y;
 
    float factor_zoom;
 
    static unsigned numero_camaras;
    static const float left, right, top, bottom, near, far;
-   Tupla3f posicion_observador_inicial, posicion_punto_atencion_inicial;
+   const Tupla3f posicion_observador_inicial, posicion_punto_atencion_inicial;
 
 public:
    Camara();

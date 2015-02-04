@@ -53,15 +53,16 @@ void util_compat_gluLookAt(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloat loo
 
 
 Camara::Camara()
+   :posicion_observador_inicial(Tupla3f(0.0,0.0,10.0)), posicion_punto_atencion_inicial(Tupla3f(0.0,0.0,0.0))
 {
    this->tipo = PERSPECTIVA;
    this->modo = EXAMINAR;
 
    this->posicion_observador = Tupla3f(0.0,0.0,10.0);
-   this->posicion_observador_inicial = Tupla3f(0.0,0.0,10.0);
+   this->posicion_observador_anterior = Tupla3f(0.0,0.0,10.0);
 
    this->posicion_punto_atencion = Tupla3f();
-   this->posicion_punto_atencion_inicial = Tupla3f();
+   this->posicion_punto_atencion_anterior = Tupla3f();
 
    this->camara_rotacion_x = 0;
    this->camara_rotacion_y = 0;
@@ -72,15 +73,16 @@ Camara::Camara()
 }
 
 Camara::Camara(tipo_camara tipo)
+   :posicion_observador_inicial(Tupla3f(0.0,0.0,10.0)), posicion_punto_atencion_inicial(Tupla3f(0.0,0.0,0.0))
 {
    this->tipo = tipo;
    this->modo = PRIMERA_PERSONA;
 
    this->posicion_observador = Tupla3f(0.0,0.0,10.0);
-   this->posicion_observador_inicial = Tupla3f(0.0,0.0,10.0);
+   this->posicion_observador_anterior = Tupla3f(0.0,0.0,10.0);
 
    this->posicion_punto_atencion = Tupla3f();
-   this->posicion_punto_atencion_inicial = Tupla3f();
+   this->posicion_punto_atencion_anterior = Tupla3f();
 
    this->camara_rotacion_x = 0;
    this->camara_rotacion_y = 0;
@@ -91,15 +93,16 @@ Camara::Camara(tipo_camara tipo)
 }
 
 Camara::Camara(modo_camara modo)
+   :posicion_observador_inicial(Tupla3f(0.0,0.0,10.0)), posicion_punto_atencion_inicial(Tupla3f(0.0,0.0,0.0))
 {
    this->tipo = PERSPECTIVA;
    this->modo = modo;
 
    this->posicion_observador = Tupla3f(0.0,0.0,10.0);
-   this->posicion_observador_inicial = Tupla3f(0.0,0.0,10.0);
+   this->posicion_observador_anterior = Tupla3f(0.0,0.0,10.0);
 
    this->posicion_punto_atencion = Tupla3f();
-   this->posicion_punto_atencion_inicial = Tupla3f();
+   this->posicion_punto_atencion_anterior = Tupla3f();
 
    this->camara_rotacion_x = 0;
    this->camara_rotacion_y = 0;
@@ -111,14 +114,15 @@ Camara::Camara(modo_camara modo)
 
 Camara::Camara(tipo_camara tipo, modo_camara modo, Tupla3f posicion_observador, Tupla3f posicion_punto_atencion,
          float camara_rotacion_x, float camara_rotacion_y)
+:posicion_observador_inicial(posicion_observador), posicion_punto_atencion_inicial(posicion_punto_atencion)
 {
    this->tipo = tipo;
    this->modo = modo;
 
    this->posicion_observador = posicion_observador;
-   this->posicion_observador_inicial = posicion_observador;
+   this->posicion_observador_anterior = posicion_observador;
    this->posicion_punto_atencion = posicion_punto_atencion;
-   this->posicion_punto_atencion_inicial = posicion_punto_atencion;
+   this->posicion_punto_atencion_anterior = posicion_punto_atencion;
    this->camara_rotacion_x = camara_rotacion_x;
    this->camara_rotacion_y = camara_rotacion_y;
 
@@ -138,19 +142,31 @@ void Camara::FijarCamara()
 
    if (modo == EXAMINAR)
    {
-      Tupla3f zoom (0.0,0.0,factor_zoom);
-      //Tupla3f zoom;
-      Tupla3f tmp = posicion_observador_inicial + zoom;
-      posicion_observador = Matriz4x4::RotacionEjeY(-camara_rotacion_y) * Matriz4x4::RotacionEjeX(-camara_rotacion_x) * tmp;
-      //posicion_observador = Matriz4x4::RotacionEjeX(-camara_rotacion_x) * Matriz4x4::RotacionEjeY(-camara_rotacion_y) * tmp;
+      /* Adrian
+       * Tupla4f pos_obs4f = Tupla4f(posicion_observador);
+         Tupla4f v = Tupla4f(posicion_punto_atencion);
+
+         pos_obs4f = Matriz4x4f::Traslacion(-v[0],-v[1],-v[2])*pos_obs4f;
+         pos_obs4f = Matriz4x4f::RotacionEjeX(camara_angulo_x)*pos_obs4f;
+         pos_obs4f = Matriz4x4f::RotacionEjeY(-1*camara_angulo_y)*pos_obs4f;
+         pos_obs4f = Matriz4x4f::Traslacion(v[0],v[1],v[2])*pos_obs4f;
+
+         posicion_observador = Tupla3f(pos_obs4f);
+       */
+
+      //Tupla3f zoom (0.0,0.0,factor_zoom);
+      Tupla3f zoom;
+      Tupla3f tmp = posicion_observador_anterior + zoom;
+      posicion_observador = Matriz4x4::Traslacion(posicion_punto_atencion * (-1)) *
+            Matriz4x4::RotacionEjeY(-camara_rotacion_y) * Matriz4x4::RotacionEjeX(-camara_rotacion_x) *
+            Matriz4x4::Traslacion(posicion_punto_atencion) * tmp;
    }
 
    else  // Modo Primera persona
    {
-      Tupla3f vector_ojo_foco = posicion_punto_atencion_inicial - posicion_observador;
+      Tupla3f vector_ojo_foco = posicion_punto_atencion_anterior - posicion_observador;
       vector_ojo_foco = Matriz4x4::RotacionEjeY(-camara_rotacion_y) * Matriz4x4::RotacionEjeX(-camara_rotacion_x) * vector_ojo_foco;
       posicion_punto_atencion = posicion_observador + vector_ojo_foco;
-      //posicion_punto_atencion_inicial = posicion_punto_atencion;
    }
 
 
@@ -158,25 +174,6 @@ void Camara::FijarCamara()
    gluLookAt(posicion_observador[X], posicion_observador[Y], posicion_observador[Z],
                posicion_punto_atencion[X], posicion_punto_atencion[Y], posicion_punto_atencion[Z],
                0.0,1.0,0.0);
-
-
-   /*
-   glm::vec3 eye(posicion_observador[X], posicion_observador[Y], posicion_observador[Z]);
-   glm::vec3 PoV(posicion_punto_atencion[X], posicion_punto_atencion[Y], posicion_punto_atencion[Z]);
-   glm::vec3 up(0.0,1.0,0.0);
-
-   glm::mat4 matriz_lookAt = glm::lookAt(eye,PoV,up);
-
-   glMultMatrixf(&matriz_lookAt[0][0]);
-   */
-/*
-   glRotatef(-camara_rotacion_y, 0.0,1.0,0.0);
-   glRotatef(-camara_rotacion_x, 1.0,0.0,0.0);
-   glTranslatef(posicion_observador[X], posicion_observador[Y], posicion_observador[Z]);
-   */
-
-
-
 
    CError();
 }
@@ -204,11 +201,11 @@ void Camara::FijarProyeccion(float ventana_tam_x, float ventana_tam_y)
    else
    {
       glOrtho
-      (  left,
-         right,
-         bottom*ratioYX,
-         top*ratioYX,
-         near,
+      (  left-5,
+         right+5,
+         (bottom-5)*ratioYX,
+         (top+5)*ratioYX,
+         near-1,
          far
       );
    }
@@ -272,7 +269,7 @@ void Camara::ModificarPosicionX(float incremento)
       Tupla3f direccion = Tupla3f(PoV_Obs[Z],0.0,-PoV_Obs[X]).normalized();   // Mira hacia la derecha
       //std::cout << "Vector direccionX: " << direccion << std::endl;
       posicion_observador += direccion * incremento;
-      posicion_punto_atencion_inicial += direccion * incremento;
+      posicion_punto_atencion_anterior += direccion * incremento;
    }
 }
 
@@ -284,7 +281,7 @@ void Camara::ModificarPosicionZ(float incremento)
       //std::cout << "Vector direccionZ: " << PoV_Obs << std::endl;
       Tupla3f direccion = Tupla3f(PoV_Obs[X],0.0,PoV_Obs[Z]).normalized();   // Mira hacia la derecha
       posicion_observador += direccion * incremento;
-      posicion_punto_atencion_inicial += direccion * incremento;
+      posicion_punto_atencion_anterior += direccion * incremento;
    }
 }
 

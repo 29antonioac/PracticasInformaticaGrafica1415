@@ -79,13 +79,13 @@ void Practica5::Inicializar( int argc, char *argv[] )
    mallas.push_back(peon);
    mallas.push_back(donut);
 
-   color_moto = Tupla3ub(255,0,0);
+   color_moto = Tupla3ub(100,0,0);
    moto->SetColorPrimario(color_moto);
 
-   color_peon = Tupla3ub(0,255,0);
+   color_peon = Tupla3ub(0,100,0);
    peon->SetColorPrimario(color_peon);
 
-   color_donut = Tupla3ub(0,0,255);
+   color_donut = Tupla3ub(0,0,100);
    donut->SetColorPrimario(color_donut);
 
 
@@ -94,9 +94,18 @@ void Practica5::Inicializar( int argc, char *argv[] )
    NodoGrafoEscena * nodo_peon = new NodoTerminal(peon);
    NodoGrafoEscena * nodo_donut = new NodoTerminal(donut);
 
-   NodoGrafoEscena * nodo_traslacion_moto = new NodoTransformacion(Matriz4x4::Traslacion(-2.0,0.0,0.0));
-   NodoGrafoEscena * nodo_traslacion_peon = new NodoTransformacion(Matriz4x4::Traslacion(4.0,0.0,0.0));
-   NodoGrafoEscena * nodo_traslacion_donut = new NodoTransformacion(Matriz4x4::Traslacion(0.0,0.0,-3.0));
+   Matriz4x4 matriz_traslacion_moto = Matriz4x4::Traslacion(-2.0,0.0,0.0);
+   Matriz4x4 matriz_traslacion_peon = Matriz4x4::Traslacion(4.0,0.0,0.0);
+   Matriz4x4 matriz_traslacion_donut = Matriz4x4::Traslacion(0.0,0.0,-3.0);
+
+   NodoGrafoEscena * nodo_traslacion_moto = new NodoTransformacion(matriz_traslacion_moto);
+   NodoGrafoEscena * nodo_traslacion_peon = new NodoTransformacion(matriz_traslacion_peon);
+   NodoGrafoEscena * nodo_traslacion_donut = new NodoTransformacion(matriz_traslacion_donut);
+
+   // Corregimos centros (no es la mejor solución, pero sí la más rápida)
+   moto->CorrigeCentro(matriz_traslacion_moto);
+   peon->CorrigeCentro(matriz_traslacion_peon);
+   //donut->CorrigeCentro(matriz_traslacion_donut);
 
 
    raiz->aniadeHijo(nodo_traslacion_moto);
@@ -105,8 +114,8 @@ void Practica5::Inicializar( int argc, char *argv[] )
    raiz->aniadeHijo(nodo_traslacion_peon);
       nodo_traslacion_peon->aniadeHijo(nodo_peon);
 
-   raiz->aniadeHijo(nodo_traslacion_donut);
-      nodo_traslacion_donut->aniadeHijo(nodo_donut);
+   //raiz->aniadeHijo(nodo_traslacion_donut);
+   //   nodo_traslacion_donut->aniadeHijo(nodo_donut);
 
 
 
@@ -145,32 +154,33 @@ void Practica5::ClickRaton(int x, int y)
          GL_RGB,GL_UNSIGNED_BYTE,(void*)pixel);
 
    // Comparar con nuestros valores de colores para cada figura
-   if (pixel[0] == 255 && pixel[1] == 255 && pixel[2] == 255)
-   {
-      cout << "Nada" << endl;
-      camaraActual->SetModo(PRIMERA_PERSONA);
-      if (malla_marcada != nullptr) malla_marcada->CambioModoDibujo(SOLIDO);
-      malla_marcada = nullptr;
-   }
-   else if (pixel[0] == 255)
+//   if (pixel[0] == 255 && pixel[1] == 255 && pixel[2] == 255)
+//   {
+//      cout << "Nada" << endl;
+//      camaraActual->SetModo(PRIMERA_PERSONA);
+//      if (malla_marcada != nullptr) malla_marcada->CambioModoDibujo(SOLIDO);
+//      malla_marcada = nullptr;
+//   }
+//   else
+   if (pixel[0] == 100)
    {
       cout << "Moto" << endl;
       if (malla_marcada != nullptr) malla_marcada->CambioModoDibujo(SOLIDO);
       malla_marcada = moto;
    }
-   else if (pixel[1] == 255)
+   else if (pixel[1] == 100)
    {
       cout << "Peón" << endl;
       if (malla_marcada != nullptr) malla_marcada->CambioModoDibujo(SOLIDO);
       malla_marcada = peon;
 
-   }
-   else if (pixel[2] == 255)
+   }/*
+   else if (pixel[2] == 100)
    {
       cout << "Donut" << endl;
       if (malla_marcada != nullptr) malla_marcada->CambioModoDibujo(SOLIDO);
       malla_marcada = donut;
-   }
+   }*/
    else
    {
       cout << "Nada" << endl;

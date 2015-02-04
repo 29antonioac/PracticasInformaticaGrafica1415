@@ -939,3 +939,9 @@ bool MallaTVT::ColorFijo()
 {
    return color_fijo;
 }
+
+// Queda feo, pero no tengo mucho tiempo
+void MallaTVT::CorrigeCentro(Matriz4x4 transformacion)
+{
+   centro_coordenadas_mundo = transformacion * centro_coordenadas_objeto;
+}
