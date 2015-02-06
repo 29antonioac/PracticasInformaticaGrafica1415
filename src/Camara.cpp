@@ -142,20 +142,8 @@ void Camara::FijarCamara()
 
    if (modo == EXAMINAR)
    {
-      /* Adrian
-       * Tupla4f pos_obs4f = Tupla4f(posicion_observador);
-         Tupla4f v = Tupla4f(posicion_punto_atencion);
 
-         pos_obs4f = Matriz4x4f::Traslacion(-v[0],-v[1],-v[2])*pos_obs4f;
-         pos_obs4f = Matriz4x4f::RotacionEjeX(camara_angulo_x)*pos_obs4f;
-         pos_obs4f = Matriz4x4f::RotacionEjeY(-1*camara_angulo_y)*pos_obs4f;
-         pos_obs4f = Matriz4x4f::Traslacion(v[0],v[1],v[2])*pos_obs4f;
-
-         posicion_observador = Tupla3f(pos_obs4f);
-       */
-
-      //Tupla3f zoom (0.0,0.0,factor_zoom);
-      Tupla3f zoom;
+      Tupla3f zoom (0.0,0.0,factor_zoom);
       Tupla3f tmp = posicion_observador_anterior + zoom;
       posicion_observador = Matriz4x4::Traslacion(posicion_punto_atencion * (-1)) *
             Matriz4x4::RotacionEjeY(-camara_rotacion_y) * Matriz4x4::RotacionEjeX(-camara_rotacion_x) *
@@ -267,7 +255,7 @@ void Camara::ModificarPosicionX(float incremento)
    {
       Tupla3f PoV_Obs = posicion_punto_atencion - posicion_observador;
       Tupla3f direccion = Tupla3f(PoV_Obs[Z],0.0,-PoV_Obs[X]).normalized();   // Mira hacia la derecha
-      //std::cout << "Vector direccionX: " << direccion << std::endl;
+
       posicion_observador += direccion * incremento;
       posicion_punto_atencion_anterior += direccion * incremento;
    }

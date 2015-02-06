@@ -61,23 +61,19 @@ void Practica5::Inicializar( int argc, char *argv[] )
 
    const unsigned caras = 20;
 
-   vector<float> vertices_moto_ply, vertices_peon_ply, vertices_donut_ply;
+   vector<float> vertices_moto_ply, vertices_peon_ply;
    vector<int> caras_moto_ply;
 
    ply::read("PLY/big_atc.ply",vertices_moto_ply,caras_moto_ply);
    ply::read_vertices("PLY/peon.ply",vertices_peon_ply);
-   ply::read_vertices("PLY/toro.ply",vertices_donut_ply);
 
    moto = new MallaTVT(MALLA,vertices_moto_ply,caras_moto_ply);
    peon = new MallaTVT(PERFIL,vertices_peon_ply);
-   donut = new MallaTVT(PERFIL,vertices_donut_ply);
 
    peon->Revolucion(caras);
-   donut->Barrido_Rotacion(caras);
 
    mallas.push_back(moto);
    mallas.push_back(peon);
-   mallas.push_back(donut);
 
    color_moto = Tupla3ub(100,0,0);
    moto->SetColorPrimario(color_moto);
@@ -85,27 +81,20 @@ void Practica5::Inicializar( int argc, char *argv[] )
    color_peon = Tupla3ub(0,100,0);
    peon->SetColorPrimario(color_peon);
 
-   color_donut = Tupla3ub(0,0,100);
-   donut->SetColorPrimario(color_donut);
-
 
    raiz = new NodoGrafoEscena;
    NodoGrafoEscena * nodo_moto = new NodoTerminal(moto);
    NodoGrafoEscena * nodo_peon = new NodoTerminal(peon);
-   NodoGrafoEscena * nodo_donut = new NodoTerminal(donut);
 
    Matriz4x4 matriz_traslacion_moto = Matriz4x4::Traslacion(-2.0,0.0,0.0);
    Matriz4x4 matriz_traslacion_peon = Matriz4x4::Traslacion(4.0,0.0,0.0);
-   Matriz4x4 matriz_traslacion_donut = Matriz4x4::Traslacion(0.0,0.0,-3.0);
 
    NodoGrafoEscena * nodo_traslacion_moto = new NodoTransformacion(matriz_traslacion_moto);
    NodoGrafoEscena * nodo_traslacion_peon = new NodoTransformacion(matriz_traslacion_peon);
-   NodoGrafoEscena * nodo_traslacion_donut = new NodoTransformacion(matriz_traslacion_donut);
 
    // Corregimos centros (no es la mejor solución, pero sí la más rápida)
    moto->CorrigeCentro(matriz_traslacion_moto);
    peon->CorrigeCentro(matriz_traslacion_peon);
-   //donut->CorrigeCentro(matriz_traslacion_donut);
 
 
    raiz->aniadeHijo(nodo_traslacion_moto);
@@ -114,14 +103,10 @@ void Practica5::Inicializar( int argc, char *argv[] )
    raiz->aniadeHijo(nodo_traslacion_peon);
       nodo_traslacion_peon->aniadeHijo(nodo_peon);
 
-   //raiz->aniadeHijo(nodo_traslacion_donut);
-   //   nodo_traslacion_donut->aniadeHijo(nodo_donut);
 
-
-
-   camaras[0] = new Camara(PRIMERA_PERSONA);
-   camaras[1] = new Camara(PRIMERA_PERSONA);
-   camaras[2] = new Camara(ORTOGONAL);
+   camaras[0] = new Camara(PERSPECTIVA, PRIMERA_PERSONA, Tupla3f(10.0,0.0,0.0), Tupla3f(), 0.0, 0.0); // ALZADO
+   camaras[1] = new Camara(PERSPECTIVA, PRIMERA_PERSONA, Tupla3f(0.001,10.0,0.001), Tupla3f(), 0.0, M_PI/2 - 0.001); // PLANTA
+   camaras[2] = new Camara(ORTOGONAL); // PERFIL
 
    camaraActual = camaras[0];
 
